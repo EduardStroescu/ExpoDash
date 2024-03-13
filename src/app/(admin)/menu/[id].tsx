@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  useColorScheme,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/src/lib/constants/Colors";
@@ -18,6 +19,7 @@ export default function ProductDetailsScreen() {
     typeof idString === "string" ? idString : idString?.[0]
   );
   const { data: product, error, isLoading } = useProduct(id);
+  const colorScheme = useColorScheme();
 
   if (isLoading) {
     return <ActivityIndicator />;
@@ -28,7 +30,12 @@ export default function ProductDetailsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme ?? "light"].background },
+      ]}
+    >
       <Stack.Screen
         options={{
           title: product?.name,
@@ -56,13 +63,17 @@ export default function ProductDetailsScreen() {
         resizeMode="contain"
       />
 
-      <Text style={styles.price}>${product?.price}</Text>
+      <Text
+        style={[styles.price, { color: Colors[colorScheme ?? "light"].text }]}
+      >
+        Price: ${product?.price}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "white", padding: 10 },
+  container: { flex: 1, padding: 10 },
   image: {
     width: "100%",
     aspectRatio: 1.5,
@@ -71,5 +82,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     alignSelf: "center",
+    marginTop: 20,
   },
 });

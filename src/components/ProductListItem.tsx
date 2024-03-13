@@ -1,4 +1,10 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
 import Colors from "../lib/constants/Colors";
 import { Tables } from "../lib/types";
 import { defaultPizzaImage } from "@/assets/data/products";
@@ -10,6 +16,7 @@ interface ProductListItemProps {
 }
 
 export default function ProductListItem({ product }: ProductListItemProps) {
+  const colorScheme = useColorScheme();
   const segments = useSegments();
   return (
     <Pressable
@@ -27,21 +34,34 @@ export default function ProductListItem({ product }: ProductListItemProps) {
         style={styles.image}
         resizeMode="contain"
       />
-      <Text style={styles.title}>{product.name}</Text>
-      <Text style={styles.price}>${product.price}</Text>
+      <View style={styles.secondaryContainer}>
+        <Text
+          style={[styles.title, { color: Colors[colorScheme ?? "light"].text }]}
+        >
+          {product.name}
+        </Text>
+        <Text
+          style={[styles.price, { color: Colors[colorScheme ?? "light"].tint }]}
+        >
+          ${product.price}
+        </Text>
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    maxWidth: "50%",
-    backgroundColor: "white",
-    padding: 10,
-    borderRadius: 20,
+    width: "100%",
   },
-  image: { width: "100%", aspectRatio: 1 },
+  secondaryContainer: {
+    flexDirection: "row",
+    width: "100%",
+    padding: 10,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  image: { width: "100%", height: 100, borderRadius: 20, objectFit: "cover" },
   title: { fontSize: 18, fontWeight: "600", marginVertical: 10 },
-  price: { color: Colors.light.tint, fontWeight: "bold" },
+  price: { fontWeight: "bold" },
 });

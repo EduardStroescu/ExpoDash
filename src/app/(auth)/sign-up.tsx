@@ -1,4 +1,11 @@
-import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Alert,
+  useColorScheme,
+} from "react-native";
 import { useState } from "react";
 import Button from "@/src/components/Button";
 import { Link, router } from "expo-router";
@@ -9,6 +16,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const colorScheme = useColorScheme();
 
   const signUpWithEmail = async () => {
     setLoading(true);
@@ -27,7 +35,14 @@ export default function SignUpPage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Email</Text>
+      <Text
+        style={[
+          styles.label,
+          { color: Colors[colorScheme ?? "light"].subText },
+        ]}
+      >
+        Email
+      </Text>
       <TextInput
         style={styles.input}
         value={email}
@@ -36,7 +51,14 @@ export default function SignUpPage() {
         clearButtonMode="while-editing"
       />
 
-      <Text style={styles.label}>Password</Text>
+      <Text
+        style={[
+          styles.label,
+          { color: Colors[colorScheme ?? "light"].subText },
+        ]}
+      >
+        Password
+      </Text>
       <TextInput
         style={styles.input}
         value={password}
@@ -53,7 +75,10 @@ export default function SignUpPage() {
         disabled={loading}
         onPress={signUpWithEmail}
       />
-      <Link href="/sign-up" style={styles.link}>
+      <Link
+        href="/sign-up"
+        style={[styles.link, { color: Colors[colorScheme ?? "light"].tint }]}
+      >
         Sign In
       </Link>
     </View>
@@ -62,7 +87,7 @@ export default function SignUpPage() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", padding: 20 },
-  label: { color: "grey", fontSize: 16 },
+  label: { fontSize: 16 },
   input: {
     borderWidth: 1,
     borderColor: "gray",
@@ -75,7 +100,6 @@ const styles = StyleSheet.create({
   link: {
     alignSelf: "center",
     fontWeight: "bold",
-    color: Colors.light.tint,
     marginVertical: 10,
   },
 });

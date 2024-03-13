@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  useColorScheme,
+} from "react-native";
 import React from "react";
 import Colors from "../lib/constants/Colors";
 import dayjs from "dayjs";
@@ -12,24 +18,46 @@ interface OrderListItemProps {
 }
 
 export default function OrderListItem({ order }: OrderListItemProps) {
+  const colorScheme = useColorScheme();
   const segments = useSegments();
   return (
     <Pressable
       onPress={() => router.push(`/${segments[0]}/orders/${order.id}`)}
-      style={styles.container}
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme ?? "light"].foreground },
+      ]}
     >
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
-          <Text style={styles.title}>Order #{order.id}</Text>
-          <Text>-</Text>
-          <Text style={styles.price}>${order.total.toFixed(2)}</Text>
+          <Text
+            style={[
+              styles.title,
+              { color: Colors[colorScheme ?? "light"].text },
+            ]}
+          >
+            Order #{order.id}
+          </Text>
+          <Text style={{ color: Colors[colorScheme ?? "light"].text }}>-</Text>
+          <Text
+            style={[
+              styles.price,
+              { color: Colors[colorScheme ?? "light"].tint },
+            ]}
+          >
+            ${order.total.toFixed(2)}
+          </Text>
         </View>
         <View style={styles.subtitleContainer}>
-          <Text style={styles.time}>{dayjs(order.created_at).fromNow()}</Text>
+          <Text style={{ color: Colors[colorScheme ?? "light"].subText }}>
+            {dayjs(order.created_at).fromNow()}
+          </Text>
         </View>
       </View>
       <View>
-        <Text>{order.status}</Text>
+        <Text style={{ color: Colors[colorScheme ?? "light"].text }}>
+          {order.status}
+        </Text>
       </View>
     </Pressable>
   );
@@ -37,7 +65,6 @@ export default function OrderListItem({ order }: OrderListItemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
     flexDirection: "row",
@@ -53,11 +80,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   price: {
-    color: Colors.light.tint,
     fontWeight: "bold",
     fontSize: 16,
-  },
-  time: {
-    color: "gray",
   },
 });

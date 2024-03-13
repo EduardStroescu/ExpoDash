@@ -2,22 +2,33 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { stripe } from "../_utils/stripe.ts";
+import { createOrRetrieveProfile } from "../_utils/supabase.ts";
 
-console.log("Hello from Functions!");
+console.log("payment-sheet handler up and running!");
 
-Deno.serve(async (req) => {
+serve(async (req: Request) => {
   try {
-    const { amount, currency } = await req.json();
+    const { amount, currency }: { amount: number; currency: string } =
+      await req.json();
+    const customer = await createOrRetrieveProfile(req);
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer },
+      { apiVersion: "2020-08-27" }
+    );
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: currency,
+      customer: customer,
     });
 
     const res = {
       paymentIntent: paymentIntent.client_secret,
       publishableKey: Deno.env.get("EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY"),
+      customer: customer,
+      ephemeralKey: ephemeralKey.secret,
     };
 
     return new Response(JSON.stringify(res), {

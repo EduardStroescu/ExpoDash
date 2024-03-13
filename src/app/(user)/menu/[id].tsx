@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  useColorScheme,
 } from "react-native";
 import Button from "@/src/components/Button";
 import { useDispatch } from "react-redux";
@@ -15,6 +16,7 @@ import { randomUUID } from "expo-crypto";
 import { useProduct } from "../../api/products";
 import { defaultPizzaImage } from "@/assets/data/products";
 import RemoteImage from "@/src/components/RemoteImage";
+import Colors from "@/src/lib/constants/Colors";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -22,6 +24,7 @@ export default function ProductDetailsScreen() {
   const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const dispatch = useDispatch();
+  const colorScheme = useColorScheme();
 
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: product, error, isLoading } = useProduct(Number(id));
@@ -51,7 +54,12 @@ export default function ProductDetailsScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme ?? "light"].background },
+      ]}
+    >
       <Stack.Screen options={{ title: product?.name }} />
 
       <RemoteImage
@@ -61,41 +69,61 @@ export default function ProductDetailsScreen() {
         resizeMode="contain"
       />
 
-      <Text>Select size</Text>
-      <View style={styles.sizes}>
-        {sizes.map((size) => {
-          return (
-            <Pressable
-              key={size}
-              style={[
-                styles.size,
-                {
-                  backgroundColor:
-                    selectedSize === size ? "gainsboro" : "white",
-                },
-              ]}
-              onPress={() => setSelectedSize(size)}
-            >
-              <Text
+      <View style={{ marginTop: 20 }}>
+        <Text
+          style={[
+            styles.sizeText,
+            { color: Colors[colorScheme ?? "light"].text },
+          ]}
+        >
+          Select size
+        </Text>
+        <View style={styles.sizes}>
+          {sizes.map((size) => {
+            return (
+              <Pressable
+                key={size}
                 style={[
-                  styles.sizeText,
-                  { color: selectedSize === size ? "black" : "grey" },
+                  styles.size,
+                  {
+                    backgroundColor:
+                      selectedSize === size
+                        ? Colors[colorScheme ?? "light"].tint
+                        : Colors[colorScheme ?? "light"].foreground,
+                  },
                 ]}
+                onPress={() => setSelectedSize(size)}
               >
-                {size}
-              </Text>
-            </Pressable>
-          );
-        })}
+                <Text
+                  style={[
+                    styles.sizeText,
+                    {
+                      color:
+                        selectedSize === size
+                          ? Colors[colorScheme ?? "light"].text
+                          : Colors[colorScheme ?? "light"].subText,
+                    },
+                  ]}
+                >
+                  {size}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
-      <Text style={styles.price}>${product?.price}</Text>
+      <Text
+        style={[styles.price, { color: Colors[colorScheme ?? "light"].tint }]}
+      >
+        ${product?.price}
+      </Text>
       <Button text="Add to cart" onPress={onAddToCart} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "white", padding: 10 },
+  container: { flex: 1, padding: 10 },
   image: {
     width: "100%",
     aspectRatio: 1.5,
@@ -110,7 +138,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 20,
   },
   size: {
     width: 50,
@@ -122,5 +150,6 @@ const styles = StyleSheet.create({
   sizeText: {
     fontSize: 20,
     fontWeight: "500",
+    textAlign: "center",
   },
 });

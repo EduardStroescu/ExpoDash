@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useColorScheme } from "react-native";
 import React from "react";
 import Colors from "../lib/constants/Colors";
 import { CartItem } from "../lib/types";
@@ -14,8 +14,14 @@ type CartListItemProps = {
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
   const dispatch = useDispatch();
+  const colorScheme = useColorScheme();
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme ?? "light"].foreground },
+      ]}
+    >
       <RemoteImage
         path={cartItem.product.image}
         fallback={defaultPizzaImage}
@@ -24,10 +30,23 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
       />
 
       <View style={{ flex: 1 }}>
-        <Text style={styles.title}>{cartItem.product.name}</Text>
+        <Text
+          style={[styles.title, { color: Colors[colorScheme ?? "light"].text }]}
+        >
+          {cartItem.product.name}
+        </Text>
         <View style={styles.subtitleContainer}>
-          <Text style={styles.price}>${cartItem.product.price.toFixed(2)}</Text>
-          <Text>Size: {cartItem.size}</Text>
+          <Text
+            style={[
+              styles.price,
+              { color: Colors[colorScheme ?? "light"].tint },
+            ]}
+          >
+            ${cartItem.product.price.toFixed(2)}
+          </Text>
+          <Text style={{ color: Colors[colorScheme ?? "light"].subText }}>
+            Size: {cartItem.size}
+          </Text>
         </View>
       </View>
       <View style={styles.quantitySelector}>
@@ -42,7 +61,14 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
           style={{ padding: 5 }}
         />
 
-        <Text style={styles.quantity}>{cartItem.quantity}</Text>
+        <Text
+          style={[
+            styles.quantity,
+            { color: Colors[colorScheme ?? "light"].text },
+          ]}
+        >
+          {cartItem.quantity}
+        </Text>
         <FontAwesome
           onPress={() =>
             dispatch(
@@ -60,7 +86,6 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
     borderRadius: 10,
     padding: 5,
     flex: 1,
@@ -93,7 +118,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   price: {
-    color: Colors.light.tint,
     fontWeight: "bold",
   },
 });

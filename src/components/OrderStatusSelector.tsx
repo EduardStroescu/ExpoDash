@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, useColorScheme } from "react-native";
 import { OrderStatusList } from "../lib/types";
 import Colors from "../lib/constants/Colors";
 import { useUpdateOrder } from "../app/api/orders";
@@ -12,6 +12,7 @@ export default function OrderStatusSelector({
   activeStatus,
   orderId,
 }: OrderStatusSelectorProps) {
+  const colorScheme = useColorScheme();
   const { mutate: updateOrder } = useUpdateOrder();
 
   const updateOrderStatus = (status: string) => {
@@ -45,7 +46,10 @@ export default function OrderStatusSelector({
           >
             <Text
               style={{
-                color: activeStatus === status ? "white" : Colors.light.tint,
+                color:
+                  activeStatus === status
+                    ? "white"
+                    : Colors[colorScheme ?? "light"].tint,
               }}
             >
               {status}

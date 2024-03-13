@@ -1,5 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import { Alert, FlatList, Platform, Text, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Platform,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reduxStore";
 import CartListItem from "../components/CartListItem";
@@ -11,6 +18,7 @@ import { useInsertOrder } from "./api/orders";
 import { useRouter } from "expo-router";
 import { useInsertOrderItems } from "./api/order-items";
 import { Tables } from "../lib/types";
+import { initialisePaymentSheet, openPaymentSheet } from "../lib/stripe";
 
 export default function CartScreen() {
   const { items, total } = useSelector((state: RootState) => state.cart);
@@ -18,6 +26,7 @@ export default function CartScreen() {
   const { mutate: insertOrder } = useInsertOrder();
   const { mutate: insertOrderItems } = useInsertOrderItems();
   const router = useRouter();
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     dispatch(getCartTotal());
@@ -25,6 +34,12 @@ export default function CartScreen() {
 
   const checkout = async () => {
     const saveOrderItems = async (order: Tables<"orders"> | null) => {
+      await initialisePaymentSheet(Math.floor(total * 100), "eur");
+      const payed = await openPaymentSheet();
+      if (!payed) {
+        return;
+      }
+
       if (!order) return;
       const orderItems = items.map((cartItem) => ({
         order_id: order?.id,
@@ -68,9 +83,20 @@ export default function CartScreen() {
         contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
       />
       <View style={{ paddingHorizontal: 10 }}>
-        <Text style={{ alignSelf: "center", fontSize: 20 }}>
+        <Text
+          style={{
+            alignSelf: "center",
+            fontSize: 20,
+            color: Colors[colorScheme ?? "light"].text,
+          }}
+        >
           Total:{" "}
-          <Text style={{ fontWeight: "bold", color: Colors.light.tint }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              color: Colors[colorScheme ?? "light"].tint,
+            }}
+          >
             ${total}
           </Text>
         </Text>

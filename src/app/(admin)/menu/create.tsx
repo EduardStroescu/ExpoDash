@@ -2,7 +2,14 @@ import { defaultPizzaImage } from "@/assets/data/products";
 import Button from "@/src/components/Button";
 import Colors from "@/src/lib/constants/Colors";
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Alert,
+  useColorScheme,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
@@ -22,6 +29,7 @@ export default function CreateProductScreen() {
   const [image, setImage] = useState<string | null>(null);
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<string>("");
+  const colorScheme = useColorScheme();
 
   const { id: idString } = useLocalSearchParams();
   const id = parseFloat(
@@ -155,21 +163,43 @@ export default function CreateProductScreen() {
         source={{ uri: image || defaultPizzaImage }}
         style={styles.image}
       />
-      <Text style={styles.textButton} onPress={pickImage}>
+      <Text
+        style={[
+          styles.textButton,
+          { color: Colors[colorScheme ?? "light"].tint },
+        ]}
+        onPress={pickImage}
+      >
         Select Image
       </Text>
 
-      <Text style={styles.label}>Name</Text>
+      <Text
+        style={[
+          styles.label,
+          { color: Colors[colorScheme ?? "light"].subText },
+        ]}
+      >
+        Name
+      </Text>
       <TextInput
         value={name}
         onChangeText={setName}
         placeholder="Name"
+        placeholderTextColor="grey"
         style={styles.input}
       />
 
-      <Text style={styles.label}>Price</Text>
+      <Text
+        style={[
+          styles.label,
+          { color: Colors[colorScheme ?? "light"].subText },
+        ]}
+      >
+        Price
+      </Text>
       <TextInput
         placeholder="9.99"
+        placeholderTextColor="grey"
         style={styles.input}
         keyboardType="numeric"
         value={price}
@@ -189,10 +219,9 @@ const styles = StyleSheet.create({
   textButton: {
     alignSelf: "center",
     fontWeight: "bold",
-    color: Colors.light.tint,
     marginVertical: 10,
   },
-  label: { color: "grey", fontSize: 16 },
+  label: { fontSize: 16 },
   input: {
     backgroundColor: "white",
     padding: 10,

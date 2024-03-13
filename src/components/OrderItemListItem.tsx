@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useColorScheme } from "react-native";
 import React from "react";
 import Colors from "../lib/constants/Colors";
 import { Tables } from "../lib/types";
@@ -10,8 +10,14 @@ type OrderItemListItemProps = {
 };
 
 const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
+  const colorScheme = useColorScheme();
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme ?? "light"].foreground },
+      ]}
+    >
       <RemoteImage
         path={item.products.image}
         fallback={defaultPizzaImage}
@@ -19,14 +25,43 @@ const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
         resizeMode="contain"
       />
       <View style={{ flex: 1 }}>
-        <Text style={styles.title}>{item.products.name}</Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text
+            style={[
+              styles.title,
+              { color: Colors[colorScheme ?? "light"].text },
+            ]}
+          >
+            {item.products.name}
+          </Text>
+          <Text style={{ color: Colors[colorScheme ?? "light"].text }}>
+            {" "}
+            -{" "}
+          </Text>
+          <Text
+            style={[
+              styles.price,
+              { color: Colors[colorScheme ?? "light"].tint },
+            ]}
+          >
+            ${item.products.price.toFixed(2)}
+          </Text>
+        </View>
         <View style={styles.subtitleContainer}>
-          <Text style={styles.price}>${item.products.price.toFixed(2)}</Text>
-          <Text>Size: {item.size}</Text>
+          <Text style={{ color: Colors[colorScheme ?? "light"].subText }}>
+            Size: {item.size}
+          </Text>
         </View>
       </View>
       <View style={styles.quantitySelector}>
-        <Text style={styles.quantity}>{item.quantity}</Text>
+        <Text
+          style={[
+            styles.quantity,
+            { color: Colors[colorScheme ?? "light"].text },
+          ]}
+        >
+          {item.quantity}
+        </Text>
       </View>
     </View>
   );
@@ -34,7 +69,6 @@ const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
     flexDirection: "row",
@@ -60,14 +94,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
-    marginVertical: 10,
+    marginRight: 10,
   },
   quantity: {
     fontWeight: "500",
     fontSize: 18,
   },
   price: {
-    color: Colors.light.tint,
     fontWeight: "bold",
   },
 });
