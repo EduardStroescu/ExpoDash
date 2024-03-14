@@ -7,9 +7,9 @@ import {
 } from "react-native";
 import React from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
-import OrderListItem from "@/src/components/OrderListItem";
-import OrderItemListItem from "@/src/components/OrderItemListItem";
-import OrderStatusSelector from "@/src/components/OrderStatusSelector";
+import OrderListItem from "@/components/OrderListItem";
+import OrderItemListItem from "@/components/OrderItemListItem";
+import OrderStatusSelector from "@/components/OrderStatusSelector";
 import { useOrderDetails } from "../../api/orders";
 
 export default function OrderDetailsPage() {

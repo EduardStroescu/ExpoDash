@@ -1,4 +1,4 @@
-import OrderListItem from "@/src/components/OrderListItem";
+import OrderListItem from "@/components/OrderListItem";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,8 +6,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { useAdminOrderList } from "@/src/app/api/orders";
-import { useRealtimeAdminOrders } from "@/src/lib/hooks/useSupabaseRealtime";
+import { useAdminOrderList } from "@/app/api/orders";
+import { useRealtimeAdminOrders } from "@/lib/hooks/useSupabaseRealtime";
 
 export default function OrdersPage() {
   const {

@@ -7,20 +7,44 @@ import {
   useColorScheme,
 } from "react-native";
 import { useState } from "react";
-import Button from "@/src/components/Button";
+import Button from "@/components/Button";
 import { Link, router } from "expo-router";
-import Colors from "@/src/lib/constants/Colors";
-import { supabase } from "@/src/lib/supabase";
-import { useDispatch } from "react-redux";
+import Colors from "@/lib/constants/Colors";
+import { supabase } from "@/lib/supabase";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const SignInSchema = z.object({
+  email: z
+    .string({ required_error: "E-mail is required." })
+    .email({ message: "Invalid E-mail address" }),
+  password: z
+    .string({ required_error: "Password is required." })
+    .min(8, { message: "Password must contain at least 8 characters." }),
+});
 
 export default function SignInPage() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const dispatch = useDispatch();
   const colorScheme = useColorScheme();
 
-  const signInWithEmail = async () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: zodResolver(SignInSchema),
+  });
+
+  const onSubmit: SubmitHandler<z.infer<typeof SignInSchema>> = async ({
+    email,
+    password,
+  }) => {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -29,9 +53,11 @@ export default function SignInPage() {
 
     if (error) {
       Alert.alert(error.message);
+      setLoading(false);
       return;
     }
     setLoading(false);
+    reset();
     router.replace("/");
   };
 
@@ -45,14 +71,27 @@ export default function SignInPage() {
       >
         Email
       </Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        placeholder="johnDoe@gmail.com"
-        placeholderTextColor="grey"
-        clearButtonMode="while-editing"
+      <Controller
+        control={control}
+        rules={{
+          required: "E-Mail is required",
+        }}
+        name="email"
+        render={({ field: { value, onChange, onBlur } }) => (
+          <TextInput
+            style={styles.input}
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            placeholder="johnDoe@gmail.com"
+            placeholderTextColor="grey"
+            clearButtonMode="while-editing"
+          />
+        )}
       />
+      {errors.email && (
+        <Text style={styles.errorMessage}>{errors.email.message}</Text>
+      )}
 
       <Text
         style={[
@@ -62,21 +101,34 @@ export default function SignInPage() {
       >
         Password
       </Text>
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        placeholder=""
-        clearButtonMode="while-editing"
-        textContentType="password"
-        secureTextEntry
-        autoCorrect={false}
+      <Controller
+        control={control}
+        rules={{
+          required: "Password is required",
+        }}
+        name="password"
+        render={({ field: { value, onChange, onBlur } }) => (
+          <TextInput
+            style={styles.input}
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            placeholder=""
+            clearButtonMode="while-editing"
+            textContentType="password"
+            secureTextEntry
+            autoCorrect={false}
+          />
+        )}
       />
+      {errors.password && (
+        <Text style={styles.errorMessage}>{errors.password.message}</Text>
+      )}
 
       <Button
         text={loading ? "Signing in..." : "Sign In"}
         disabled={loading}
-        onPress={signInWithEmail}
+        onPress={handleSubmit(onSubmit)}
       />
       <Link
         href="/sign-up"
@@ -104,5 +156,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontWeight: "bold",
     marginVertical: 10,
+  },
+  errorMessage: {
+    color: "red",
   },
 });

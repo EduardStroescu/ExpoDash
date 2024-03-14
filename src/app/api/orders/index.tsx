@@ -1,8 +1,8 @@
-import { supabase } from "@/src/lib/supabase";
-import { RootState } from "@/src/reduxStore";
+import { supabase } from "@/lib/supabase";
+import { RootState } from "@/reduxStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import { InsertTables, UpdateTables } from "@/src/lib/types";
+import { InsertTables, UpdateTables } from "@/lib/types";
 
 export const useAdminOrderList = ({ archived }: { archived: boolean }) => {
   const status = archived ? ["Delivered"] : ["New", "Cooking", "Delivering"];

@@ -1,4 +1,4 @@
-import OrderListItem from "@/src/components/OrderListItem";
+import OrderListItem from "@/components/OrderListItem";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useAdminOrderList } from "@/src/app/api/orders";
+import { useAdminOrderList } from "@/app/api/orders";
 
 export default function OrdersPage() {
   const {

@@ -3,7 +3,7 @@ import React from "react";
 import Colors from "../lib/constants/Colors";
 import { CartItem } from "../lib/types";
 import { FontAwesome } from "@expo/vector-icons";
-import { defaultPizzaImage } from "@/assets/data/products";
+import { defaultPizzaImage } from "@assets/data/products";
 import { useDispatch } from "react-redux";
 import { updateQuantity } from "../lib/features/cartSlice";
 import RemoteImage from "./RemoteImage";

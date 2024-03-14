@@ -1,7 +1,7 @@
 import { withLayoutContext } from "expo-router";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Colors from "@/src/lib/constants/Colors";
+import Colors from "@/lib/constants/Colors";
 import { useColorScheme } from "react-native";
 
 const TopTabs = withLayoutContext(createMaterialTopTabNavigator().Navigator);

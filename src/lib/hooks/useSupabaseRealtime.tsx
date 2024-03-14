@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "../supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import { RootState } from "@/src/reduxStore";
+import { RootState } from "@/reduxStore";
 
 export function useRealtimeAdminOrders() {
   const queryClient = useQueryClient();

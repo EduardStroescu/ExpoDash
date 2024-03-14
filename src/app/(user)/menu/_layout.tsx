@@ -1,4 +1,4 @@
-import Colors from "@/src/lib/constants/Colors";
+import Colors from "@/lib/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, Stack } from "expo-router";
 import { Pressable, useColorScheme } from "react-native";

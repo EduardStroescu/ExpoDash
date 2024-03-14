@@ -1,4 +1,4 @@
-import LogoutButton from "@/src/components/LogoutButton";
+import LogoutButton from "@/components/LogoutButton";
 import { View, Text } from "react-native";
 
 export default function profile() {

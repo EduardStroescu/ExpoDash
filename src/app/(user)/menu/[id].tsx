@@ -8,15 +8,15 @@ import {
   View,
   useColorScheme,
 } from "react-native";
-import Button from "@/src/components/Button";
+import Button from "@/components/Button";
 import { useDispatch } from "react-redux";
-import { addToCart } from "@/src/lib/features/cartSlice";
-import { PizzaSize } from "@/src/lib/types";
+import { addToCart } from "@/lib/features/cartSlice";
+import { PizzaSize } from "@/lib/types";
 import { randomUUID } from "expo-crypto";
 import { useProduct } from "../../api/products";
-import { defaultPizzaImage } from "@/assets/data/products";
-import RemoteImage from "@/src/components/RemoteImage";
-import Colors from "@/src/lib/constants/Colors";
+import { defaultPizzaImage } from "@assets/data/products";
+import RemoteImage from "@/components/RemoteImage";
+import Colors from "@/lib/constants/Colors";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 

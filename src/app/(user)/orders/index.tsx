@@ -1,4 +1,4 @@
-import OrderListItem from "@/src/components/OrderListItem";
+import OrderListItem from "@/components/OrderListItem";
 import {
   ActivityIndicator,
   FlatList,
@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import { useUserOrderList } from "../../api/orders";
-import { useRealtimeUserOrders } from "@/src/lib/hooks/useSupabaseRealtime";
+import { useRealtimeUserOrders } from "@/lib/hooks/useSupabaseRealtime";
 
 export default function OrdersPage() {
   const { data: orders, isLoading, error } = useUserOrderList();

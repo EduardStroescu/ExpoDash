@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import Colors from "../lib/constants/Colors";
 import { Tables } from "../lib/types";
-import { defaultPizzaImage } from "@/assets/data/products";
+import { defaultPizzaImage } from "@assets/data/products";
 import { router, useSegments } from "expo-router";
 import RemoteImage from "./RemoteImage";
 

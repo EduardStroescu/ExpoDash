@@ -8,10 +8,10 @@ import {
   useColorScheme,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import Colors from "@/src/lib/constants/Colors";
+import Colors from "@/lib/constants/Colors";
 import { useProduct } from "../../api/products";
-import { defaultPizzaImage } from "@/assets/data/products";
-import RemoteImage from "@/src/components/RemoteImage";
+import RemoteImage from "@/components/RemoteImage";
+import { defaultPizzaImage } from "@assets/data/products";
 
 export default function ProductDetailsScreen() {
   const { id: idString } = useLocalSearchParams<{ id: string }>();

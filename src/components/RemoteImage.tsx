@@ -1,5 +1,5 @@
 import { Image } from "react-native";
-import React, { ComponentProps, useEffect, useMemo, useState } from "react";
+import { ComponentProps, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 type RemoteImageProps = {

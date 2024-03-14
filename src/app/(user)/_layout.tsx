@@ -6,7 +6,7 @@ import Colors from "../../lib/constants/Colors";
 import { useColorScheme } from "../../components/useColorScheme";
 import { useClientOnlyValue } from "../../components/useClientOnlyValue";
 import { useSelector } from "react-redux";
-import { RootState } from "@/src/reduxStore";
+import { RootState } from "@/reduxStore";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {

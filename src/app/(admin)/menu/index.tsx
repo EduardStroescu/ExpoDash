@@ -1,6 +1,5 @@
-import Colors from "@/src/lib/constants/Colors";
 import { View, FlatList, ActivityIndicator, Text } from "react-native";
-import ProductListItem from "@/src/components/ProductListItem";
+import ProductListItem from "@/components/ProductListItem";
 import { useProductList } from "../../api/products";
 
 export default function Menu() {

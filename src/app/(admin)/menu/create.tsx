@@ -1,7 +1,7 @@
-import { defaultPizzaImage } from "@/assets/data/products";
-import Button from "@/src/components/Button";
-import Colors from "@/src/lib/constants/Colors";
-import { useEffect, useState } from "react";
+import { defaultPizzaImage } from "@assets/data/products";
+import Button from "@/components/Button";
+import Colors from "@/lib/constants/Colors";
+import { useEffect } from "react";
 import {
   View,
   Text,
@@ -18,17 +18,25 @@ import {
   useProduct,
   useUpdateProduct,
 } from "../../api/products";
-import * as FileSystem from "expo-file-system";
-import { randomUUID } from "expo-crypto";
-import { supabase } from "@/src/lib/supabase";
-import { decode } from "base64-arraybuffer";
+import { supabase } from "@/lib/supabase";
 import { Image } from "react-native";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { uploadProductImage } from "@/lib/helpers/uploadProductImage";
 
-//TODO: React-Hook-Form && ZOD
+const FormSchema = z.object({
+  name: z
+    .string({ required_error: "A product name is required" })
+    .min(3, { message: "Name must contain at least three characters." }),
+  image: z.string().nullable(),
+  price: z
+    .string({ required_error: "A product price is required" })
+    .min(1, { message: "Price must contain at least one character." }),
+});
+
 export default function CreateProductScreen() {
-  const [image, setImage] = useState<string | null>(null);
-  const [name, setName] = useState<string>("");
-  const [price, setPrice] = useState<string>("");
+  const router = useRouter();
   const colorScheme = useColorScheme();
 
   const { id: idString } = useLocalSearchParams();
@@ -42,55 +50,67 @@ export default function CreateProductScreen() {
   const { mutate: updateProduct } = useUpdateProduct();
   const { mutate: deleteProduct } = useDeleteProduct();
 
-  useEffect(() => {
-    (async () => {
-      if (updatingProduct) {
-        if (updatingProduct.image) {
-          const { data: productImage } = await supabase.storage
-            .from("product-images")
-            .download(updatingProduct.image);
-          if (productImage) {
-            const fr = new FileReader();
-            fr.readAsDataURL(productImage);
-            fr.onload = () => {
-              setImage(fr.result as string);
-            };
-          }
-        } else setImage(defaultPizzaImage);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    getValues,
+    reset,
+  } = useForm({
+    defaultValues: { name: "", image: "", price: "" },
+    resolver: zodResolver(FormSchema),
+    mode: "onChange",
+  });
 
-        setName(updatingProduct.name);
-        setPrice(String(updatingProduct.price));
-      }
-    })();
-  }, [updatingProduct]);
+  const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = ({
+    name,
+    image,
+    price,
+  }) => {
+    if (isUpdate) {
+      onUpdate(name, image, price);
+    } else {
+      onCreate(name, image, price);
+    }
+  };
 
-  const router = useRouter();
-
-  const onCreate = async () => {
-    const imagePath = await uploadImage();
+  const onCreate = async (
+    name: string,
+    image: string | null,
+    price: string
+  ) => {
+    const imagePath = await uploadProductImage(image);
 
     insertProduct(
       { name, image: imagePath, price: parseFloat(price) },
       {
         onSuccess: () => {
+          reset();
           router.back();
         },
       }
     );
   };
 
-  const onUpdate = async () => {
-    const imagePath = await uploadImage();
+  const onUpdate = async (
+    name: string,
+    image: string | null,
+    price: string
+  ) => {
+    const imagePath = await uploadProductImage(image);
 
     updateProduct(
       { id, name, image: imagePath, price: parseFloat(price) },
       {
         onSuccess: () => {
+          reset();
           router.back();
         },
       }
     );
   };
+
   const onDelete = () => {
     Alert.alert("Confirm", "Are you sure you want to delete this product?", [
       {
@@ -110,16 +130,6 @@ export default function CreateProductScreen() {
     ]);
   };
 
-  const onSubmit = () => {
-    if (isUpdate) {
-      // update
-      onUpdate();
-    } else {
-      //create
-      onCreate();
-    }
-  };
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -130,28 +140,47 @@ export default function CreateProductScreen() {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setValue("image", result.assets[0].uri, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     }
   };
 
-  const uploadImage = async () => {
-    if (!image?.startsWith("file://")) {
-      return;
-    }
+  useEffect(() => {
+    (async () => {
+      if (updatingProduct) {
+        if (updatingProduct.image) {
+          const { data: productImage } = await supabase.storage
+            .from("product-images")
+            .download(updatingProduct.image);
+          if (productImage) {
+            const fr = new FileReader();
+            fr.readAsDataURL(productImage);
+            fr.onload = () => {
+              setValue("image", fr.result as string, {
+                shouldValidate: true,
+                shouldDirty: true,
+              });
+            };
+          }
+        } else
+          setValue("image", defaultPizzaImage, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
 
-    const base64 = await FileSystem.readAsStringAsync(image, {
-      encoding: "base64",
-    });
-    const filePath = `${randomUUID()}.png`;
-    const contentType = "image/png";
-    const { data, error } = await supabase.storage
-      .from("product-images")
-      .upload(filePath, decode(base64), { contentType });
-
-    if (data) {
-      return data.path;
-    }
-  };
+        setValue("name", updatingProduct.name, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        setValue("price", String(updatingProduct.price), {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+    })();
+  }, [updatingProduct]);
 
   return (
     <View style={styles.container}>
@@ -160,7 +189,7 @@ export default function CreateProductScreen() {
       />
 
       <Image
-        source={{ uri: image || defaultPizzaImage }}
+        source={{ uri: getValues("image") || defaultPizzaImage }}
         style={styles.image}
       />
       <Text
@@ -181,13 +210,26 @@ export default function CreateProductScreen() {
       >
         Name
       </Text>
-      <TextInput
-        value={name}
-        onChangeText={setName}
-        placeholder="Name"
-        placeholderTextColor="grey"
-        style={styles.input}
+      <Controller
+        control={control}
+        rules={{
+          required: "Name is required",
+        }}
+        name="name"
+        render={({ field: { value, onChange, onBlur } }) => (
+          <TextInput
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            placeholder="Name"
+            placeholderTextColor="grey"
+            style={styles.input}
+          />
+        )}
       />
+      {errors.name && (
+        <Text style={styles.errorMessage}>{errors.name.message}</Text>
+      )}
 
       <Text
         style={[
@@ -197,16 +239,32 @@ export default function CreateProductScreen() {
       >
         Price
       </Text>
-      <TextInput
-        placeholder="9.99"
-        placeholderTextColor="grey"
-        style={styles.input}
-        keyboardType="numeric"
-        value={price}
-        onChangeText={setPrice}
+      <Controller
+        control={control}
+        rules={{
+          required: "Price is required",
+        }}
+        name="price"
+        render={({ field: { value, onChange, onBlur } }) => (
+          <TextInput
+            placeholder="9.99"
+            placeholderTextColor="grey"
+            style={styles.input}
+            keyboardType="numeric"
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+          />
+        )}
       />
+      {errors.price && (
+        <Text style={styles.errorMessage}>{errors.price.message}</Text>
+      )}
 
-      <Button text={isUpdate ? "Update" : "Create"} onPress={onSubmit} />
+      <Button
+        text={isUpdate ? "Update" : "Create"}
+        onPress={handleSubmit(onSubmit)}
+      />
 
       {isUpdate && <Button text="Delete Product" onPress={onDelete} />}
     </View>
@@ -228,5 +286,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 5,
     marginBottom: 20,
+  },
+  errorMessage: {
+    color: "red",
   },
 });

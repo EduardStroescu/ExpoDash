@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, useColorScheme } from "react-native";
 import React from "react";
 import Colors from "../lib/constants/Colors";
 import { Tables } from "../lib/types";
-import { defaultPizzaImage } from "@/assets/data/products";
+import { defaultPizzaImage } from "@assets/data/products";
 import RemoteImage from "./RemoteImage";
 
 type OrderItemListItemProps = {
