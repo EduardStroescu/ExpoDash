@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { supabase } from "../supabase";
+import { supabase } from "../supabase/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import { RootState } from "@/reduxStore";
+import { RootState } from "@/lib/reduxStore";
 
 export function useRealtimeAdminOrders() {
   const queryClient = useQueryClient();
@@ -41,7 +41,7 @@ export function useRealtimeUserOrders() {
           table: "orders",
           filter: `user_id=eq.${userId}`,
         },
-        (payload) => {
+        () => {
           queryClient.invalidateQueries({ queryKey: ["orders"] });
         }
       )
@@ -49,6 +49,33 @@ export function useRealtimeUserOrders() {
 
     return () => {
       orders.unsubscribe();
+    };
+  }, []);
+}
+
+export function useRealtimeAdminOrderStatistics() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const order_statistics = supabase
+      .channel("admin-order-statistics")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "order_statistics" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["order_statistics"] });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "order_statistics" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["order_statistics"] });
+        }
+      )
+      .subscribe();
+    return () => {
+      order_statistics.unsubscribe();
     };
   }, []);
 }

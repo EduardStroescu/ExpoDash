@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { supabase } from "./supabase";
+import { supabase } from "../supabase/supabase";
 import {
   initPaymentSheet,
   presentPaymentSheet,
@@ -13,7 +13,6 @@ const fetchPaymentSheetParams = async (amount: number, currency: string) => {
   if (data) {
     return data;
   } else {
-    console.log(error.message);
     Alert.alert("Error fetching payment sheet params");
     return {};
   }
@@ -32,7 +31,7 @@ export const initialisePaymentSheet = async (
   if (!paymentIntent || !publishableKey) return;
 
   await initPaymentSheet({
-    merchantDisplayName: "FlashFoods",
+    merchantDisplayName: "ExpoDash",
     paymentIntentClientSecret: paymentIntent,
     returnURL: "your-app://stripe-redirect",
     defaultBillingDetails: {

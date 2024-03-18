@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/supabase";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { InsertTables } from "@/lib/types";
 

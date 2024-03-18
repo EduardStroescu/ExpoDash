@@ -3,10 +3,10 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Redirect, Tabs } from "expo-router";
 
 import Colors from "../../lib/constants/Colors";
-import { useColorScheme } from "../../components/useColorScheme";
-import { useClientOnlyValue } from "../../components/useClientOnlyValue";
+import { useColorScheme } from "../../components/useColorScheme/useColorScheme";
+import { useClientOnlyValue } from "../../components/useClientOnlyValue/useClientOnlyValue";
 import { useSelector } from "react-redux";
-import { RootState } from "@/reduxStore";
+import { RootState } from "@/lib/reduxStore";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {

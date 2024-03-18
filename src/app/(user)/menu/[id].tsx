@@ -3,6 +3,7 @@ import { Stack, router, useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -54,7 +55,7 @@ export default function ProductDetailsScreen() {
   }
 
   return (
-    <View
+    <ScrollView
       style={[
         styles.container,
         { backgroundColor: Colors[colorScheme ?? "light"].background },
@@ -118,7 +119,7 @@ export default function ProductDetailsScreen() {
         ${product?.price}
       </Text>
       <Button text="Add to cart" onPress={onAddToCart} />
-    </View>
+    </ScrollView>
   );
 }
 

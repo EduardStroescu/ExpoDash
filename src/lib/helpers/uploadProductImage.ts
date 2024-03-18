@@ -1,7 +1,7 @@
 import * as FileSystem from "expo-file-system";
 import { randomUUID } from "expo-crypto";
 import { decode } from "base64-arraybuffer";
-import { supabase } from "../supabase";
+import { supabase } from "../supabase/supabase";
 
 export const uploadProductImage = async (image: string | null) => {
   if (!image?.startsWith("file://")) {

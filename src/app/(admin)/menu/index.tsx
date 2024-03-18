@@ -1,8 +1,17 @@
-import { View, FlatList, ActivityIndicator, Text } from "react-native";
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  Text,
+  useColorScheme,
+  ScrollView,
+} from "react-native";
 import ProductListItem from "@/components/ProductListItem";
 import { useProductList } from "../../api/products";
+import Colors from "@/lib/constants/Colors";
 
 export default function Menu() {
+  const colorScheme = useColorScheme();
   const { data: products, error, isLoading } = useProductList();
 
   if (isLoading) {
@@ -14,7 +23,13 @@ export default function Menu() {
   }
 
   return (
-    <View>
+    <View
+      style={{
+        height: "100%",
+        flex: 1,
+        backgroundColor: Colors[colorScheme ?? "light"].background,
+      }}
+    >
       <FlatList
         data={products}
         renderItem={({ item }) => <ProductListItem product={item} />}

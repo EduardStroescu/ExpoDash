@@ -3,12 +3,16 @@
 // This enables autocomplete, go to definition, etc.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { stripe } from "../_utils/stripe.ts";
+import { stripe, corsHeaders } from "../_utils/stripe.ts";
 import { createOrRetrieveProfile } from "../_utils/supabase.ts";
 
 console.log("payment-sheet handler up and running!");
 
 serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
   try {
     const { amount, currency }: { amount: number; currency: string } =
       await req.json();
@@ -32,11 +36,11 @@ serve(async (req: Request) => {
     };
 
     return new Response(JSON.stringify(res), {
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
     return new Response(JSON.stringify(error), {
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 400,
     });
   }

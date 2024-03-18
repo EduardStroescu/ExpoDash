@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  image: { width: "100%", height: 100, borderRadius: 20, objectFit: "cover" },
+  image: { width: "100%", height: 120, borderRadius: 20, objectFit: "cover" },
   title: { fontSize: 18, fontWeight: "600", marginVertical: 10 },
   price: { fontWeight: "bold" },
 });

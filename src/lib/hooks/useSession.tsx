@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { supabase } from "../supabase";
+import { supabase } from "../supabase/supabase";
 import { useDispatch } from "react-redux";
 import { setLoading, setProfile, setSession } from "../features/authSlice";
 

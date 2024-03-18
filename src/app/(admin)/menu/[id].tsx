@@ -2,9 +2,9 @@ import { Link, Stack, useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   useColorScheme,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -30,7 +30,7 @@ export default function ProductDetailsScreen() {
   }
 
   return (
-    <View
+    <ScrollView
       style={[
         styles.container,
         { backgroundColor: Colors[colorScheme ?? "light"].background },
@@ -68,7 +68,7 @@ export default function ProductDetailsScreen() {
       >
         Price: ${product?.price}
       </Text>
-    </View>
+    </ScrollView>
   );
 }
 

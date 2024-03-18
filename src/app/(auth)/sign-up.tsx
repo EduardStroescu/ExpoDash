@@ -1,16 +1,16 @@
 import {
-  View,
   Text,
   TextInput,
   StyleSheet,
   Alert,
   useColorScheme,
+  ScrollView,
 } from "react-native";
 import { useState } from "react";
 import Button from "@/components/Button";
 import { Link, router } from "expo-router";
 import Colors from "@/lib/constants/Colors";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/supabase";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,7 +59,12 @@ export default function SignUpPage() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      <Text
+        style={[styles.title, { color: Colors[colorScheme ?? "light"].tint }]}
+      >
+        Welcome!
+      </Text>
       <Text
         style={[
           styles.label,
@@ -79,6 +84,8 @@ export default function SignUpPage() {
             onBlur={onBlur}
             placeholder="johnDoe@gmail.com"
             clearButtonMode="while-editing"
+            autoCorrect={false}
+            returnKeyType="done"
           />
         )}
       />
@@ -111,6 +118,7 @@ export default function SignUpPage() {
             textContentType="password"
             secureTextEntry
             autoCorrect={false}
+            returnKeyType="done"
           />
         )}
       />
@@ -124,17 +132,18 @@ export default function SignUpPage() {
         onPress={handleSubmit(onSubmit)}
       />
       <Link
-        href="/sign-up"
+        href="/sign-in"
         style={[styles.link, { color: Colors[colorScheme ?? "light"].tint }]}
       >
         Sign In
       </Link>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
+  container: { flex: 1, padding: 20 },
+  title: { fontSize: 60, alignSelf: "center", marginVertical: 40 },
   label: { fontSize: 16 },
   input: {
     borderWidth: 1,

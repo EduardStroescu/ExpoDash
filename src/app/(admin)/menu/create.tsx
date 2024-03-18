@@ -18,7 +18,7 @@ import {
   useProduct,
   useUpdateProduct,
 } from "../../api/products";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/supabase";
 import { Image } from "react-native";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";

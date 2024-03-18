@@ -1,7 +1,7 @@
 import React from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../lib/supabase/supabase";
 import { router } from "expo-router";
-import Button from "./Button";
+import Button from "../Button";
 
 export default function LogoutButton() {
   return (

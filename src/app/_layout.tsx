@@ -9,11 +9,11 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
-import { useColorScheme } from "../components/useColorScheme";
+import { useColorScheme } from "../components/useColorScheme/useColorScheme";
 import { Provider } from "react-redux";
-import { store } from "../reduxStore";
-import QueryProvider from "../providers/QueryProvider";
-import { StripeProvider } from "@stripe/stripe-react-native";
+import { store } from "../lib/reduxStore";
+import QueryProvider from "../lib/providers/QueryProvider";
+import StripePlatformProvider from "@/lib/providers/StripePlatformProvider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -57,9 +57,7 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <StripeProvider
-        publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
-      >
+      <StripePlatformProvider>
         <Provider store={store}>
           <QueryProvider>
             <Stack>
@@ -74,7 +72,7 @@ function RootLayoutNav() {
             </Stack>
           </QueryProvider>
         </Provider>
-      </StripeProvider>
+      </StripePlatformProvider>
     </ThemeProvider>
   );
 }

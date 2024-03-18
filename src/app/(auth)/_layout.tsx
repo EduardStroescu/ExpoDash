@@ -1,4 +1,4 @@
-import { RootState } from "@/reduxStore";
+import { RootState } from "@/lib/reduxStore";
 import { Redirect, Stack } from "expo-router";
 import { useSelector } from "react-redux";
 
