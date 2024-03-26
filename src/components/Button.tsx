@@ -1,8 +1,9 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
 import { forwardRef } from "react";
+import { Button as Pressable } from "tamagui";
 
-type ButtonProps = {
-  text: string;
+export type ButtonProps = {
+  text?: string;
   style?: {};
 } & React.ComponentPropsWithoutRef<typeof Pressable>;
 
@@ -12,27 +13,31 @@ const Button = forwardRef<View | null, ButtonProps>(
       <Pressable
         ref={ref}
         {...pressableProps}
-        style={[styles.container, pressableProps.style && pressableProps.style]}
+        borderRadius={100}
+        backgroundColor={
+          pressableProps.backgroundColor
+            ? pressableProps.backgroundColor
+            : "$color2"
+        }
+        borderColor={
+          pressableProps.borderColor ? pressableProps.borderColor : "$purple10"
+        }
+        hoverStyle={
+          pressableProps.hoverStyle
+            ? pressableProps.hoverStyle
+            : { borderColor: "$purple10", backgroundColor: "$purple8" }
+        }
+        pressStyle={
+          pressableProps.pressStyle
+            ? pressableProps.pressStyle
+            : { borderColor: "$purple10", backgroundColor: "$purple8" }
+        }
+        style={pressableProps.style && pressableProps.style}
       >
-        <Text style={styles.text}>{text}</Text>
+        {text}
       </Pressable>
     );
-  }
+  },
 );
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "purple",
-    padding: 15,
-    alignItems: "center",
-    borderRadius: 100,
-    marginVertical: 10,
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "white",
-  },
-});
 
 export default Button;

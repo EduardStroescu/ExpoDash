@@ -120,7 +120,7 @@ function RenderDot(color: string) {
 
 function RenderLegendComponent(
   selectedTimePeriod: string,
-  displayedStats: number[]
+  displayedStats: number[],
 ) {
   return (
     <>

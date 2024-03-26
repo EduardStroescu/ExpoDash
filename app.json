@@ -5,8 +5,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "scheme": "ExpoDash",
+    "userInterfaceStyle": "dark mode",
+    "backgroundColor": "#000000",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -14,9 +15,13 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "userInterfaceStyle": "dark mode",
+      "backgroundColor": "#000000"
     },
     "android": {
+      "backgroundColor": "#000000",
+      "userInterfaceStyle": "dark mode",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000000"
@@ -25,7 +30,9 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "userInterfaceStyle": "dark mode",
+      "backgroundColor": "#000000"
     },
     "plugins": ["expo-router", "expo-secure-store"],
     "experiments": {

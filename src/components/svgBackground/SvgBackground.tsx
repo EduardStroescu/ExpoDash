@@ -9,18 +9,8 @@ import Animated, {
   interpolateColor,
   useAnimatedStyle,
   Easing,
+  StyleProps,
 } from "react-native-reanimated";
-
-const styles = StyleSheet.create({
-  svg: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: -1,
-  },
-});
 
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
@@ -34,15 +24,15 @@ export default function SvgBackground() {
         easing: Easing.inOut(Easing.sin),
       }),
       -1,
-      true
+      true,
     );
   }, []);
 
-  const colorChange = useAnimatedStyle(() => ({
+  const colorChange: StyleProps = useAnimatedStyle(() => ({
     color: interpolateColor(
       color.value,
       [0, 1],
-      ["rgb(86, 2, 124)", "rgb(174, 0, 255)"]
+      ["rgb(86, 2, 124)", "rgb(174, 0, 255)"],
     ),
   }));
 
@@ -51,7 +41,7 @@ export default function SvgBackground() {
       style={[styles.svg, colorChange]}
       width="110%"
       height="110%"
-      viewBox="12 72 150 150"
+      viewBox="12.1 75 150 150"
       stroke="currentColor"
       opacity="0.4"
     >
@@ -124,3 +114,14 @@ export default function SvgBackground() {
     </AnimatedSvg>
   );
 }
+
+const styles = StyleSheet.create({
+  svg: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: -10,
+    right: 0,
+    zIndex: -1,
+  },
+});

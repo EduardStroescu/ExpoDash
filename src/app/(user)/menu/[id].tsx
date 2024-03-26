@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Stack, router, useLocalSearchParams } from "expo-router";
 import {
-  ActivityIndicator,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -18,6 +18,8 @@ import { useProduct } from "../../api/products";
 import { defaultPizzaImage } from "@assets/data/products";
 import RemoteImage from "@/components/RemoteImage";
 import Colors from "@/lib/constants/Colors";
+import Header from "@/components/webOnlyComponents/Header";
+import { setIsLoading } from "@/lib/features/appSlice";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -27,7 +29,11 @@ export default function ProductDetailsScreen() {
   const dispatch = useDispatch();
   const colorScheme = useColorScheme();
 
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: idString } = useLocalSearchParams<{ id: string }>();
+  const id = parseFloat(
+    typeof idString === "string" ? idString : idString?.[0],
+  );
+
   const { data: product, error, isLoading } = useProduct(Number(id));
 
   const onAddToCart = () => {
@@ -39,16 +45,20 @@ export default function ProductDetailsScreen() {
           product: product,
           size: selectedSize,
           quantity: selectedQuantity,
-        })
+        }),
       );
-      router.push("/cart");
+      router.push("/(user)/menu/cart");
     }
     return;
   };
 
-  if (isLoading) {
-    return <ActivityIndicator />;
-  }
+  useEffect(() => {
+    if (isLoading) {
+      dispatch(setIsLoading(true));
+    } else {
+      dispatch(setIsLoading(false));
+    }
+  }, [isLoading, dispatch]);
 
   if (error) {
     return <Text>Failed to fetch products</Text>;
@@ -56,12 +66,14 @@ export default function ProductDetailsScreen() {
 
   return (
     <ScrollView
-      style={[
+      contentContainerStyle={[
         styles.container,
         { backgroundColor: Colors[colorScheme ?? "light"].background },
       ]}
     >
       <Stack.Screen options={{ title: product?.name }} />
+
+      {Platform.OS === "web" && <Header slug={id} />}
 
       <RemoteImage
         path={product?.image}
@@ -118,16 +130,18 @@ export default function ProductDetailsScreen() {
       >
         ${product?.price}
       </Text>
-      <Button text="Add to cart" onPress={onAddToCart} />
+      <Button marginVertical={20} text="Add to cart" onPress={onAddToCart} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
+  container: { flex: 1, padding: 10, justifyContent: "center" },
   image: {
-    width: "100%",
-    aspectRatio: 1.5,
+    flex: 1,
+    aspectRatio: 1,
+    alignSelf: "center",
+    objectFit: "contain",
   },
   price: {
     fontSize: 18,

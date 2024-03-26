@@ -8,6 +8,13 @@ export default function Root({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <title>ExpoDash</title>
+        <meta
+          name="description"
+          content="ExpoDash offers a seamless delivery experience from start to finish. With just a few taps, you can arrange for your package to be whisked away and delivered promptly to its destination.
+  
+  "
+        />
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta
@@ -32,7 +39,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
 
 const responsiveBackground = `
 body {
-  background-color: #fff;
+  background-color: #000;
 }
 @media (prefers-color-scheme: dark) {
   body {

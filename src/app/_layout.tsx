@@ -1,19 +1,26 @@
+import "@tamagui/core/reset.css";
+import "./styles.css";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useColorScheme } from "../components/useColorScheme/useColorScheme";
 import { Provider } from "react-redux";
 import { store } from "../lib/reduxStore";
 import QueryProvider from "../lib/providers/QueryProvider";
 import StripePlatformProvider from "@/lib/providers/StripePlatformProvider";
+import { Platform } from "react-native";
+import Navbar from "@/components/webOnlyComponents/Navbar";
+import AnimatedLoader from "@/components/AnimatedLoader";
+import { TamaguiProvider } from "tamagui";
+import config from "tamagui.config";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -31,6 +38,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
+    Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
+    InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
     ...FontAwesome.font,
   });
 
@@ -54,25 +63,35 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <StripePlatformProvider>
-        <Provider store={store}>
-          <QueryProvider>
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-              <Stack.Screen name="(user)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="cart"
-                options={{ presentation: "modal", title: "Cart" }}
-              />
-            </Stack>
-          </QueryProvider>
-        </Provider>
-      </StripePlatformProvider>
+    <ThemeProvider value={colorScheme === "light" ? DefaultTheme : DarkTheme}>
+      <TamaguiProvider
+        // disableRootThemeClass
+        config={config}
+        defaultTheme="light"
+      >
+        <StripePlatformProvider>
+          <Provider store={store}>
+            {Platform.OS === "web" && <Navbar />}
+            <QueryProvider>
+              <AnimatedLoader />
+              <Stack
+                screenOptions={{
+                  headerShown: Platform.OS === "web" ? false : true,
+                  contentStyle: {
+                    backgroundColor: "#000000",
+                  },
+                }}
+              >
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+                <Stack.Screen name="(user)" options={{ headerShown: false }} />
+              </Stack>
+            </QueryProvider>
+          </Provider>
+        </StripePlatformProvider>
+      </TamaguiProvider>
     </ThemeProvider>
   );
 }

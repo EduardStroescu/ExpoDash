@@ -7,6 +7,7 @@ import { useColorScheme } from "../../components/useColorScheme/useColorScheme";
 import { useClientOnlyValue } from "../../components/useClientOnlyValue/useClientOnlyValue";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
+import { Platform } from "react-native";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -27,11 +28,13 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      sceneContainerStyle={{ backgroundColor: "transparent" }}
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
+        headerShown: Platform.OS === "web" ? false : true,
+        tabBarStyle: { display: Platform.OS === "web" ? "none" : "flex" },
       }}
     >
       <Tabs.Screen name="index" options={{ href: null }} />
@@ -57,6 +60,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
+          headerShown: Platform.OS !== "web",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />

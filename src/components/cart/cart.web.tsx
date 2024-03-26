@@ -1,10 +1,10 @@
-import { FlatList, ScrollView, Text, View, useColorScheme } from "react-native";
+import { FlatList, Platform, useColorScheme } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../lib/reduxStore";
 import CartListItem from "../CartListItem";
 import Button from "../Button";
 import { clearCart, getCartTotal } from "../../lib/features/cartSlice";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Colors from "../../lib/constants/Colors";
 import { useInsertOrder } from "../../app/api/orders";
 import { useRouter } from "expo-router";
@@ -21,6 +21,9 @@ import {
   fetchPaymentSheetParams,
   stripePromise,
 } from "@/lib/stripe/stripe.web";
+import Header from "../webOnlyComponents/Header";
+import { ScrollView, Text, Theme, View } from "tamagui";
+import { InlineGradient } from "./InlineGradient";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);
@@ -37,63 +40,79 @@ export default function Cart() {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        minHeight: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: Colors[colorScheme ?? "light"].background,
-      }}
-    >
-      <FlatList
-        data={items}
-        renderItem={({ item }) => <CartListItem cartItem={item} />}
-        contentContainerStyle={{ flex: 1, gap: 10, padding: 10 }}
-        style={{ width: "50%" }}
-      />
-      {isCheckout && (
-        <Elements
-          stripe={stripePromise}
-          options={{
-            mode: "payment",
-            amount: Math.floor(total * 100),
-            currency: "usd",
-            appearance: {
-              theme: "night",
-              labels: "floating",
-            },
-          }}
-        >
-          <CheckoutForm total={total} items={items} />
-        </Elements>
-      )}
-      {!isCheckout && (
-        <View style={{ width: "50%", paddingHorizontal: 10 }}>
-          <Text
-            style={{
-              alignSelf: "center",
-              fontSize: 20,
-              color: Colors[colorScheme ?? "light"].text,
+    <Theme name={colorScheme}>
+      <ScrollView {...styles.container}>
+        {Platform.OS === "web" && <Header />}
+
+        <FlatList
+          data={items}
+          renderItem={({ item }) => <CartListItem cartItem={item} />}
+          contentContainerStyle={{ flex: 1, gap: 10, padding: 10 }}
+          style={{ width: "50%" }}
+        />
+        {isCheckout && (
+          <Elements
+            stripe={stripePromise}
+            options={{
+              mode: "payment",
+              amount: Math.round(total * 100),
+              currency: "usd",
+              appearance: {
+                theme: "night",
+                labels: "floating",
+              },
             }}
           >
-            Total:{" "}
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: Colors[colorScheme ?? "light"].tint,
-              }}
-            >
-              ${total}
-            </Text>
-          </Text>
-          <Button text="Go to checkout" onPress={checkout} />
-        </View>
-      )}
-    </ScrollView>
+            <CheckoutForm
+              total={total}
+              items={items}
+              setIsCheckout={setIsCheckout}
+            />
+          </Elements>
+        )}
+        {!isCheckout && (
+          <>
+            <View {...styles.cartResults}>
+              <InlineGradient />
+              <Text
+                style={{
+                  alignSelf: "center",
+                  fontSize: 20,
+                  color: Colors[colorScheme ?? "light"].text,
+                }}
+              >
+                Total:{" "}
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: Colors[colorScheme ?? "light"].tint,
+                  }}
+                >
+                  ${total.toFixed(2)}
+                </Text>
+              </Text>
+            </View>
+            <Button
+              text="Go to checkout"
+              onPress={checkout}
+              {...styles.checkoutButton}
+            />
+          </>
+        )}
+      </ScrollView>
+    </Theme>
   );
 }
 
-function CheckoutForm({ total, items }: { total: number; items: CartItem[] }) {
+function CheckoutForm({
+  total,
+  items,
+  setIsCheckout,
+}: {
+  total: number;
+  items: CartItem[];
+  setIsCheckout: Dispatch<SetStateAction<boolean>>;
+}) {
   const { mutate: insertOrder } = useInsertOrder();
   const { mutate: insertOrderItems } = useInsertOrderItems();
   const router = useRouter();
@@ -118,11 +137,20 @@ function CheckoutForm({ total, items }: { total: number; items: CartItem[] }) {
       }
 
       const { paymentIntent: clientSecret } = await fetchPaymentSheetParams(
-        Math.floor(total * 100),
-        "usd"
+        Math.round(total * 100),
+        "usd",
       );
 
       if (!clientSecret) return;
+
+      const orderItems = items.map((cartItem) => ({
+        order_id: order?.id,
+        product_id: cartItem.product_id,
+        quantity: cartItem.quantity,
+        size: cartItem.size,
+      }));
+
+      insertOrderItems(orderItems);
 
       const { error } = await stripe.confirmPayment({
         elements,
@@ -132,39 +160,66 @@ function CheckoutForm({ total, items }: { total: number; items: CartItem[] }) {
         },
       });
 
-      const orderItems = items.map((cartItem) => ({
-        order_id: order?.id,
-        product_id: cartItem.product_id,
-        quantity: cartItem.quantity,
-        size: cartItem.size,
-      }));
-
-      insertOrderItems(orderItems, {
-        onSuccess() {
-          dispatch(clearCart());
-          router.replace(`/(user)/orders/${order?.id}`);
-        },
-      });
+      dispatch(clearCart());
+      setIsCheckout(false);
+      router.replace(`/(user)/orders/${order?.id}`);
     };
 
     insertOrder(
       { total },
       {
         onSuccess: saveOrderItems,
-      }
+      },
     );
   };
   return (
-    <View style={{ width: "50%", marginTop: 50 }}>
-      <Text style={{ color: Colors[colorScheme ?? "light"].text }}>
-        Shipping Details:
-      </Text>
-      <AddressElement options={{ mode: "shipping" }} />
-      <Text style={{ color: Colors[colorScheme ?? "light"].text }}>
-        Payment
-      </Text>
-      <PaymentElement />
-      <Button text="Pay" disabled={!stripe || !elements} onPress={checkout} />
+    <View {...styles.cartForm}>
+      <View {...styles.paymentSheetGroup}>
+        <Text color="$color">Shipping Details:</Text>
+        <AddressElement options={{ mode: "shipping" }} />
+      </View>
+      <View {...styles.paymentSheetGroup}>
+        <Text color="$color">Payment</Text>
+        <PaymentElement />
+      </View>
+      <Button
+        text="Pay"
+        disabled={!stripe || !elements}
+        onPress={checkout}
+        width="100%"
+      />
     </View>
   );
 }
+
+const styles = {
+  container: {
+    contentContainerStyle: {
+      minHeight: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "$background",
+      paddingBottom: 20,
+      gap: "$4",
+    },
+  },
+  cartResults: {
+    position: "relative",
+    width: "20%",
+    alignSelf: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  checkoutButton: {
+    width: "30%",
+  },
+  cartForm: {
+    width: "50%",
+    marginTop: 50,
+    gap: "$3",
+  },
+  paymentSheetGroup: {
+    gap: "$3",
+    marginBottom: "$4",
+  },
+};

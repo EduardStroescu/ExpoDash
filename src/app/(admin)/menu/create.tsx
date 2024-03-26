@@ -9,6 +9,7 @@ import {
   TextInput,
   Alert,
   useColorScheme,
+  ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
@@ -183,7 +184,12 @@ export default function CreateProductScreen() {
   }, [updatingProduct]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: Colors[colorScheme ?? "light"].background },
+      ]}
+    >
       <Stack.Screen
         options={{ title: isUpdate ? "Update Product" : "Add New Product" }}
       />
@@ -267,13 +273,18 @@ export default function CreateProductScreen() {
       />
 
       {isUpdate && <Button text="Delete Product" onPress={onDelete} />}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", padding: 10 },
-  image: { width: "50%", aspectRatio: 1, alignSelf: "center" },
+  image: {
+    flex: 1,
+    aspectRatio: 1,
+    alignSelf: "center",
+    objectFit: "contain",
+  },
   textButton: {
     alignSelf: "center",
     fontWeight: "bold",

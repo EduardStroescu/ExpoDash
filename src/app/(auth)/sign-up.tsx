@@ -1,19 +1,14 @@
-import {
-  Text,
-  TextInput,
-  StyleSheet,
-  Alert,
-  useColorScheme,
-  ScrollView,
-} from "react-native";
+import { Alert, useColorScheme, Platform } from "react-native";
 import { useState } from "react";
 import Button from "@/components/Button";
 import { Link, router } from "expo-router";
-import Colors from "@/lib/constants/Colors";
 import { supabase } from "@/lib/supabase/supabase";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Meta from "@/components/Meta";
+import { Form, ScrollView, Text, Theme } from "tamagui";
+import Input, { InputProps } from "@/components/Input";
 
 const SignUpSchema = z.object({
   email: z
@@ -59,107 +54,118 @@ export default function SignUpPage() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text
-        style={[styles.title, { color: Colors[colorScheme ?? "light"].tint }]}
-      >
-        Welcome!
-      </Text>
-      <Text
-        style={[
-          styles.label,
-          { color: Colors[colorScheme ?? "light"].subText },
-        ]}
-      >
-        Email
-      </Text>
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { value, onChange, onBlur } }) => (
-          <TextInput
-            style={styles.input}
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-            placeholder="johnDoe@gmail.com"
-            clearButtonMode="while-editing"
-            autoCorrect={false}
-            returnKeyType="done"
-          />
-        )}
-      />
-      {errors.email && (
-        <Text style={styles.errorMessage}>{errors.email.message}</Text>
-      )}
+    <Theme name={colorScheme}>
+      {Platform.OS === "web" && <Meta />}
 
-      <Text
-        style={[
-          styles.label,
-          { color: Colors[colorScheme ?? "light"].subText },
-        ]}
-      >
-        Password
-      </Text>
-      <Controller
-        control={control}
-        rules={{
-          required: "Password is required",
-        }}
-        name="password"
-        render={({ field: { value, onChange, onBlur } }) => (
-          <TextInput
-            style={styles.input}
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-            placeholder=""
-            clearButtonMode="while-editing"
-            textContentType="password"
-            secureTextEntry
-            autoCorrect={false}
-            returnKeyType="done"
+      <ScrollView {...styles.container}>
+        <Form {...styles.form}>
+          <Text {...styles.title}>Register</Text>
+          <Text {...styles.label}>Email</Text>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Input
+                style={styles.input}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="johnDoe@gmail.com"
+                clearButtonMode="while-editing"
+                autoCorrect={false}
+                returnKeyType="done"
+              />
+            )}
           />
-        )}
-      />
-      {errors.password && (
-        <Text style={styles.errorMessage}>{errors.password.message}</Text>
-      )}
+          {errors.email && (
+            <Text {...styles.errorMessage}>{errors.email.message}</Text>
+          )}
 
-      <Button
-        text={loading ? "Creating Account..." : "Create an account"}
-        disabled={loading}
-        onPress={handleSubmit(onSubmit)}
-      />
-      <Link
-        href="/sign-in"
-        style={[styles.link, { color: Colors[colorScheme ?? "light"].tint }]}
-      >
-        Sign In
-      </Link>
-    </ScrollView>
+          <Text {...styles.label}>Password</Text>
+          <Controller
+            control={control}
+            rules={{
+              required: "Password is required",
+            }}
+            name="password"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Input
+                style={styles.input}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder=""
+                clearButtonMode="while-editing"
+                textContentType="password"
+                secureTextEntry
+                autoCorrect={false}
+                returnKeyType="done"
+              />
+            )}
+          />
+          {errors.password && (
+            <Text {...styles.errorMessage}>{errors.password.message}</Text>
+          )}
+
+          <Button
+            text={loading ? "Creating Account..." : "Create an account"}
+            disabled={loading}
+            onPress={handleSubmit(onSubmit)}
+          />
+          <Link href="/sign-in" asChild>
+            <Text {...styles.link}>Sign In</Text>
+          </Link>
+        </Form>
+      </ScrollView>
+    </Theme>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 60, alignSelf: "center", marginVertical: 40 },
-  label: { fontSize: 16 },
+interface StyleProps {
+  container: React.ComponentPropsWithoutRef<typeof ScrollView>;
+  form: React.ComponentPropsWithoutRef<typeof Form>;
+  title: React.ComponentPropsWithoutRef<typeof Text>;
+  label: React.ComponentPropsWithoutRef<typeof Text>;
+  input: InputProps;
+  link: React.ComponentPropsWithoutRef<typeof Text>;
+  errorMessage: React.ComponentPropsWithoutRef<typeof Text>;
+}
+
+const styles: StyleProps = {
+  container: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "$background",
+    contentContainerStyle: { justifyContent: "center" },
+  },
+  form: {
+    padding: 20,
+    alignSelf: "center",
+    width: "100%",
+    $gtMd: { width: "30%" },
+  },
+  title: {
+    fontSize: 60,
+    alignSelf: "center",
+    marginVertical: 40,
+    color: "$blue10",
+  },
+  label: { fontSize: 16, color: "$color10" },
   input: {
     borderWidth: 1,
-    borderColor: "gray",
     padding: 10,
     marginTop: 5,
     marginBottom: 20,
-    backgroundColor: "white",
     borderRadius: 5,
   },
   link: {
     alignSelf: "center",
+    marginVertical: 20,
     fontWeight: "bold",
-    marginVertical: 10,
+    color: "$blue10",
+    hoverStyle: { cursor: "pointer" },
   },
   errorMessage: {
     color: "red",
   },
-});
+};

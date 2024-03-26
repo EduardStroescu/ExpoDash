@@ -1,12 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  Alert,
-  FlatList,
-  Platform,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Alert, FlatList, Platform, useColorScheme } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../lib/reduxStore";
 import CartListItem from "../CartListItem";
@@ -22,6 +15,8 @@ import {
   initialisePaymentSheet,
   openPaymentSheet,
 } from "../../lib/stripe/stripe";
+import { Text, Theme, View } from "tamagui";
+import { InlineGradient } from "./InlineGradient";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);
@@ -37,7 +32,7 @@ export default function Cart() {
 
   const checkout = async () => {
     const saveOrderItems = async (order: Tables<"orders"> | null) => {
-      await initialisePaymentSheet(Math.floor(total * 100), "eur");
+      await initialisePaymentSheet(Math.round(total * 100), "usd");
       const payed = await openPaymentSheet();
       if (!payed) {
         return;
@@ -71,7 +66,7 @@ export default function Cart() {
             { total },
             {
               onSuccess: saveOrderItems,
-            }
+            },
           );
         },
       },
@@ -79,33 +74,61 @@ export default function Cart() {
   };
 
   return (
-    <View style={{ height: "100%" }}>
-      <FlatList
-        data={items}
-        renderItem={({ item }) => <CartListItem cartItem={item} />}
-        contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
-      />
-      <View style={{ paddingHorizontal: 10 }}>
-        <Text
-          style={{
-            alignSelf: "center",
-            fontSize: 20,
-            color: Colors[colorScheme ?? "light"].text,
-          }}
-        >
-          Total:{" "}
+    <Theme name={colorScheme}>
+      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+
+      <View {...styles.container}>
+        <FlatList
+          data={items}
+          renderItem={({ item }) => <CartListItem cartItem={item} />}
+          contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
+        />
+        <View {...styles.cartResults}>
+          <InlineGradient />
           <Text
             style={{
-              fontWeight: "bold",
-              color: Colors[colorScheme ?? "light"].tint,
+              alignSelf: "center",
+              fontSize: 20,
+              color: "white",
             }}
           >
-            ${total}
+            Total:{" "}
+            <Text
+              style={{
+                fontWeight: "bold",
+                color: Colors[colorScheme ?? "light"].tint,
+              }}
+            >
+              ${total.toFixed(2)}
+            </Text>
           </Text>
-        </Text>
-        <Button text="Go to checkout" onPress={checkout} />
+        </View>
+        <Button
+          text="Go to checkout"
+          onPress={checkout}
+          marginHorizontal={10}
+        />
       </View>
-      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-    </View>
+    </Theme>
   );
 }
+
+const styles = {
+  container: {
+    height: "100%",
+    paddingBottom: 20,
+    gap: "$4",
+    backgroundColor: "$background",
+  },
+  cartResults: {
+    position: "relative",
+    width: "90%",
+    alignSelf: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  cartTotal: {
+    fontSize: 20,
+    color: "$blue10",
+  },
+};

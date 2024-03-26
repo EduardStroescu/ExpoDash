@@ -1,4 +1,5 @@
 import {
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -31,7 +32,7 @@ export default function ProductListItem({ product }: ProductListItemProps) {
       <RemoteImage
         path={product.image}
         fallback={defaultPizzaImage}
-        style={styles.image}
+        style={[styles.image, { height: Platform.OS === "web" ? 500 : 120 }]}
         resizeMode="contain"
       />
       <View style={styles.secondaryContainer}>
@@ -52,7 +53,7 @@ export default function ProductListItem({ product }: ProductListItemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    flex: 1 / 2,
   },
   secondaryContainer: {
     flexDirection: "row",
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  image: { width: "100%", height: 120, borderRadius: 20, objectFit: "cover" },
+  image: { width: "100%", borderRadius: 20, objectFit: "cover" },
   title: { fontSize: 18, fontWeight: "600", marginVertical: 10 },
   price: { fontWeight: "bold" },
 });
