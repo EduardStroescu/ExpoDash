@@ -1,11 +1,4 @@
-import {
-  View,
-  FlatList,
-  Text,
-  useColorScheme,
-  Platform,
-  StyleSheet,
-} from "react-native";
+import { View, Text, useColorScheme, Platform, StyleSheet } from "react-native";
 import ProductListItem from "@/components/ProductListItem";
 import { useProductList } from "../../api/products";
 import Colors from "@/lib/constants/Colors";
@@ -13,6 +6,7 @@ import Header from "@/components/webOnlyComponents/Header";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import { useEffect } from "react";
+import AnimatedFlatList from "@/components/AnimatedFlatlist";
 
 export default function Menu() {
   const colorScheme = useColorScheme();
@@ -39,11 +33,13 @@ export default function Menu() {
       ]}
     >
       {Platform.OS === "web" && <Header />}
-      <FlatList
+      <AnimatedFlatList
         data={products}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <ProductListItem product={item} />}
-        numColumns={Platform.OS === "web" ? 3 : 1}
+        renderItem={({ item, index, scrollY }) => (
+          <ProductListItem product={item} index={index} scrollY={scrollY} />
+        )}
+        numColumns={Platform.OS === "web" ? 6 : 1}
         contentContainerStyle={{ gap: 10, padding: 10 }}
         columnWrapperStyle={Platform.OS === "web" && styles.columnWrapper}
       />

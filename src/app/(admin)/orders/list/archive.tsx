@@ -1,18 +1,12 @@
 import OrderListItem from "@/components/OrderListItem";
-import {
-  FlatList,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
+import { Platform, StyleSheet, Text, View, useColorScheme } from "react-native";
 import { useAdminOrderList } from "@/app/api/orders";
 import Colors from "@/lib/constants/Colors";
 import Header from "@/components/webOnlyComponents/Header";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import { useEffect } from "react";
+import AnimatedFlatList from "@/components/AnimatedFlatlist";
 
 export default function OrdersPage() {
   const colorScheme = useColorScheme();
@@ -43,9 +37,11 @@ export default function OrdersPage() {
       ]}
     >
       {Platform.OS === "web" && <Header />}
-      <FlatList
+      <AnimatedFlatList
         data={orders}
-        renderItem={({ item }) => <OrderListItem order={item} />}
+        renderItem={({ item, index, scrollY }) => (
+          <OrderListItem order={item} index={index} scrollY={scrollY} />
+        )}
         contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
       />
     </View>

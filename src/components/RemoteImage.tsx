@@ -69,10 +69,10 @@ function ImagePlaceholder({ style, image }: ImagePlaceholderProps) {
   useEffect(() => {
     translateX.value = withRepeat(
       withSequence(
-        withTiming(-400, { duration: 2000, easing: Easing.inOut(Easing.quad) })
+        withTiming(-400, { duration: 2000, easing: Easing.inOut(Easing.quad) }),
       ),
       -1,
-      false
+      false,
     );
     opacity.value = withRepeat(
       withSequence(
@@ -83,10 +83,10 @@ function ImagePlaceholder({ style, image }: ImagePlaceholderProps) {
         withTiming(0.4, {
           duration: 300,
           easing: Easing.inOut(Easing.quad),
-        })
+        }),
       ),
       -1,
-      true
+      true,
     );
   }, []);
 

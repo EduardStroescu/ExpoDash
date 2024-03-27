@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, useColorScheme } from "react-native";
+import { View, Text, StyleSheet, useColorScheme } from "react-native";
 import React, { useEffect } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import OrderListItem from "@/components/OrderListItem";
@@ -8,6 +8,7 @@ import { useOrderDetails } from "../../api/orders";
 import Colors from "@/lib/constants/Colors";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
+import AnimatedFlatList from "@/components/AnimatedFlatlist";
 
 export default function OrderDetailsPage() {
   const colorScheme = useColorScheme();
@@ -29,33 +30,38 @@ export default function OrderDetailsPage() {
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme ?? "light"].background },
-      ]}
-    >
-      <Stack.Screen
-        options={{
-          title: `Order #${orderId}`,
-        }}
-      />
+    <>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: Colors[colorScheme ?? "light"].background },
+        ]}
+      >
+        <Stack.Screen
+          options={{
+            title: `Order #${orderId}`,
+          }}
+        />
 
-      <OrderListItem order={order} />
+        <OrderListItem order={order} />
 
-      <FlatList
-        data={order.order_items}
-        renderItem={({ item }) => <OrderItemListItem item={item} />}
-        contentContainerStyle={{ gap: 10 }}
-      />
+        <AnimatedFlatList
+          data={order.order_items}
+          renderItem={({ item, index, scrollY }) => (
+            <OrderItemListItem item={item} index={index} scrollY={scrollY} />
+          )}
+          contentContainerStyle={{ gap: 10 }}
+        />
+      </View>
       <OrderStatusSelector activeStatus={order.status} orderId={id} />
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingTop: 10,
     flex: 1,
     gap: 10,
   },

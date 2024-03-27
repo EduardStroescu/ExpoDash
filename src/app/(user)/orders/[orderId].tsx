@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, useColorScheme } from "react-native";
+import { View, Text, StyleSheet, useColorScheme } from "react-native";
 import React, { useEffect } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import OrderListItem from "@/components/OrderListItem";
@@ -7,6 +7,7 @@ import { useOrderDetails } from "../../api/orders";
 import Colors from "@/lib/constants/Colors";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
+import AnimatedFlatList from "@/components/AnimatedFlatlist";
 
 export default function OrderDetailsPage() {
   const colorScheme = useColorScheme();
@@ -42,9 +43,11 @@ export default function OrderDetailsPage() {
 
       <OrderListItem order={order} />
 
-      <FlatList
+      <AnimatedFlatList
         data={order.order_items}
-        renderItem={({ item }) => <OrderItemListItem item={item} />}
+        renderItem={({ item, index, scrollY }) => (
+          <OrderItemListItem item={item} index={index} scrollY={scrollY} />
+        )}
         contentContainerStyle={{ gap: 10 }}
       />
     </View>

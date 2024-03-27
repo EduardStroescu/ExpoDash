@@ -26,9 +26,6 @@ export default function OrderStatusSelector({
 
   return (
     <>
-      <Text style={{ fontWeight: "bold", fontSize: 20, alignSelf: "center" }}>
-        Active Status
-      </Text>
       <View style={{ flexDirection: "row", gap: 5, justifyContent: "center" }}>
         {OrderStatusList.map((status) => (
           <Pressable

@@ -44,7 +44,7 @@ export default function Page() {
         {Platform.OS !== "web" && <SvgBackground />}
 
         <YStack {...styles.container}>
-          <View>{session && <Stats />}</View>
+          {session && <Stats />}
           <View
             overflow="hidden"
             style={{ borderRadius: 20 }}
@@ -99,6 +99,7 @@ const styles: StyleTypes = {
   container: {
     gap: "$4",
     width: "100%",
+    // height: "100%",
     $gtMd: { width: "30%" },
     padding: 10,
   },

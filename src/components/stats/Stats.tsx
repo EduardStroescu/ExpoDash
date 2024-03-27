@@ -4,13 +4,15 @@ import { PieChart } from "react-native-gifted-charts";
 import Colors from "@/lib/constants/Colors";
 import { useOrderStatistics } from "@/app/api/orders";
 import { useRealtimeAdminOrderStatistics } from "@/lib/hooks/useSupabaseRealtime";
+import { Separator } from "tamagui";
 
 const DOT_COLORS = ["#009FFF", "#cf80f3"];
 const DOT_GRADIENT_COLORS = ["#023577", "#380152"];
+const DisplayableStatDates = ["Day", "Week", "Month", "Year"];
 
 export function Stats() {
   useRealtimeAdminOrderStatistics();
-  const [selectedTimePeriod, setSelectedTimePeriod] = useState("day");
+  const [selectedTimePeriod, setSelectedTimePeriod] = useState("Day");
   const [displayedStats, setDisplayedStats] = useState<number[]>([]);
 
   const { data: stats, error } = useOrderStatistics();
@@ -18,9 +20,9 @@ export function Stats() {
   useEffect(() => {
     if (stats && selectedTimePeriod) {
       const newOrdersKey =
-        `total_new_orders_${selectedTimePeriod}` as keyof typeof stats;
+        `total_new_orders_${selectedTimePeriod.toLowerCase()}` as keyof typeof stats;
       const deliveredOrdersKey =
-        `total_delivered_orders_${selectedTimePeriod}` as keyof typeof stats;
+        `total_delivered_orders_${selectedTimePeriod.toLowerCase()}` as keyof typeof stats;
       setDisplayedStats([stats[newOrdersKey], stats[deliveredOrdersKey]]);
     }
   }, [stats, selectedTimePeriod]);
@@ -46,6 +48,7 @@ export function Stats() {
   return (
     <View
       style={{
+        // flex: 1,
         padding: 16,
         borderRadius: 20,
         backgroundColor: "#232b5d85",
@@ -53,21 +56,37 @@ export function Stats() {
     >
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
-          Orders
+          Overview
         </Text>
         <View style={{ flexDirection: "row", gap: 10 }}>
-          <Pressable onPress={() => setSelectedTimePeriod("day")}>
-            <Text style={styles.text}>Day</Text>
-          </Pressable>
-          <Pressable onPress={() => setSelectedTimePeriod("week")}>
-            <Text style={styles.text}>Week</Text>
-          </Pressable>
-          <Pressable onPress={() => setSelectedTimePeriod("month")}>
-            <Text style={styles.text}>Month</Text>
-          </Pressable>
-          <Pressable onPress={() => setSelectedTimePeriod("year")}>
-            <Text style={styles.text}>Year</Text>
-          </Pressable>
+          {DisplayableStatDates.map((date, idx) => {
+            return (
+              <View key={idx} style={{ flexDirection: "row", gap: 10 }}>
+                <Pressable onPress={() => setSelectedTimePeriod(date)}>
+                  <Text
+                    style={[
+                      styles.text,
+                      {
+                        color:
+                          date === selectedTimePeriod
+                            ? "red"
+                            : Colors.light.tint,
+                      },
+                    ]}
+                  >
+                    {date}
+                  </Text>
+                </Pressable>
+                {idx !== date.length - 1 && (
+                  <Separator
+                    alignSelf="stretch"
+                    vertical
+                    borderColor="$red10"
+                  />
+                )}
+              </View>
+            );
+          })}
         </View>
       </View>
       <View style={{ padding: 20, alignItems: "center" }}>
@@ -101,7 +120,7 @@ export function Stats() {
 }
 
 const styles = StyleSheet.create({
-  text: { color: Colors.light.tint, fontWeight: "bold" },
+  text: { fontWeight: "bold" },
 });
 
 function RenderDot(color: string) {
@@ -139,15 +158,11 @@ function RenderLegendComponent(
           }}
         >
           {RenderDot(DOT_COLORS[0])}
-          <Text style={{ color: "white" }}>
-            New / {selectedTimePeriod}: {displayedStats[0]}
-          </Text>
+          <Text style={{ color: "white" }}>New: {displayedStats[0]}</Text>
         </View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {RenderDot(DOT_COLORS[1])}
-          <Text style={{ color: "white" }}>
-            Delivered / {selectedTimePeriod}: {displayedStats[1]}
-          </Text>
+          <Text style={{ color: "white" }}>Delivered: {displayedStats[1]}</Text>
         </View>
       </View>
     </>
