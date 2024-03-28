@@ -1,10 +1,8 @@
-import { Image, ImageStyle, StyleProp, View } from "react-native";
+import { Image, ImageStyle, StyleProp } from "react-native";
 import { ComponentProps, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase/supabase";
 import Animated, {
   Easing,
-  interpolate,
-  interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,

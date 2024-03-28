@@ -11,7 +11,7 @@ export default function MenuStack() {
       screenOptions={{
         headerShown: Platform.OS === "web" ? false : true,
         contentStyle: {
-          backgroundColor: "transparent",
+          backgroundColor: "black",
         },
       }}
     >

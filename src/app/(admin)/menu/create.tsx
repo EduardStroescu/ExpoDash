@@ -1,36 +1,34 @@
-import { defaultPizzaImage } from "@assets/data/products";
-import Button from "@/components/Button";
-import Colors from "@/lib/constants/Colors";
 import { useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Alert,
-  useColorScheme,
-  ScrollView,
-} from "react-native";
+import { Alert, useColorScheme } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { supabase } from "@/lib/supabase/supabase";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ScrollView, Image, Text, Theme, View, YStack } from "tamagui";
+import { uploadProductImage } from "@/lib/helpers/uploadProductImage";
+
 import {
   useDeleteProduct,
   useInsertProduct,
   useProduct,
   useUpdateProduct,
 } from "../../api/products";
-import { supabase } from "@/lib/supabase/supabase";
-import { Image } from "react-native";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { uploadProductImage } from "@/lib/helpers/uploadProductImage";
+import Input from "@/components/Input";
+import Button from "@/components/Button";
+import { defaultPizzaImage } from "@assets/data/products";
 
 const FormSchema = z.object({
   name: z
     .string({ required_error: "A product name is required" })
     .min(3, { message: "Name must contain at least three characters." }),
   image: z.string().nullable(),
+  description: z
+    .string({ required_error: "A product description is required" })
+    .min(1, {
+      message: "Product description must contain at least one character.",
+    }),
   price: z
     .string({ required_error: "A product price is required" })
     .min(1, { message: "Price must contain at least one character." }),
@@ -42,7 +40,7 @@ export default function CreateProductScreen() {
 
   const { id: idString } = useLocalSearchParams();
   const id = parseFloat(
-    typeof idString === "string" ? idString : idString?.[0]
+    typeof idString === "string" ? idString : idString?.[0],
   );
   const isUpdate = !!idString;
 
@@ -59,7 +57,7 @@ export default function CreateProductScreen() {
     getValues,
     reset,
   } = useForm({
-    defaultValues: { name: "", image: "", price: "" },
+    defaultValues: { name: "", image: "", description: "", price: "" },
     resolver: zodResolver(FormSchema),
     mode: "onChange",
   });
@@ -67,48 +65,51 @@ export default function CreateProductScreen() {
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = ({
     name,
     image,
+    description,
     price,
   }) => {
     if (isUpdate) {
-      onUpdate(name, image, price);
+      onUpdate(name, image, description, price);
     } else {
-      onCreate(name, image, price);
+      onCreate(name, image, description, price);
     }
   };
 
   const onCreate = async (
     name: string,
     image: string | null,
-    price: string
+    description: string,
+    price: string,
   ) => {
     const imagePath = await uploadProductImage(image);
 
     insertProduct(
-      { name, image: imagePath, price: parseFloat(price) },
+      { name, image: imagePath, description, price: parseFloat(price) },
       {
         onSuccess: () => {
           reset();
           router.back();
         },
-      }
+      },
     );
   };
 
   const onUpdate = async (
     name: string,
     image: string | null,
-    price: string
+    description: string,
+    price: string,
   ) => {
     const imagePath = await uploadProductImage(image);
 
     updateProduct(
-      { id, name, image: imagePath, price: parseFloat(price) },
+      { id, name, image: imagePath, description, price: parseFloat(price) },
       {
         onSuccess: () => {
           reset();
           router.back();
         },
-      }
+      },
     );
   };
 
@@ -175,6 +176,10 @@ export default function CreateProductScreen() {
           shouldValidate: true,
           shouldDirty: true,
         });
+        setValue("description", updatingProduct.description, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
         setValue("price", String(updatingProduct.price), {
           shouldValidate: true,
           shouldDirty: true,
@@ -184,115 +189,147 @@ export default function CreateProductScreen() {
   }, [updatingProduct]);
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme ?? "light"].background },
-      ]}
-    >
+    <Theme name={colorScheme}>
       <Stack.Screen
         options={{ title: isUpdate ? "Update Product" : "Add New Product" }}
       />
 
-      <Image
-        source={{ uri: getValues("image") || defaultPizzaImage }}
-        style={styles.image}
-      />
-      <Text
-        style={[
-          styles.textButton,
-          { color: Colors[colorScheme ?? "light"].tint },
-        ]}
-        onPress={pickImage}
-      >
-        Select Image
-      </Text>
+      <ScrollView width="100%" height="100%" backgroundColor="$background">
+        <YStack {...styles.container}>
+          <View>
+            <Image
+              {...styles.image}
+              source={{
+                width: 200,
+                height: 200,
+                uri: getValues("image") || defaultPizzaImage,
+              }}
+            />
+          </View>
+          <Text {...styles.textButton} onPress={pickImage}>
+            Select Image
+          </Text>
 
-      <Text
-        style={[
-          styles.label,
-          { color: Colors[colorScheme ?? "light"].subText },
-        ]}
-      >
-        Name
-      </Text>
-      <Controller
-        control={control}
-        rules={{
-          required: "Name is required",
-        }}
-        name="name"
-        render={({ field: { value, onChange, onBlur } }) => (
-          <TextInput
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-            placeholder="Name"
-            placeholderTextColor="grey"
-            style={styles.input}
+          <Text {...styles.label}>Name</Text>
+          <Controller
+            control={control}
+            rules={{
+              required: "Name is required",
+            }}
+            name="name"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Name"
+                placeholderTextColor="grey"
+                style={styles.input}
+              />
+            )}
           />
-        )}
-      />
-      {errors.name && (
-        <Text style={styles.errorMessage}>{errors.name.message}</Text>
-      )}
+          {errors.name && (
+            <Text {...styles.errorMessage}>{errors.name?.message}</Text>
+          )}
 
-      <Text
-        style={[
-          styles.label,
-          { color: Colors[colorScheme ?? "light"].subText },
-        ]}
-      >
-        Price
-      </Text>
-      <Controller
-        control={control}
-        rules={{
-          required: "Price is required",
-        }}
-        name="price"
-        render={({ field: { value, onChange, onBlur } }) => (
-          <TextInput
-            placeholder="9.99"
-            placeholderTextColor="grey"
-            style={styles.input}
-            keyboardType="numeric"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
+          <Text {...styles.label}>Description</Text>
+          <Controller
+            control={control}
+            rules={{
+              required: "A description is required",
+            }}
+            name="description"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                placeholder="Description"
+                placeholderTextColor="grey"
+                style={styles.input}
+              />
+            )}
           />
-        )}
-      />
-      {errors.price && (
-        <Text style={styles.errorMessage}>{errors.price.message}</Text>
-      )}
+          {errors.name && (
+            <Text {...styles.errorMessage}>{errors.description?.message}</Text>
+          )}
 
-      <Button
-        text={isUpdate ? "Update" : "Create"}
-        onPress={handleSubmit(onSubmit)}
-      />
+          <Text {...styles.label}>Price</Text>
+          <Controller
+            control={control}
+            rules={{
+              required: "Price is required",
+            }}
+            name="price"
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Input
+                placeholder="9.99"
+                placeholderTextColor="grey"
+                style={styles.input}
+                keyboardType="numeric"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
+          {errors.price && (
+            <Text {...styles.errorMessage}>{errors.price?.message}</Text>
+          )}
 
-      {isUpdate && <Button text="Delete Product" onPress={onDelete} />}
-    </ScrollView>
+          <Button
+            text={isUpdate ? "Update" : "Create"}
+            onPress={handleSubmit(onSubmit)}
+          />
+
+          {isUpdate && (
+            <Button
+              backgroundColor="$red7"
+              text="Delete Product"
+              onPress={onDelete}
+            />
+          )}
+        </YStack>
+      </ScrollView>
+    </Theme>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 10 },
+interface StyleProps {
+  container: React.PropsWithoutRef<typeof YStack>;
+  image: React.PropsWithoutRef<typeof Image>;
+  textButton: React.PropsWithoutRef<typeof Text>;
+  label: React.PropsWithoutRef<typeof Text>;
+  input: React.PropsWithoutRef<typeof Input>;
+  errorMessage: React.PropsWithoutRef<typeof Text>;
+}
+
+const styles = {
+  container: {
+    width: "100%",
+    $gtMd: { width: "50%" },
+    height: "100%",
+    alignSelf: "center",
+    backgroundColor: "$background",
+    padding: 10,
+    gap: "$3",
+  },
   image: {
-    flex: 1,
+    width: 400,
+    height: 400,
     aspectRatio: 1,
     alignSelf: "center",
-    objectFit: "contain",
+    objectFit: "cover",
   },
   textButton: {
+    color: "$blue10",
     alignSelf: "center",
     fontWeight: "bold",
     marginVertical: 10,
+    cursor: "pointer",
   },
-  label: { fontSize: 16 },
+  label: { fontSize: 16, color: "$color10" },
   input: {
-    backgroundColor: "white",
     padding: 10,
     borderRadius: 5,
     marginTop: 5,
@@ -301,4 +338,4 @@ const styles = StyleSheet.create({
   errorMessage: {
     color: "red",
   },
-});
+};

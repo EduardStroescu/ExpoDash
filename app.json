@@ -2,6 +2,9 @@
   "expo": {
     "name": "ExpoDash",
     "slug": "ExpoDash",
+    "description": "ExpoDash offers a seamless delivery experience from start to finish. With just a few taps, you can arrange for your package to be whisked away and delivered promptly to its destination.",
+    "owner": "Eduard Stroescu",
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -29,7 +32,7 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
+      "output": "single",
       "favicon": "./assets/images/favicon.png",
       "userInterfaceStyle": "dark mode",
       "backgroundColor": "#000000"

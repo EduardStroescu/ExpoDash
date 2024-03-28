@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, useColorScheme } from "react-native";
+import { useColorScheme } from "react-native";
 import React, { useEffect } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import OrderListItem from "@/components/OrderListItem";
@@ -9,6 +9,7 @@ import Colors from "@/lib/constants/Colors";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
+import { Text, Theme, View } from "tamagui";
 
 export default function OrderDetailsPage() {
   const colorScheme = useColorScheme();
@@ -30,19 +31,14 @@ export default function OrderDetailsPage() {
   }
 
   return (
-    <>
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: Colors[colorScheme ?? "light"].background },
-        ]}
-      >
-        <Stack.Screen
-          options={{
-            title: `Order #${orderId}`,
-          }}
-        />
+    <Theme name={colorScheme}>
+      <Stack.Screen
+        options={{
+          title: `Order #${orderId}`,
+        }}
+      />
 
+      <View {...styles.container}>
         <OrderListItem order={order} />
 
         <AnimatedFlatList
@@ -52,17 +48,18 @@ export default function OrderDetailsPage() {
           )}
           contentContainerStyle={{ gap: 10 }}
         />
+        <OrderStatusSelector activeStatus={order.status} orderId={id} />
       </View>
-      <OrderStatusSelector activeStatus={order.status} orderId={id} />
-    </>
+    </Theme>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
+    backgroundColor: "$background",
     paddingHorizontal: 10,
     paddingTop: 10,
     flex: 1,
     gap: 10,
   },
-});
+};

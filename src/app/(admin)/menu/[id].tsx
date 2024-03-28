@@ -1,12 +1,5 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
-import {
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  useColorScheme,
-} from "react-native";
+import { Platform, Pressable, useColorScheme } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/lib/constants/Colors";
 import { useProduct } from "../../api/products";
@@ -16,11 +9,12 @@ import Header from "@/components/webOnlyComponents/Header";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import { useEffect } from "react";
+import { ScrollView, Text, Theme, YStack } from "tamagui";
 
 export default function ProductDetailsScreen() {
   const { id: idString } = useLocalSearchParams<{ id: string }>();
   const id = parseFloat(
-    typeof idString === "string" ? idString : idString?.[0]
+    typeof idString === "string" ? idString : idString?.[0],
   );
   const { data: product, error, isLoading } = useProduct(id);
   const colorScheme = useColorScheme();
@@ -39,12 +33,7 @@ export default function ProductDetailsScreen() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme ?? "light"].background },
-      ]}
-    >
+    <Theme name={colorScheme}>
       <Stack.Screen
         options={{
           title: product?.name,
@@ -64,56 +53,54 @@ export default function ProductDetailsScreen() {
           ),
         }}
       />
-
       {Platform.OS === "web" && <Header slug={id} />}
 
-      <RemoteImage
-        path={product?.image}
-        fallback={defaultPizzaImage}
-        style={styles.image}
-        resizeMode="contain"
-      />
+      <ScrollView {...styles.container}>
+        <YStack $gtMd={{ width: "40%", alignSelf: "center" }}>
+          <RemoteImage
+            path={product?.image}
+            fallback={defaultPizzaImage}
+            style={{
+              width: 500,
+              height: 500,
+              aspectRatio: 1,
+              alignSelf: "center",
+            }}
+            resizeMode="contain"
+          />
 
-      <Text
-        style={[styles.price, { color: Colors[colorScheme ?? "light"].text }]}
-      >
-        Price: ${product?.price}
-      </Text>
-      <Text
-        style={[
-          styles.description,
-          { color: Colors[colorScheme ?? "light"].text },
-        ]}
-      >
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam dolor ab
-        officiis? Eaque quod unde optio architecto nostrum ipsum velit,
-        excepturi distinctio error reprehenderit illo similique blanditiis harum
-        vel! Quibusdam. Libero numquam nemo consequuntur quia temporibus porro
-        et corrupti aliquam, ducimus, illo excepturi sequi quos officiis!
-        Commodi quisquam in corrupti debitis adipisci corporis hic ad.
-        Consequatur doloremque accusantium nulla illum!
-      </Text>
-    </ScrollView>
+          <Text {...styles.price}>Price: ${product?.price}</Text>
+          <Text {...styles.description}>{product?.description}</Text>
+        </YStack>
+      </ScrollView>
+    </Theme>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, justifyContent: "center" },
-  image: {
+interface StyleProps {
+  container: React.PropsWithoutRef<typeof ScrollView>;
+  price: React.PropsWithoutRef<typeof Text>;
+  size: React.PropsWithoutRef<typeof Pressable>;
+  description: React.PropsWithoutRef<typeof Text>;
+}
+
+const styles: StyleProps = {
+  container: {
     flex: 1,
-    aspectRatio: 1,
-    alignSelf: "center",
-    objectFit: "contain",
+    padding: 10,
+    backgroundColor: "$background",
   },
   price: {
     fontSize: 18,
     fontWeight: "bold",
     alignSelf: "center",
     marginTop: 20,
+    color: "$blue10",
   },
   description: {
     marginTop: 20,
     alignSelf: "center",
     textAlign: "justify",
+    color: "$color",
   },
-});
+};

@@ -29,7 +29,7 @@ export default function ProductListItem({
   const colorScheme = useColorScheme();
   const { width } = useWindowDimensions();
   const segments = useSegments();
-  const NOTIFICATION_HEIGHT = width <= 660 ? 200 : 138;
+  const NOTIFICATION_HEIGHT = width <= 660 ? 200 : 69.8;
   const { animatedStyle } = useAnimatedFlatList({
     scrollY,
     NOTIFICATION_HEIGHT,
@@ -42,7 +42,7 @@ export default function ProductListItem({
       style={[
         animatedStyle,
         {
-          flex: 1 / 5,
+          flex: 1 / 6,
           height: width <= 660 ? NOTIFICATION_HEIGHT - 10 : "auto",
         },
       ]}
@@ -59,7 +59,7 @@ export default function ProductListItem({
         <RemoteImage
           path={product.image}
           fallback={defaultPizzaImage}
-          style={[styles.image, { height: Platform.OS === "web" ? 500 : 120 }]}
+          style={[styles.image, { height: Platform.OS === "web" ? 300 : 120 }]}
           resizeMode="contain"
         />
         <View style={styles.secondaryContainer}>
@@ -88,12 +88,13 @@ export default function ProductListItem({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 10,
   },
   secondaryContainer: {
     flexDirection: "row",
     width: "100%",
-    padding: 10,
     justifyContent: "space-between",
+    padding: 10,
     alignItems: "center",
   },
   image: { width: "100%", borderRadius: 20, objectFit: "cover" },

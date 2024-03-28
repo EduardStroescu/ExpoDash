@@ -45,6 +45,7 @@ export const useInsertProduct = () => {
         .insert({
           name: data.name,
           image: data.image,
+          description: data.description,
           price: data.price,
         })
         .single();
@@ -73,6 +74,7 @@ export const useUpdateProduct = () => {
         .update({
           name: data.name,
           image: data.image,
+          description: data.description,
           price: data.price,
         })
         .eq("id", data.id)

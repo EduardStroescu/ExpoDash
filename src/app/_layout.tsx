@@ -1,10 +1,10 @@
 import "@tamagui/core/reset.css";
 import "./styles.css";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { useColorScheme } from "../components/useColorScheme/useColorScheme";
 import { Provider } from "react-redux";
