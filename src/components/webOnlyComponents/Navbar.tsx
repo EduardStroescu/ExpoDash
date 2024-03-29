@@ -160,30 +160,37 @@ const styles: StyleProps = {
   primaryContainer: {
     width: "100%",
     height: 60,
+    overflow: "hidden",
     backgroundColor: "$background",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 60,
     gap: 20,
+    paddingHorizontal: 20,
+    $gtMd: {
+      paddingHorizontal: 60,
+    },
   },
   linksContainer: {
     alignItems: "center",
-    gap: 20,
+    gap: 10,
+    $gtMd: { gap: 20 },
   },
   mainLink: {
-    fontWeight: "bold",
-    fontSize: 16,
+    fontWeight: "600",
+    fontSize: 14,
     hoverStyle: {
       color: "$blue10",
       fontStyle: "italic",
     },
+    $gtMd: { fontSize: 16 },
   },
   secondaryLink: {
-    fontSize: 14,
+    fontSize: 12,
     hoverStyle: {
       color: "$red10",
       fontStyle: "italic",
     },
+    $gtMd: { fontSize: 14 },
   },
 };

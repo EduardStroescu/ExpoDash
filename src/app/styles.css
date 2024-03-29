@@ -1,3 +1,7 @@
+html {
+  overflow: hidden;
+}
+
 /* toolbar width */
 ::-webkit-scrollbar {
     width: 5px;

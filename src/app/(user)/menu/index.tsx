@@ -6,11 +6,23 @@ import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import { useEffect } from "react";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
-import { Text, Theme, View } from "tamagui";
+import { Text, Theme, View, useWindowDimensions } from "tamagui";
+import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
 
 export default function Menu() {
   const colorScheme = useColorScheme();
+  const { width } = useWindowDimensions();
   const { data: products, error, isLoading } = useProductList();
+  const columnBreakpoints = {
+    default: 1,
+    sm: 1,
+    md: 2,
+    gtMd: 3,
+    lg: 4,
+    xl: 6,
+    gtXl: 6,
+  };
+  const columnNumber = useResponsiveStyle(columnBreakpoints, width);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -30,13 +42,23 @@ export default function Menu() {
       <View {...styles.container}>
         {Platform.OS === "web" && <Header />}
         <AnimatedFlatList
+          {...styles.contentContainerStyle}
           data={products}
+          key={columnNumber}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item, index, scrollY }) => (
-            <ProductListItem product={item} index={index} scrollY={scrollY} />
+            <ProductListItem
+              product={item}
+              index={index}
+              scrollY={scrollY}
+              columnNumber={columnNumber}
+            />
           )}
-          numColumns={Platform.OS === "web" ? 6 : 1}
-          {...styles.contentContainerStyle}
+          numColumns={columnNumber}
+          contentContainerStyle={{
+            paddingHorizontal: width <= 660 ? 0 : 10,
+            paddingVertical: width <= 660 ? 10 : 10,
+          }}
         />
       </View>
     </Theme>
@@ -48,7 +70,6 @@ const styles = {
   contentContainerStyle: {
     contentContainerStyle: {
       gap: 10,
-      paddingVertical: 10,
     },
   },
 };

@@ -14,6 +14,7 @@ export default function ProfileScreen() {
     <Theme name={colorScheme}>
       <ScrollView {...styles.page}>
         {Platform.OS === "web" && <Header />}
+
         <YStack {...styles.container}>
           <Card {...styles.card}>
             <Avatar circular size="$15" elevate elevation="$1">

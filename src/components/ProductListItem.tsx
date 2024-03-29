@@ -1,54 +1,65 @@
-import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  useColorScheme,
-} from "react-native";
-import Colors from "../lib/constants/Colors";
+import { LayoutChangeEvent, Pressable } from "react-native";
 import { Tables } from "../lib/types";
 import { defaultPizzaImage } from "@assets/data/products";
 import { router, useSegments } from "expo-router";
 import RemoteImage from "./RemoteImage";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
 import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
-import { useWindowDimensions } from "tamagui";
+import { XStack, YStack, useWindowDimensions } from "tamagui";
+import { Text } from "tamagui";
+import React, { useState } from "react";
+import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
 
 interface ProductListItemProps {
   product: Tables<"products">;
   index: number;
   scrollY: SharedValue<number>;
+  columnNumber: number;
 }
 
 export default function ProductListItem({
   product,
   index,
   scrollY,
+  columnNumber,
 }: ProductListItemProps) {
-  const colorScheme = useColorScheme();
+  const [height, setHeight] = useState(150);
   const { width } = useWindowDimensions();
   const segments = useSegments();
-  const NOTIFICATION_HEIGHT = width <= 660 ? 200 : 69.8;
+  const columnBreakpoints = {
+    default: height,
+    sm: height,
+    md: (25 / 100) * (columnNumber * height),
+    gtMd: (12 / 100) * (columnNumber * height),
+    lg: (7.7 / 100) * (columnNumber * height),
+    xl: (3.6 / 100) * (columnNumber * height),
+    gtXl: (3.65 / 100) * (columnNumber * height),
+  };
+  const NOTIFICATION_HEIGHT = useResponsiveStyle(columnBreakpoints, width);
+
   const { animatedStyle } = useAnimatedFlatList({
     scrollY,
     NOTIFICATION_HEIGHT,
     index,
   });
 
+  const onLayout = (event: LayoutChangeEvent) => {
+    setHeight(event.nativeEvent.layout.height);
+  };
+
   return (
     <Animated.View
+      onLayout={onLayout}
       entering={SlideInDown}
       style={[
         animatedStyle,
         {
-          flex: 1 / 6,
-          height: width <= 660 ? NOTIFICATION_HEIGHT - 10 : "auto",
+          flex: 1 / columnNumber,
         },
       ]}
     >
       <Pressable
-        style={styles.container}
+        style={{ flex: 1, paddingHorizontal: 10 }}
         onPress={() =>
           router.push({
             pathname: `${segments[0]}/menu/[id]`,
@@ -59,45 +70,57 @@ export default function ProductListItem({
         <RemoteImage
           path={product.image}
           fallback={defaultPizzaImage}
-          style={[styles.image, { height: Platform.OS === "web" ? 300 : 120 }]}
-          resizeMode="contain"
+          style={{
+            height: width <= 600 ? 110 : 300,
+            width: "100%",
+            borderRadius: 20,
+            objectFit: "cover",
+          }}
+          resizeMode="cover"
         />
-        <View style={styles.secondaryContainer}>
-          <Text
-            style={[
-              styles.title,
-              { color: Colors[colorScheme ?? "light"].text },
-            ]}
-          >
-            {product.name}
+        <YStack {...styles.primaryContainer}>
+          <Text {...styles.productDescription}>
+            {product.description?.length >= 200
+              ? `${product.description?.slice(0, 200)}...`
+              : product.description}
           </Text>
-          <Text
-            style={[
-              styles.price,
-              { color: Colors[colorScheme ?? "light"].tint },
-            ]}
-          >
-            ${product.price}
-          </Text>
-        </View>
+          <XStack {...styles.secondaryContainer}>
+            <Text {...styles.title}>{product.name}</Text>
+            <Text {...styles.price}>${product.price}</Text>
+          </XStack>
+        </YStack>
       </Pressable>
     </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 10,
+interface StyleProps {
+  primaryContainer: React.PropsWithoutRef<typeof YStack>;
+  secondaryContainer: React.PropsWithoutRef<typeof XStack>;
+  title: React.PropsWithoutRef<typeof Text>;
+  productDescription: React.PropsWithoutRef<typeof Text>;
+  price: React.PropsWithoutRef<typeof Text>;
+}
+
+const styles = {
+  primaryContainer: {
+    width: "100%",
+    padding: 10,
   },
   secondaryContainer: {
-    flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
-    padding: 10,
     alignItems: "center",
   },
-  image: { width: "100%", borderRadius: 20, objectFit: "cover" },
-  title: { fontSize: 18, fontWeight: "600", marginVertical: 10 },
-  price: { fontWeight: "bold" },
-});
+  title: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginVertical: 10,
+    color: "$color",
+  },
+  productDescription: {
+    fontSize: 11,
+    color: "$color10",
+  },
+  price: { fontWeight: "bold", color: "$blue10" },
+};

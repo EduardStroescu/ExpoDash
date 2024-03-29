@@ -132,9 +132,12 @@ const styles = {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 50,
+    paddingHorizontal: 20,
     paddingVertical: 5,
     borderBottomWidth: 0.3,
+    $gtMd: {
+      paddingHorizontal: 50,
+    },
   },
   text: {
     fontSize: 22,

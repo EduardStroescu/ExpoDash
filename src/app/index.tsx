@@ -10,10 +10,19 @@ import { Stats } from "@/components/stats/Stats";
 import SvgBackground from "@/components/svgBackground/SvgBackground";
 import Meta from "@/components/Meta";
 import AnimatedLoader from "@/components/AnimatedLoader";
-import { Text, Theme, View, XStack, YStack, useTheme } from "tamagui";
+import {
+  Text,
+  Theme,
+  View,
+  XStack,
+  YStack,
+  useTheme,
+  useWindowDimensions,
+} from "tamagui";
 import { InlineGradient } from "@/components/cart/InlineGradient";
 
 export default function Page() {
+  const { width } = useWindowDimensions();
   const colorScheme = useColorScheme();
   const theme = useTheme();
   const pathname = usePathname();
@@ -41,7 +50,7 @@ export default function Page() {
       )}
 
       <View {...styles.page}>
-        {Platform.OS !== "web" && <SvgBackground />}
+        {width <= 660 && <SvgBackground />}
 
         <YStack {...styles.container}>
           {session && <Stats />}
