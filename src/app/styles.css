@@ -4,17 +4,33 @@ html {
 
 /* toolbar width */
 ::-webkit-scrollbar {
-    width: 5px;
-  }
-  
-  /* toolbar Track */
-  ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px hsl(281, 100%, 50%);
-    border-radius: 10px;
-  }
-  
-  /* toolbar Handle */
-  ::-webkit-scrollbar-thumb {
-    background: hsl(281, 100%, 50%);
-    border-radius: 10px;
-  }
+  width: 5px;
+}
+
+/* toolbar Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px hsl(281, 100%, 50%);
+  border-radius: 10px;
+}
+
+/* toolbar Handle */
+::-webkit-scrollbar-thumb {
+  background: hsl(281, 100%, 50%);
+  border-radius: 10px;
+}
+
+::-webkit-file-upload-button {
+  visibility: hidden;
+  font-size: 0;
+}
+
+input[type="file"] {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  text-wrap: nowrap;
+  overflow: hidden;
+}

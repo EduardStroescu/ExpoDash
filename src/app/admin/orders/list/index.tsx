@@ -1,12 +1,13 @@
 import OrderListItem from "@/components/OrderListItem";
-import { Platform, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { Platform, useColorScheme } from "react-native";
 import { useAdminOrderList } from "@/app/api/orders";
-import Colors from "@/lib/constants/Colors";
+import { useRealtimeAdminOrders } from "@/lib/hooks/useSupabaseRealtime";
 import Header from "@/components/webOnlyComponents/Header";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import { useEffect } from "react";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
+import { Text, Theme, View } from "tamagui";
 
 export default function OrdersPage() {
   const colorScheme = useColorScheme();
@@ -14,7 +15,9 @@ export default function OrdersPage() {
     data: orders,
     isLoading,
     error,
-  } = useAdminOrderList({ archived: true });
+  } = useAdminOrderList({ archived: false });
+
+  useRealtimeAdminOrders();
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -26,30 +29,28 @@ export default function OrdersPage() {
   }, [isLoading, dispatch]);
 
   if (error) {
-    return <Text>Failed to fetch archived orders</Text>;
+    return <Text>Failed to fetch orders</Text>;
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme ?? "light"].background },
-      ]}
-    >
+    <Theme name={colorScheme}>
       {Platform.OS === "web" && <Header />}
-      <AnimatedFlatList
-        data={orders}
-        renderItem={({ item, index, scrollY }) => (
-          <OrderListItem order={item} index={index} scrollY={scrollY} />
-        )}
-        contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
-      />
-    </View>
+      <View {...styles.container}>
+        <AnimatedFlatList
+          data={orders}
+          renderItem={({ item, index, scrollY }) => (
+            <OrderListItem order={item} index={index} scrollY={scrollY} />
+          )}
+          contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
+        />
+      </View>
+    </Theme>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     height: "100%",
+    backgroundColor: "$background",
   },
-});
+};

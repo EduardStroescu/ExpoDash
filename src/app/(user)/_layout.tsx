@@ -4,12 +4,11 @@ import { Redirect, Tabs } from "expo-router";
 
 import Colors from "../../lib/constants/Colors";
 import { useColorScheme } from "../../components/useColorScheme/useColorScheme";
-import { useClientOnlyValue } from "../../components/useClientOnlyValue/useClientOnlyValue";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
 import { Platform } from "react-native";
+import AnimatedLoader from "@/components/AnimatedLoader";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
@@ -20,7 +19,11 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  const { session } = useSelector((state: RootState) => state.auth);
+  const { session, loading } = useSelector((state: RootState) => state.auth);
+
+  if (loading) {
+    return <AnimatedLoader overwriteState={true} />;
+  }
 
   if (!session) {
     return <Redirect href={"/"} />;
@@ -31,8 +34,6 @@ export default function TabLayout() {
       sceneContainerStyle={{ backgroundColor: "transparent" }}
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
         headerShown: Platform.OS === "web" ? false : true,
         tabBarStyle: { display: Platform.OS === "web" ? "none" : "flex" },
       }}

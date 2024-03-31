@@ -7,6 +7,7 @@ import { defaultPizzaImage } from "@assets/data/products";
 import { useDispatch } from "react-redux";
 import { updateQuantity } from "../lib/features/cartSlice";
 import RemoteImage from "./RemoteImage";
+import Input from "./Input";
 
 type CartListItemProps = {
   cartItem: CartItem;
@@ -53,26 +54,32 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
         <FontAwesome
           onPress={() =>
             dispatch(
-              updateQuantity({ ...cartItem, quantity: cartItem.quantity - 1 })
+              updateQuantity({ ...cartItem, quantity: cartItem.quantity - 1 }),
             )
           }
           name="minus"
           color="gray"
           style={{ padding: 5 }}
         />
-
-        <Text
-          style={[
-            styles.quantity,
-            { color: Colors[colorScheme ?? "light"].text },
-          ]}
-        >
-          {cartItem.quantity}
-        </Text>
+        <Input
+          width={50}
+          padding={0}
+          textAlign="center"
+          inputMode="numeric"
+          value={String(cartItem?.quantity)}
+          onChangeText={(t) =>
+            dispatch(
+              updateQuantity({
+                ...cartItem,
+                quantity: !isNaN(parseFloat(t)) ? parseFloat(t) : 1,
+              }),
+            )
+          }
+        />
         <FontAwesome
           onPress={() =>
             dispatch(
-              updateQuantity({ ...cartItem, quantity: cartItem.quantity + 1 })
+              updateQuantity({ ...cartItem, quantity: cartItem.quantity + 1 }),
             )
           }
           name="plus"

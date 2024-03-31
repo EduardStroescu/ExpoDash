@@ -1,13 +1,13 @@
 import OrderListItem from "@/components/OrderListItem";
-import { Platform, StyleSheet, Text, View, useColorScheme } from "react-native";
+import { Platform, useColorScheme } from "react-native";
 import { useUserOrderList } from "../../api/orders";
 import { useRealtimeUserOrders } from "@/lib/hooks/useSupabaseRealtime";
-import Colors from "@/lib/constants/Colors";
 import Header from "@/components/webOnlyComponents/Header";
 import { setIsLoading } from "@/lib/features/appSlice";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
+import { Text, Theme, View } from "tamagui";
 
 export default function OrdersPage() {
   const colorScheme = useColorScheme();
@@ -28,26 +28,25 @@ export default function OrdersPage() {
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme ?? "light"].background },
-      ]}
-    >
+    <Theme name={colorScheme}>
       {Platform.OS === "web" && <Header />}
-      <AnimatedFlatList
-        data={orders}
-        renderItem={({ item, index, scrollY }) => (
-          <OrderListItem order={item} index={index} scrollY={scrollY} />
-        )}
-        contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
-      />
-    </View>
+
+      <View {...styles.container}>
+        <AnimatedFlatList
+          data={orders}
+          renderItem={({ item, index, scrollY }) => (
+            <OrderListItem order={item} index={index} scrollY={scrollY} />
+          )}
+          contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
+        />
+      </View>
+    </Theme>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     height: "100%",
+    backgroundColor: "$background",
   },
-});
+};

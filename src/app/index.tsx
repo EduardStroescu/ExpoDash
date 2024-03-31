@@ -4,11 +4,9 @@ import Button, { ButtonProps } from "../components/Button";
 import { useSelector } from "react-redux";
 import { RootState } from "../lib/reduxStore";
 import LogoutButton from "../components/logoutButton/LogoutButton";
-import { useSession } from "../lib/hooks/useSession";
 import { StatusBar } from "expo-status-bar";
 import { Stats } from "@/components/stats/Stats";
 import SvgBackground from "@/components/svgBackground/SvgBackground";
-import Meta from "@/components/Meta";
 import AnimatedLoader from "@/components/AnimatedLoader";
 import {
   Text,
@@ -19,17 +17,17 @@ import {
   useTheme,
   useWindowDimensions,
 } from "tamagui";
-import { InlineGradient } from "@/components/cart/InlineGradient";
+import { InlineGradient } from "@/components/InlineGradient";
 
 export default function Page() {
   const { width } = useWindowDimensions();
   const colorScheme = useColorScheme();
   const theme = useTheme();
   const pathname = usePathname();
-  useSession();
   const { session, loading, isAdmin } = useSelector(
     (state: RootState) => state.auth,
   );
+
   if (loading) {
     return <AnimatedLoader overwriteState={true} />;
   }
@@ -44,14 +42,12 @@ export default function Page() {
 
   return (
     <Theme name={colorScheme}>
-      {Platform.OS === "web" && <Meta />}
       {pathname === "/" && (
         <StatusBar animated style={Platform.OS === "ios" ? "light" : "auto"} />
       )}
 
       <View {...styles.page}>
         {width <= 660 && <SvgBackground />}
-
         <YStack {...styles.container}>
           {session && <Stats />}
           <View
@@ -78,7 +74,7 @@ export default function Page() {
             <Link href="/(user)" asChild>
               <Button {...styles.button} text="User" />
             </Link>
-            <Link href="/(admin)" asChild>
+            <Link href="/admin" asChild>
               <Button {...styles.button} text="Admin" />
             </Link>
           </XStack>

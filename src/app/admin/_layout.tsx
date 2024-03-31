@@ -7,8 +7,8 @@ import { useColorScheme } from "../../components/useColorScheme/useColorScheme";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
 import { Platform } from "react-native";
+import AnimatedLoader from "@/components/AnimatedLoader";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
@@ -17,9 +17,13 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { session, isAdmin, loading } = useSelector(
+    (state: RootState) => state.auth,
+  );
 
-  const { session, isAdmin } = useSelector((state: RootState) => state.auth);
+  if (loading) {
+    return <AnimatedLoader overwriteState={true} />;
+  }
 
   if (!session || !isAdmin) {
     return <Redirect href={"/"} />;

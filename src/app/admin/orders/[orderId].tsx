@@ -5,7 +5,6 @@ import OrderListItem from "@/components/OrderListItem";
 import OrderItemListItem from "@/components/OrderItemListItem";
 import OrderStatusSelector from "@/components/OrderStatusSelector";
 import { useOrderDetails } from "../../api/orders";
-import Colors from "@/lib/constants/Colors";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";

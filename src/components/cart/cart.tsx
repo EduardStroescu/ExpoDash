@@ -16,7 +16,7 @@ import {
   openPaymentSheet,
 } from "../../lib/stripe/stripe";
 import { Text, Theme, View } from "tamagui";
-import { InlineGradient } from "./InlineGradient";
+import { InlineGradient } from "../InlineGradient";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);

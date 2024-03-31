@@ -38,7 +38,7 @@ export default function ProductDetailsScreen() {
         options={{
           title: product?.name,
           headerRight: () => (
-            <Link href={`/(admin)/menu/create?id=${id}`} asChild>
+            <Link href={`/admin/menu/create?id=${id}`} asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
@@ -61,16 +61,17 @@ export default function ProductDetailsScreen() {
             path={product?.image}
             fallback={defaultPizzaImage}
             style={{
-              width: 500,
-              height: 500,
+              width: 400,
+              height: 400,
               aspectRatio: 1,
               alignSelf: "center",
             }}
             resizeMode="contain"
           />
-
+          <Text {...styles.description}>
+            Product Description: {product?.description}
+          </Text>
           <Text {...styles.price}>Price: ${product?.price}</Text>
-          <Text {...styles.description}>{product?.description}</Text>
         </YStack>
       </ScrollView>
     </Theme>

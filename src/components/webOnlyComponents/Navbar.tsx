@@ -1,6 +1,6 @@
 import { RootState } from "@/lib/reduxStore";
 import { Link, usePathname, useSegments } from "expo-router";
-import { ColorSchemeName, Pressable, useColorScheme } from "react-native";
+import { Pressable, useColorScheme } from "react-native";
 import { Separator, Text, Theme, XStack } from "tamagui";
 import { useSelector } from "react-redux";
 
@@ -13,17 +13,13 @@ export default function Navbar() {
   if (isAdmin)
     return (
       <Theme name={colorScheme}>
-        <AdminNavbar
-          segments={segments}
-          pathname={pathname}
-          colorScheme={colorScheme}
-        />
+        <AdminNavbar segments={segments} pathname={pathname} />
       </Theme>
     );
 
   return (
     <Theme name={colorScheme}>
-      <UserNavbar pathname={pathname} colorScheme={colorScheme} />
+      <UserNavbar pathname={pathname} />
     </Theme>
   );
 }
@@ -32,7 +28,7 @@ function UserNavbar({ pathname }: { pathname: string }) {
   const routes = [
     { title: "Menu", href: "/(user)/menu" },
     { title: "Orders", href: "/(user)/orders" },
-    { title: "Profile", href: "/profile" },
+    { title: "Profile", href: "/(user)/profile" },
     { title: "Cart", href: "/(user)/menu/cart" },
   ];
   return (
@@ -70,8 +66,8 @@ function AdminNavbar({
 }) {
   const routes = {
     default: [
-      { title: "Admin", href: "/(admin)/menu" },
-      { title: "User", href: "/(user)/menu" },
+      { title: "Admin", href: "/admin/" },
+      { title: "User", href: "/(user)/" },
     ],
     user: [
       { title: "Orders", href: "/(user)/orders" },
@@ -79,15 +75,17 @@ function AdminNavbar({
       { title: "Cart", href: "/(user)/menu/cart" },
     ],
     admin: [
-      { title: "Orders", href: "/(admin)/orders" },
-      { title: "Profile", href: "/(admin)/profile" },
+      { title: "Orders", href: "/admin/orders" },
+      { title: "Profile", href: "/admin/profile" },
     ],
   };
 
   const currentUserType =
-    segments[0] === "(admin)" || segments[0] === "(user)"
-      ? (segments[0].slice(1, -1) as keyof typeof routes)
-      : "admin";
+    segments[0] === "admin"
+      ? (segments[0] as keyof typeof routes)
+      : segments[0] === "(user)"
+        ? (segments[0]?.slice(1, -1) as keyof typeof routes)
+        : "admin";
 
   return (
     <XStack {...styles.primaryContainer}>

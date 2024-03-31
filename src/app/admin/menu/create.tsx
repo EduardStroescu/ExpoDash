@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Alert, useColorScheme } from "react-native";
+import { Alert, Platform, useColorScheme } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase/supabase";
@@ -7,7 +7,10 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ScrollView, Image, Text, Theme, View, YStack } from "tamagui";
-import { uploadProductImage } from "@/lib/helpers/uploadProductImage";
+import {
+  uploadProductImageMobile,
+  uploadProductImageWeb,
+} from "@/lib/helpers/uploadImage";
 
 import {
   useDeleteProduct,
@@ -18,6 +21,7 @@ import {
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { defaultPizzaImage } from "@assets/data/products";
+import Header from "@/components/webOnlyComponents/Header";
 
 const FormSchema = z.object({
   name: z
@@ -81,7 +85,10 @@ export default function CreateProductScreen() {
     description: string,
     price: string,
   ) => {
-    const imagePath = await uploadProductImage(image);
+    const imagePath =
+      Platform.OS !== "web"
+        ? await uploadProductImageMobile(image)
+        : await uploadProductImageWeb(image);
 
     insertProduct(
       { name, image: imagePath, description, price: parseFloat(price) },
@@ -100,7 +107,10 @@ export default function CreateProductScreen() {
     description: string,
     price: string,
   ) => {
-    const imagePath = await uploadProductImage(image);
+    const imagePath =
+      Platform.OS !== "web"
+        ? await uploadProductImageMobile(image)
+        : await uploadProductImageWeb(image);
 
     updateProduct(
       { id, name, image: imagePath, description, price: parseFloat(price) },
@@ -113,6 +123,7 @@ export default function CreateProductScreen() {
     );
   };
 
+  // TODO: Change this for WEB/ Alert not available on WEB
   const onDelete = () => {
     Alert.alert("Confirm", "Are you sure you want to delete this product?", [
       {
@@ -124,7 +135,7 @@ export default function CreateProductScreen() {
         onPress: () => {
           deleteProduct(id, {
             onSuccess: () => {
-              router.replace("/(admin)");
+              router.replace("/admin");
             },
           });
         },
@@ -132,21 +143,36 @@ export default function CreateProductScreen() {
     ]);
   };
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setValue("image", result.assets[0].uri, {
-        shouldValidate: true,
-        shouldDirty: true,
+  const pickImage = async (e) => {
+    if (Platform.OS !== "web") {
+      // No permissions request is necessary for launching the image library
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
       });
-    }
+
+      if (!result.canceled) {
+        setValue("image", result.assets[0].uri, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+    } else if (!e.target.files?.length) return;
+    const fileReader = new FileReader();
+    const file = e.target.files[0];
+    fileReader.readAsDataURL(file);
+
+    fileReader.onloadend = () => {
+      const content = fileReader.result;
+      if (content && typeof content === "string") {
+        setValue("image", content, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+    };
   };
 
   useEffect(() => {
@@ -166,11 +192,11 @@ export default function CreateProductScreen() {
               });
             };
           }
-        } else
-          setValue("image", defaultPizzaImage, {
-            shouldValidate: true,
-            shouldDirty: true,
-          });
+        }
+        setValue("image", defaultPizzaImage, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
 
         setValue("name", updatingProduct.name, {
           shouldValidate: true,
@@ -193,6 +219,7 @@ export default function CreateProductScreen() {
       <Stack.Screen
         options={{ title: isUpdate ? "Update Product" : "Add New Product" }}
       />
+      {Platform.OS === "web" && <Header />}
 
       <ScrollView width="100%" height="100%" backgroundColor="$background">
         <YStack {...styles.container}>
@@ -206,9 +233,16 @@ export default function CreateProductScreen() {
               }}
             />
           </View>
-          <Text {...styles.textButton} onPress={pickImage}>
-            Select Image
-          </Text>
+          {Platform.OS === "web" ? (
+            <Text {...styles.textButton} position="relative">
+              Select Image
+              <input type="file" onChange={pickImage} />
+            </Text>
+          ) : (
+            <Text {...styles.textButton} onPress={pickImage}>
+              Select Image
+            </Text>
+          )}
 
           <Text {...styles.label}>Name</Text>
           <Controller

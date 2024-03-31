@@ -21,6 +21,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { useSession } from "@/lib/hooks/useSession";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -58,39 +59,40 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <Provider store={store}>
+      <RootLayoutNav />
+    </Provider>
+  );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  useSession();
   return (
     <ThemeProvider value={colorScheme === "light" ? DefaultTheme : DarkTheme}>
-      <TamaguiProvider
-        // disableRootThemeClass
-        config={config}
-        defaultTheme="light"
-      >
+      <TamaguiProvider config={config} defaultTheme="light">
+        {/* <Provider store={store}> */}
+        {Platform.OS === "web" && <Navbar />}
         <StripePlatformProvider>
-          <Provider store={store}>
-            {Platform.OS === "web" && <Navbar />}
-            <QueryProvider>
-              <AnimatedLoader />
-              <Stack
-                screenOptions={{
-                  headerShown: Platform.OS === "web" ? false : true,
-                  contentStyle: {
-                    backgroundColor: "#000000",
-                  },
-                }}
-              >
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-                <Stack.Screen name="(user)" options={{ headerShown: false }} />
-              </Stack>
-            </QueryProvider>
-          </Provider>
+          <QueryProvider>
+            <AnimatedLoader />
+            <Stack
+              screenOptions={{
+                headerShown: Platform.OS === "web" ? false : true,
+                contentStyle: {
+                  backgroundColor: "#000000",
+                },
+              }}
+            >
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="admin" options={{ headerShown: false }} />
+              <Stack.Screen name="(user)" options={{ headerShown: false }} />
+            </Stack>
+          </QueryProvider>
         </StripePlatformProvider>
+        {/* </Provider> */}
       </TamaguiProvider>
     </ThemeProvider>
   );

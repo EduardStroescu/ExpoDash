@@ -8,7 +8,7 @@ export type ButtonProps = {
 } & React.ComponentPropsWithoutRef<typeof Pressable>;
 
 const Button = forwardRef<View | null, ButtonProps>(
-  ({ text, ...pressableProps }, ref) => {
+  ({ text, children, ...pressableProps }, ref) => {
     return (
       <Pressable
         ref={ref}
@@ -34,7 +34,7 @@ const Button = forwardRef<View | null, ButtonProps>(
         }
         style={pressableProps.style && pressableProps.style}
       >
-        {text}
+        {text ? text : children}
       </Pressable>
     );
   },

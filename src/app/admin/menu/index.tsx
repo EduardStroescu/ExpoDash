@@ -39,8 +39,9 @@ export default function Menu() {
 
   return (
     <Theme name={colorScheme}>
+      {Platform.OS === "web" && <Header />}
+
       <View {...styles.container}>
-        {Platform.OS === "web" && <Header />}
         <AnimatedFlatList
           {...styles.contentContainerStyle}
           data={products}

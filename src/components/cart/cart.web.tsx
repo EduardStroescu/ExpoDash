@@ -23,7 +23,7 @@ import {
 } from "@/lib/stripe/stripe.web";
 import Header from "../webOnlyComponents/Header";
 import { ScrollView, Text, Theme, View } from "tamagui";
-import { InlineGradient } from "./InlineGradient";
+import { InlineGradient } from "../InlineGradient";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);
@@ -120,8 +120,6 @@ function CheckoutForm({
 
   const stripe = useStripe();
   const elements = useElements();
-
-  const colorScheme = useColorScheme();
 
   const checkout = async (event: { preventDefault: () => void }) => {
     event.preventDefault();

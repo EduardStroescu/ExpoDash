@@ -12,6 +12,7 @@ export const headerIcons = {
   cart: "cart",
 };
 
+// Header must be used inside a Theme from Tamagui to preserve the colorScheme
 export default function Header({ slug }: { slug?: number }) {
   const { isAdmin } = useSelector((state: RootState) => state.auth);
   const colorScheme = useColorScheme();
@@ -19,7 +20,7 @@ export default function Header({ slug }: { slug?: number }) {
   const theme = useTheme();
 
   const shouldDisplayHeaderAction =
-    (segments[0] === "(admin)" && segments[1] === "menu") ||
+    (segments[0] === "admin" && segments[1] === "menu") ||
     segments[1] === "[id]";
   const headerTitle =
     (segments[1] &&
@@ -31,64 +32,62 @@ export default function Header({ slug }: { slug?: number }) {
     isAdmin && (segments[2] === "list" || segments[3] === "archive");
 
   return (
-    <Theme name={colorScheme}>
-      <View {...styles.container} borderBlockColor="$color">
-        <XStack alignItems="center" gap="$3">
-          <FontAwesome
-            name={
-              headerIcons[
-                headerTitle?.toLowerCase() as keyof typeof headerIcons
-              ]
-            }
-            size={20}
-            color={theme.red10.val}
-            style={{ transform: [{ translateY: 1 }] }}
-          />
-          <Text {...styles.text} fontWeight="bold">
-            {headerTitle}
-          </Text>
-        </XStack>
-        {shouldDisplayHeaderAction && (
-          <Link
-            href={
-              slug ? `/(admin)/menu/create?id=${slug}` : "/(admin)/menu/create"
-            }
-            asChild
-          >
-            <Pressable>
-              {({ pressed }) => (
-                <XStack
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="center"
-                  gap="$3"
+    <View
+      {...styles.container}
+      backgroundColor="$background"
+      borderBlockColor="$color"
+    >
+      <XStack alignItems="center" gap="$3">
+        <FontAwesome
+          name={
+            headerIcons[headerTitle?.toLowerCase() as keyof typeof headerIcons]
+          }
+          size={20}
+          color={theme.red10.val}
+          style={{ transform: [{ translateY: 1 }] }}
+        />
+        <Text {...styles.text} fontWeight="bold">
+          {headerTitle}
+        </Text>
+      </XStack>
+      {shouldDisplayHeaderAction && (
+        <Link
+          href={slug ? `/admin/menu/create?id=${slug}` : "/admin/menu/create"}
+          asChild
+        >
+          <Pressable>
+            {({ pressed }) => (
+              <XStack
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="center"
+                gap="$3"
+              >
+                <FontAwesome
+                  name={!slug ? "plus" : "pencil"}
+                  size={25}
+                  color={theme.blue10.val}
+                  style={{
+                    opacity: pressed ? 0.5 : 1,
+                    transform: [{ translateY: 1 }],
+                  }}
+                />
+                <Text
+                  {...styles.text}
+                  color="$blue10"
+                  opacity={pressed ? 0.5 : 1}
                 >
-                  <FontAwesome
-                    name={!slug ? "plus" : "pencil"}
-                    size={25}
-                    color={theme.blue10.val}
-                    style={{
-                      opacity: pressed ? 0.5 : 1,
-                      transform: [{ translateY: 1 }],
-                    }}
-                  />
-                  <Text
-                    {...styles.text}
-                    color="$blue10"
-                    opacity={pressed ? 0.5 : 1}
-                  >
-                    {!slug ? "Create" : "Edit"}
-                  </Text>
-                </XStack>
-              )}
-            </Pressable>
-          </Link>
-        )}
-        {shouldDisplayViewSwitch && (
-          <ViewSwitcher colorScheme={colorScheme} segments={segments} />
-        )}
-      </View>
-    </Theme>
+                  {!slug ? "Create" : "Edit"}
+                </Text>
+              </XStack>
+            )}
+          </Pressable>
+        </Link>
+      )}
+      {shouldDisplayViewSwitch && (
+        <ViewSwitcher colorScheme={colorScheme} segments={segments} />
+      )}
+    </View>
   );
 }
 
@@ -103,7 +102,7 @@ function ViewSwitcher({
 
   return (
     <View {...styles.displayViewSwitch}>
-      <Link href="/(admin)/orders/list" asChild>
+      <Link href="/admin/orders/list" asChild>
         <Pressable>
           <Text {...styles.switcherText} color={isActive ? "$red10" : "$color"}>
             Active
@@ -112,7 +111,7 @@ function ViewSwitcher({
       </Link>
       <Separator alignSelf="stretch" vertical borderColor="$blue10" />
 
-      <Link href="/(admin)/orders/list/archive" asChild>
+      <Link href="/admin/orders/list/archive" asChild>
         <Pressable>
           <Text
             {...styles.switcherText}

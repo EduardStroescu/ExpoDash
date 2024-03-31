@@ -3,22 +3,22 @@ import LogoutButton from "@/components/logoutButton/LogoutButton";
 import Header from "@/components/webOnlyComponents/Header";
 import { useColorScheme, Platform } from "react-native";
 import { Avatar, Card, ScrollView, Text, Theme, XStack, YStack } from "tamagui";
+import * as ImagePicker from "expo-image-picker";
 import {
   useUpdateProfileAvatar,
   useUpdateProfileDetails,
 } from "../api/profiles";
-import { useEffect, useState } from "react";
 import {
   uploadUserAvatarMobile,
   uploadUserAvatarWeb,
 } from "@/lib/helpers/uploadImage";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/supabase";
-import * as ImagePicker from "expo-image-picker";
 import Input from "@/components/Input";
+import { defaultPizzaImage } from "@assets/data/products";
 import { UpdateTables } from "@/lib/types";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
-import { defaultPizzaImage } from "@assets/data/products";
 
 export default function ProfileScreen() {
   const [profileAvatar, setProfileAvatar] = useState("");
@@ -93,7 +93,7 @@ export default function ProfileScreen() {
               <Text borderRadius="$10">
                 {user?.username || user?.email?.split("@")[0]}
               </Text>
-              <XStack gap="$2" flexWrap="noWrap" justifyContent="center">
+              <XStack gap="$2" flexWrap="wrap" justifyContent="center">
                 {Platform.OS !== "web" ? (
                   <Button
                     {...styles.smallButton}
@@ -229,7 +229,7 @@ const styles: StyleProps = {
     padding: 10,
     $gtMd: { width: "30%" },
     gap: "$2",
-    backgroundColor: "#0c1033b2",
+    backgroundColor: "#0c103385",
     borderRadius: 20,
   },
   card: {

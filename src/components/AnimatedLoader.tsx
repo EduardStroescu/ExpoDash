@@ -17,6 +17,7 @@ export default function AnimatedLoader({
     <Animated.View style={styles.container} exiting={FadeOut.duration(1000)}>
       <LottieView
         autoPlay
+        loop
         style={{
           width: "100%",
           height: "100%",

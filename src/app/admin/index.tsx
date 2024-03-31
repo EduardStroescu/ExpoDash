@@ -4,6 +4,6 @@ import { useEffect } from "react";
 export default function TabIndex() {
   const router = useRouter();
   useEffect(() => {
-    router.replace("/(admin)/menu/");
+    router.replace("/admin/menu/");
   }, []);
 }
