@@ -25,7 +25,7 @@ export default function TabLayout() {
     return <AnimatedLoader overwriteState={true} />;
   }
 
-  if (!session) {
+  if (!loading && !session) {
     return <Redirect href={"/"} />;
   }
 

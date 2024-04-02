@@ -27,7 +27,7 @@ export function LogInAsDemoAccount({
       password:
         accountType === "admin"
           ? process.env.EXPO_PUBLIC_ADMIN_DEMO_ACCOUNT_PASS!
-          : process.env.EXPO_PUBLIC_USER_DEMO_ACCOUNT_ID_PASS!,
+          : process.env.EXPO_PUBLIC_USER_DEMO_ACCOUNT_PASS!,
     });
 
     if (error) {

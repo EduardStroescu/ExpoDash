@@ -1,10 +1,10 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import { PieChart } from "react-native-gifted-charts";
-import Colors from "@/lib/constants/Colors";
 import { useOrderStatistics } from "@/app/api/orders";
 import { useRealtimeAdminOrderStatistics } from "@/lib/hooks/useSupabaseRealtime";
-import { Separator } from "tamagui";
+import { Separator, View } from "tamagui";
+import { Text } from "tamagui";
 
 const DOT_COLORS = ["#009FFF", "#cf80f3"];
 const DOT_GRADIENT_COLORS = ["#023577", "#380152"];
@@ -47,32 +47,25 @@ export function Stats() {
 
   return (
     <View
-      style={{
-        // flex: 1,
-        padding: 16,
-        borderRadius: 20,
-        backgroundColor: "#232b5d85",
-      }}
+    padding={20}
+        borderRadius={20}
+        backgroundColor="#232b5d85"
     >
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+      <View flexDirection="row" justifyContent="space-between" >
+        <Text color="white" fontSize={16} fontWeight="bold">
           Overview
         </Text>
-        <View style={{ flexDirection: "row", gap: 10 }}>
+        <View flexDirection="row" gap={10} >
           {DisplayableStatDates.map((date, idx) => {
             return (
-              <View key={idx} style={{ flexDirection: "row", gap: 10 }}>
+              <View key={idx} flexDirection="row" gap={10} alignItems="center">
                 <Pressable onPress={() => setSelectedTimePeriod(date)}>
                   <Text
-                    style={[
-                      styles.text,
-                      {
-                        color:
-                          date === selectedTimePeriod
-                            ? "red"
-                            : Colors.light.tint,
-                      },
-                    ]}
+                  fontSize={14}
+                  fontWeight="bold"
+                  color={date === selectedTimePeriod
+                    ? "red"
+                    : "$blue10"}
                   >
                     {date}
                   </Text>
@@ -89,7 +82,7 @@ export function Stats() {
           })}
         </View>
       </View>
-      <View style={{ padding: 20, alignItems: "center" }}>
+      <View padding={30} alignItems="center" >
         <PieChart
           data={getPieData()}
           donut
@@ -100,13 +93,13 @@ export function Stats() {
           innerCircleColor={"#232B5D"}
           centerLabelComponent={() => {
             return (
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <View justifyContent="center" alignItems="center" >
                 <Text
-                  style={{ fontSize: 32, color: "white", fontWeight: "bold" }}
+                fontSize={32} color="white" fontWeight="bold"
                 >
                   {displayedStats[1]}
                 </Text>
-                <Text style={{ fontSize: 14, color: "white" }}>
+                <Text fontSize={14} color="white" >
                   / {selectedTimePeriod}
                 </Text>
               </View>
@@ -114,55 +107,44 @@ export function Stats() {
           }}
         />
       </View>
-      {RenderLegendComponent(selectedTimePeriod, displayedStats)}
+      {RenderLegendComponent(displayedStats)}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  text: { fontWeight: "bold" },
-});
-
 function RenderDot(color: string) {
   return (
     <View
-      style={{
-        height: 10,
-        width: 10,
-        borderRadius: 5,
-        backgroundColor: color,
-        marginRight: 10,
-      }}
+    height={10}
+        width={10}
+        borderRadius={5}
+        backgroundColor={color}
+        marginRight={10}
     />
   );
 }
 
 function RenderLegendComponent(
-  selectedTimePeriod: string,
   displayedStats: number[],
 ) {
   return (
     <>
       <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          marginBottom: 10,
-          gap: 40,
-        }}
+      flexDirection="row"
+      justifyContent="center"
+      marginBottom={10}
+      gap={40}
       >
         <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-          }}
+        flexDirection="row"
+        alignItems="center"
         >
           {RenderDot(DOT_COLORS[0])}
-          <Text style={{ color: "white" }}>New: {displayedStats[0]}</Text>
+          <Text color="white" >New: {displayedStats[0]}</Text>
         </View>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View flexDirection="row" alignItems="center" >
           {RenderDot(DOT_COLORS[1])}
-          <Text style={{ color: "white" }}>Delivered: {displayedStats[1]}</Text>
+          <Text color="white">Delivered: {displayedStats[1]}</Text>
         </View>
       </View>
     </>

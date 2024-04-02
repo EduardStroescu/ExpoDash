@@ -2,18 +2,13 @@ import { useEffect } from "react";
 import { supabase } from "../supabase/supabase";
 import { useDispatch } from "react-redux";
 import { setLoading, setProfile, setSession } from "../features/authSlice";
+import { Session } from "@supabase/supabase-js";
 
 export const useSession = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchSession = async () => {
-      dispatch(setLoading(true));
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      dispatch(setSession(session));
-
+    const updateProfile = async (session: Session | null) => {
       if (session) {
         const { data } = await supabase
           .from("profiles")
@@ -25,9 +20,18 @@ export const useSession = () => {
       dispatch(setLoading(false));
     };
 
+    const fetchSession = async () => {
+      dispatch(setLoading(true));
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      dispatch(setSession(session))
+    };
+
     fetchSession();
     supabase.auth.onAuthStateChange((_event, session) => {
       dispatch(setSession(session));
+      updateProfile(session)
     });
   }, []);
 };

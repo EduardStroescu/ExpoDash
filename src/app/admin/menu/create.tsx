@@ -159,7 +159,8 @@ export default function CreateProductScreen() {
           shouldDirty: true,
         });
       }
-    } else if (!e.target.files?.length) return;
+    } else { 
+    if (!e.target.files?.length) return;
     const fileReader = new FileReader();
     const file = e.target.files[0];
     fileReader.readAsDataURL(file);
@@ -171,7 +172,7 @@ export default function CreateProductScreen() {
           shouldValidate: true,
           shouldDirty: true,
         });
-      }
+      }}
     };
   };
 
@@ -354,6 +355,7 @@ const styles = {
     aspectRatio: 1,
     alignSelf: "center",
     objectFit: "cover",
+    algnSelf: "center"
   },
   textButton: {
     color: "$blue10",

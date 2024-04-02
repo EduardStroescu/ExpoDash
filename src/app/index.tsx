@@ -24,7 +24,7 @@ export default function Page() {
   const colorScheme = useColorScheme();
   const theme = useTheme();
   const pathname = usePathname();
-  const { session, loading, isAdmin } = useSelector(
+  const { session, profile, loading, isAdmin } = useSelector(
     (state: RootState) => state.auth,
   );
 
@@ -36,7 +36,7 @@ export default function Page() {
     return <Redirect href="/sign-in" />;
   }
 
-  if (!isAdmin) {
+  if (session && profile && !isAdmin) {
     return <Redirect href="/(user)" />;
   }
 
@@ -104,8 +104,7 @@ const styles: StyleTypes = {
   container: {
     gap: "$4",
     width: "100%",
-    // height: "100%",
-    $gtMd: { width: "30%" },
+    $gtMd: { width: "40%", maxWidth: 600 },
     padding: 10,
   },
   subtitle: {

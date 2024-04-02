@@ -27,6 +27,8 @@ export const authSlice = createSlice({
       state.profile = action.payload;
       if (action.payload && action.payload?.group === "ADMIN") {
         state.isAdmin = true;
+      } else {
+        state.isAdmin = false;
       }
     },
     setLoading: (state, action) => {
