@@ -1,4 +1,9 @@
-import { Alert, useColorScheme, Platform } from "react-native";
+import {
+  Alert,
+  useColorScheme,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
 import { useState } from "react";
 import Button from "@/components/Button";
 import { Link, router } from "expo-router";
@@ -7,7 +12,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Meta from "@/components/Meta";
-import { Form, ScrollView, Text, Theme } from "tamagui";
+import { Form, GetProps, ScrollView, Text, Theme } from "tamagui";
 import Input, { InputProps } from "@/components/Input";
 import { LogInAsDemoAccount } from "@/components/LogInAsDemoAccount";
 
@@ -61,103 +66,119 @@ export default function SignInPage() {
     <Theme name={colorScheme}>
       {Platform.OS === "web" && <Meta />}
 
-      <ScrollView {...styles.container}>
-        <Form {...styles.form}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView {...styles.container}>
           <Text {...styles.title}>Sign In</Text>
-          <Text {...styles.label}>Email</Text>
-          <Controller
-            control={control}
-            rules={{
-              required: "E-Mail is required",
-            }}
-            name="email"
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="johnDoe@gmail.com"
-                placeholderTextColor="grey"
-                clearButtonMode="while-editing"
-                autoCorrect={false}
-                returnKeyType="done"
-              />
+          <Form {...styles.form} id="box-shadow">
+            <Text {...styles.label}>Email</Text>
+            <Controller
+              control={control}
+              rules={{
+                required: "E-Mail is required",
+              }}
+              name="email"
+              render={({ field: { value, onChange, onBlur } }) => (
+                <Input
+                  {...styles.input}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="johnDoe@gmail.com"
+                  placeholderTextColor="grey"
+                  clearButtonMode="while-editing"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                />
+              )}
+            />
+            {errors.email && (
+              <Text {...styles.errorMessage}>{errors.email.message}</Text>
             )}
-          />
-          {errors.email && (
-            <Text {...styles.errorMessage}>{errors.email.message}</Text>
-          )}
 
-          <Text {...styles.label}>Password</Text>
-          <Controller
-            control={control}
-            rules={{
-              required: "Password is required",
-            }}
-            name="password"
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder=""
-                clearButtonMode="while-editing"
-                textContentType="password"
-                secureTextEntry
-                autoCorrect={false}
-                returnKeyType="done"
-              />
+            <Text {...styles.label}>Password</Text>
+            <Controller
+              control={control}
+              rules={{
+                required: "Password is required",
+              }}
+              name="password"
+              render={({ field: { value, onChange, onBlur } }) => (
+                <Input
+                  {...styles.input}
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder=""
+                  clearButtonMode="while-editing"
+                  textContentType="password"
+                  secureTextEntry
+                  autoCorrect={false}
+                  returnKeyType="done"
+                />
+              )}
+            />
+            {errors.password && (
+              <Text {...styles.errorMessage}>{errors.password.message}</Text>
             )}
-          />
-          {errors.password && (
-            <Text {...styles.errorMessage}>{errors.password.message}</Text>
-          )}
 
-          <Button
-            text={loading ? "Signing in..." : "Sign In"}
-            disabled={loading}
-            onPress={handleSubmit(onSubmit)}
-          />
-          <Link asChild href="/sign-up">
-            <Text {...styles.link}>Create an Account</Text>
-          </Link>
-          <LogInAsDemoAccount loading={loading} setLoading={setLoading} />
-        </Form>
-      </ScrollView>
+            <Button
+              text={loading ? "Signing in..." : "Sign In"}
+              disabled={loading}
+              onPress={handleSubmit(onSubmit)}
+            />
+            <Link asChild href="/sign-up">
+              <Text {...styles.link}>Create an Account</Text>
+            </Link>
+            <LogInAsDemoAccount loading={loading} setLoading={setLoading} />
+          </Form>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Theme>
   );
 }
 
 interface StyleProps {
-  container: React.ComponentPropsWithoutRef<typeof ScrollView>;
-  form: React.ComponentPropsWithoutRef<typeof Form>;
-  title: React.ComponentPropsWithoutRef<typeof Text>;
-  label: React.ComponentPropsWithoutRef<typeof Text>;
+  container: GetProps<typeof ScrollView>;
+  form: GetProps<typeof Form>;
+  title: GetProps<typeof Text>;
+  label: GetProps<typeof Text>;
   input: InputProps;
-  link: React.ComponentPropsWithoutRef<typeof Text>;
-  errorMessage: React.ComponentPropsWithoutRef<typeof Text>;
+  link: GetProps<typeof Text>;
+  errorMessage: GetProps<typeof Text>;
 }
 
 const styles: StyleProps = {
   container: {
     width: "100%",
-    height: "100%",
+    minHeight: "100%",
     backgroundColor: "$background",
-    contentContainerStyle: { justifyContent: "center" },
+    contentContainerStyle: { justifyContent: "center", height: "90%" },
   },
   form: {
-    padding: 20,
+    paddingHorizontal: 20,
     alignSelf: "center",
     width: "100%",
-    $gtMd: { width: "30%" },
+    $gtMd: {
+      width: "30%",
+      paddingVertical: 20,
+      borderRadius: 20,
+      borderStyle: "double",
+      borderWidth: 4,
+      borderColor: "#7007acff",
+      position: "relative",
+      zIndex: -1,
+      backgroundColor: "#0c1033b2",
+    },
   },
   title: {
     fontSize: 60,
     alignSelf: "center",
-    marginVertical: 40,
     color: "$blue10",
+    marginBottom: 20,
+    $gtMd: { marginVertical: 40 },
   },
   label: { fontSize: 16, color: "$color10" },
   input: {

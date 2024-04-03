@@ -1,8 +1,17 @@
 import Button from "@/components/Button";
 import LogoutButton from "@/components/logoutButton/LogoutButton";
 import Header from "@/components/webOnlyComponents/Header";
-import { useColorScheme, Platform } from "react-native";
-import { Avatar, Card, ScrollView, Text, Theme, XStack, YStack } from "tamagui";
+import { useColorScheme, Platform, KeyboardAvoidingView } from "react-native";
+import {
+  Avatar,
+  Card,
+  GetProps,
+  ScrollView,
+  Text,
+  Theme,
+  XStack,
+  YStack,
+} from "tamagui";
 import * as ImagePicker from "expo-image-picker";
 import {
   useUpdateProfileAvatar,
@@ -19,6 +28,7 @@ import { defaultPizzaImage } from "@assets/data/products";
 import { UpdateTables } from "@/lib/types";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
+import SvgBackground from "@/components/svgBackground/SvgBackground";
 
 export default function ProfileScreen() {
   const [profileAvatar, setProfileAvatar] = useState("");
@@ -75,42 +85,49 @@ export default function ProfileScreen() {
   return (
     <Theme name={colorScheme}>
       {Platform.OS === "web" && <Header />}
+      <SvgBackground />
 
-      <ScrollView {...styles.page}>
-        <YStack {...styles.container}>
-          <Card {...styles.card}>
-            <Avatar circular size="$15" elevate elevation="$1">
-              <Avatar.Image src={profileAvatar || defaultPizzaImage} />
-              <Avatar.Fallback bc="#0c103385" />
-            </Avatar>
-            <Card.Footer flexDirection="column" alignItems="center" gap="$4">
-              <Text borderRadius="$10">
-                {user?.username || user?.email?.split("@")[0]}
-              </Text>
-              <XStack gap="$2" flexWrap="wrap" justifyContent="center">
-                {Platform.OS !== "web" ? (
-                  <Button
-                    {...styles.smallButton}
-                    text="Change Avatar"
-                    onPress={pickImage}
-                  />
-                ) : (
-                  <Button
-                    {...styles.smallButton}
-                    position="relative"
-                    overflow="hidden"
-                  >
-                    Change Avatar
-                    <input type="file" onChange={pickImage} />
-                  </Button>
-                )}
-                <LogoutButton {...styles.smallButton} />
-              </XStack>
-            </Card.Footer>
-          </Card>
-          <ChangeProfileDetailsForm user={user} />
-        </YStack>
-      </ScrollView>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={65}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView {...styles.page}>
+          <YStack {...styles.container}>
+            <Card {...styles.card}>
+              <Avatar circular size="$15" elevate elevation="$1">
+                <Avatar.Image src={profileAvatar || defaultPizzaImage} />
+                <Avatar.Fallback bc="#0c103385" />
+              </Avatar>
+              <Card.Footer flexDirection="column" alignItems="center" gap="$4">
+                <Text borderRadius="$10">
+                  {user?.username || user?.email?.split("@")[0]}
+                </Text>
+                <XStack gap="$2" flexWrap="wrap" justifyContent="center">
+                  {Platform.OS !== "web" ? (
+                    <Button
+                      {...styles.smallButton}
+                      text="Change Avatar"
+                      onPress={pickImage}
+                    />
+                  ) : (
+                    <Button
+                      {...styles.smallButton}
+                      position="relative"
+                      overflow="hidden"
+                    >
+                      Change Avatar
+                      <input type="file" onChange={pickImage} />
+                    </Button>
+                  )}
+                  <LogoutButton {...styles.smallButton} />
+                </XStack>
+              </Card.Footer>
+            </Card>
+            <ChangeProfileDetailsForm user={user} />
+          </YStack>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Theme>
   );
 }
@@ -204,24 +221,27 @@ function ChangeProfileDetailsForm({
 }
 
 interface StyleProps {
-  page: React.ComponentPropsWithoutRef<typeof ScrollView>;
-  container: React.ComponentPropsWithoutRef<typeof YStack>;
-  card: React.ComponentPropsWithoutRef<typeof Card>;
-  smallButton: React.ComponentPropsWithoutRef<typeof Button>;
+  page: GetProps<typeof ScrollView>;
+  container: GetProps<typeof YStack>;
+  card: GetProps<typeof Card>;
+  smallButton: GetProps<typeof Button>;
 }
 
 const styles: StyleProps = {
   page: {
     width: "100%",
     height: "100%",
-    backgroundColor: "$background",
     contentContainerStyle: { alignItems: "center" },
   },
   container: {
     width: "95%",
     margin: 10,
     padding: 10,
-    $gtMd: { width: "30%" },
+    $gtSm: {
+      width: "40%",
+      minWidth: 700,
+      maxWidth: 1000,
+    },
     gap: "$2",
     backgroundColor: "#0c103385",
     borderRadius: 20,

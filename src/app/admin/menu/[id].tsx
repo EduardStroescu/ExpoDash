@@ -9,7 +9,7 @@ import Header from "@/components/webOnlyComponents/Header";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import { useEffect } from "react";
-import { ScrollView, Text, Theme, YStack } from "tamagui";
+import { GetProps, ScrollView, Text, Theme, YStack } from "tamagui";
 
 export default function ProductDetailsScreen() {
   const { id: idString } = useLocalSearchParams<{ id: string }>();
@@ -56,17 +56,33 @@ export default function ProductDetailsScreen() {
       {Platform.OS === "web" && <Header slug={id} />}
 
       <ScrollView {...styles.container}>
-        <YStack $gtMd={{ width: "40%", alignSelf: "center" }}>
+        <YStack
+          $gtXs={{
+            width: "60%",
+            alignSelf: "center",
+            justifyContent: "center",
+          }}
+          $gtMd={{
+            width: "50%",
+            alignSelf: "center",
+            justifyContent: "center",
+          }}
+        >
           <RemoteImage
             path={product?.image}
             fallback={defaultPizzaImage}
-            style={{
-              width: 400,
-              height: 400,
+            width="100%"
+            aspectRatio={1}
+            alignSelf="center"
+            resizeMode="cover"
+            placeholderStyle={{
+              width: 500,
+              height: 500,
               aspectRatio: 1,
               alignSelf: "center",
             }}
-            resizeMode="contain"
+            $gtXs={{ width: "100%", height: "auto" }}
+            $gtLg={{ width: "50%", height: "auto" }}
           />
           <Text {...styles.description}>
             Product Description: {product?.description}
@@ -79,15 +95,14 @@ export default function ProductDetailsScreen() {
 }
 
 interface StyleProps {
-  container: React.PropsWithoutRef<typeof ScrollView>;
-  price: React.PropsWithoutRef<typeof Text>;
-  size: React.PropsWithoutRef<typeof Pressable>;
-  description: React.PropsWithoutRef<typeof Text>;
+  container: GetProps<typeof ScrollView>;
+  price: GetProps<typeof Text>;
+  description: GetProps<typeof Text>;
 }
 
 const styles: StyleProps = {
   container: {
-    flex: 1,
+    width: "100%",
     padding: 10,
     backgroundColor: "$background",
   },

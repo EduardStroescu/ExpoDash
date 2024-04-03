@@ -13,7 +13,7 @@ const DisplayableStatDates = ["Day", "Week", "Month", "Year"];
 export function Stats() {
   useRealtimeAdminOrderStatistics();
   const [selectedTimePeriod, setSelectedTimePeriod] = useState("Day");
-  const [displayedStats, setDisplayedStats] = useState<number[]>([]);
+  const [displayedStats, setDisplayedStats] = useState<number[]>([0, 0]);
 
   const { data: stats, error } = useOrderStatistics();
 
@@ -29,43 +29,34 @@ export function Stats() {
 
   const getPieData = () => [
     {
-      value: displayedStats[0],
+      value: displayedStats[0] || 0,
       color: DOT_COLORS[0],
       gradientCenterColor: DOT_GRADIENT_COLORS[0],
       focused: true,
     },
     {
-      value: displayedStats[1],
+      value: displayedStats[1] || 1,
       color: DOT_COLORS[1],
       gradientCenterColor: DOT_GRADIENT_COLORS[1],
     },
   ];
 
-  if (error) {
-    return null;
-  }
-
   return (
-    <View
-    padding={20}
-        borderRadius={20}
-        backgroundColor="#232b5d85"
-    >
-      <View flexDirection="row" justifyContent="space-between" >
+    <View padding={20} borderRadius={20} backgroundColor="#232b5d85">
+      <View flexDirection="row" justifyContent="space-between">
         <Text color="white" fontSize={16} fontWeight="bold">
           Overview
         </Text>
-        <View flexDirection="row" gap={10} >
+        <View flexDirection="row" gap={10}>
           {DisplayableStatDates.map((date, idx) => {
             return (
               <View key={idx} flexDirection="row" gap={10} alignItems="center">
                 <Pressable onPress={() => setSelectedTimePeriod(date)}>
                   <Text
-                  fontSize={14}
-                  fontWeight="bold"
-                  color={date === selectedTimePeriod
-                    ? "red"
-                    : "$blue10"}
+                    fontSize={12}
+                    fontWeight="bold"
+                    color={date === selectedTimePeriod ? "red" : "$blue10"}
+                    $gtMd={{ fontSize: 14 }}
                   >
                     {date}
                   </Text>
@@ -82,7 +73,7 @@ export function Stats() {
           })}
         </View>
       </View>
-      <View padding={30} alignItems="center" >
+      <View padding={30} alignItems="center">
         <PieChart
           data={getPieData()}
           donut
@@ -93,13 +84,11 @@ export function Stats() {
           innerCircleColor={"#232B5D"}
           centerLabelComponent={() => {
             return (
-              <View justifyContent="center" alignItems="center" >
-                <Text
-                fontSize={32} color="white" fontWeight="bold"
-                >
+              <View justifyContent="center" alignItems="center">
+                <Text fontSize={32} color="white" fontWeight="bold">
                   {displayedStats[1]}
                 </Text>
-                <Text fontSize={14} color="white" >
+                <Text fontSize={14} color="white">
                   / {selectedTimePeriod}
                 </Text>
               </View>
@@ -115,34 +104,29 @@ export function Stats() {
 function RenderDot(color: string) {
   return (
     <View
-    height={10}
-        width={10}
-        borderRadius={5}
-        backgroundColor={color}
-        marginRight={10}
+      height={10}
+      width={10}
+      borderRadius={5}
+      backgroundColor={color}
+      marginRight={10}
     />
   );
 }
 
-function RenderLegendComponent(
-  displayedStats: number[],
-) {
+function RenderLegendComponent(displayedStats: number[]) {
   return (
     <>
       <View
-      flexDirection="row"
-      justifyContent="center"
-      marginBottom={10}
-      gap={40}
-      >
-        <View
         flexDirection="row"
-        alignItems="center"
-        >
+        justifyContent="center"
+        marginBottom={10}
+        gap={40}
+      >
+        <View flexDirection="row" alignItems="center">
           {RenderDot(DOT_COLORS[0])}
-          <Text color="white" >New: {displayedStats[0]}</Text>
+          <Text color="white">New: {displayedStats[0]}</Text>
         </View>
-        <View flexDirection="row" alignItems="center" >
+        <View flexDirection="row" alignItems="center">
           {RenderDot(DOT_COLORS[1])}
           <Text color="white">Delivered: {displayedStats[1]}</Text>
         </View>

@@ -59,6 +59,6 @@ const renderHeaderRight = (pathname: string, colorScheme: ColorSchemeName) => {
       </Link>
     );
   } else {
-    return <View></View>;
+    return <View />;
   }
 };

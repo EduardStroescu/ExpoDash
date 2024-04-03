@@ -5,7 +5,7 @@ import { router, useSegments } from "expo-router";
 import RemoteImage from "./RemoteImage";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
 import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
-import { XStack, YStack, useWindowDimensions } from "tamagui";
+import { GetProps, XStack, YStack, useWindowDimensions } from "tamagui";
 import { Text } from "tamagui";
 import React, { useState } from "react";
 import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
@@ -70,7 +70,7 @@ export default function ProductListItem({
         <RemoteImage
           path={product.image}
           fallback={defaultPizzaImage}
-          style={{
+          placeholderStyle={{
             height: width <= 600 ? 110 : 300,
             width: "100%",
             borderRadius: 20,
@@ -96,14 +96,14 @@ export default function ProductListItem({
 }
 
 interface StyleProps {
-  primaryContainer: React.PropsWithoutRef<typeof YStack>;
-  secondaryContainer: React.PropsWithoutRef<typeof XStack>;
-  title: React.PropsWithoutRef<typeof Text>;
-  productDescription: React.PropsWithoutRef<typeof Text>;
-  price: React.PropsWithoutRef<typeof Text>;
+  primaryContainer: GetProps<typeof YStack>;
+  secondaryContainer: GetProps<typeof XStack>;
+  title: GetProps<typeof Text>;
+  productDescription: GetProps<typeof Text>;
+  price: GetProps<typeof Text>;
 }
 
-const styles = {
+const styles: StyleProps = {
   primaryContainer: {
     width: "100%",
     padding: 10,
@@ -115,7 +115,7 @@ const styles = {
   },
   title: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "bold",
     marginVertical: 10,
     color: "$color",
   },

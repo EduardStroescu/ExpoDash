@@ -8,19 +8,19 @@ import { StatusBar } from "expo-status-bar";
 import { Stats } from "@/components/stats/Stats";
 import SvgBackground from "@/components/svgBackground/SvgBackground";
 import AnimatedLoader from "@/components/AnimatedLoader";
+import { InlineGradient } from "@/components/InlineGradient";
 import {
+  GetProps,
+  ScrollView,
   Text,
   Theme,
   View,
   XStack,
   YStack,
   useTheme,
-  useWindowDimensions,
 } from "tamagui";
-import { InlineGradient } from "@/components/InlineGradient";
 
 export default function Page() {
-  const { width } = useWindowDimensions();
   const colorScheme = useColorScheme();
   const theme = useTheme();
   const pathname = usePathname();
@@ -45,11 +45,11 @@ export default function Page() {
       {pathname === "/" && (
         <StatusBar animated style={Platform.OS === "ios" ? "light" : "auto"} />
       )}
+      <SvgBackground />
 
-      <View {...styles.page}>
-        {width <= 660 && <SvgBackground />}
-        <YStack {...styles.container}>
-          {session && <Stats />}
+      <ScrollView {...styles.page}>
+        <YStack {...styles.container} id="box-shadow">
+          {session && isAdmin && <Stats />}
           <View
             overflow="hidden"
             style={{ borderRadius: 20 }}
@@ -80,15 +80,15 @@ export default function Page() {
           </XStack>
           <LogoutButton />
         </YStack>
-      </View>
+      </ScrollView>
     </Theme>
   );
 }
 interface StyleTypes {
-  page: React.ComponentPropsWithoutRef<typeof View>;
-  container: React.ComponentPropsWithoutRef<typeof YStack>;
-  subtitle: React.ComponentPropsWithoutRef<typeof Text>;
-  buttonContainer: React.ComponentPropsWithoutRef<typeof XStack>;
+  page: GetProps<typeof ScrollView>;
+  container: GetProps<typeof YStack>;
+  subtitle: GetProps<typeof Text>;
+  buttonContainer: GetProps<typeof XStack>;
   button: ButtonProps;
 }
 
@@ -97,15 +97,28 @@ const styles: StyleTypes = {
     position: "relative",
     width: "100%",
     height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: "$1",
+    paddingTop: Platform.OS === "web" ? 60 : 0,
+    $gtXs: { paddingTop: 0 },
+    contentContainerStyle: {
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   },
   container: {
     gap: "$4",
     width: "100%",
-    $gtMd: { width: "40%", maxWidth: 600 },
     padding: 10,
+    $gtSm: {
+      width: "40%",
+      minWidth: 700,
+      maxWidth: 1000,
+      backgroundColor: "#0c1033b2",
+      borderRadius: 20,
+      borderStyle: "double", // Only works on web
+      borderWidth: 4,
+      borderColor: "#7007acff",
+    },
   },
   subtitle: {
     color: "$color",

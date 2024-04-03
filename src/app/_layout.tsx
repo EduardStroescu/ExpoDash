@@ -1,4 +1,3 @@
-import "@tamagui/core/reset.css";
 import "./styles.css";
 import { useFonts } from "expo-font";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -69,14 +68,14 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   useSession();
+
   return (
     <ThemeProvider value={colorScheme === "light" ? DefaultTheme : DarkTheme}>
       <TamaguiProvider config={config} defaultTheme="light">
-        {/* <Provider store={store}> */}
-        {Platform.OS === "web" && <Navbar />}
         <StripePlatformProvider>
           <QueryProvider>
             <AnimatedLoader />
+            {Platform.OS === "web" && <Navbar />}
             <Stack
               screenOptions={{
                 headerShown: Platform.OS === "web" ? false : true,
@@ -92,7 +91,6 @@ function RootLayoutNav() {
             </Stack>
           </QueryProvider>
         </StripePlatformProvider>
-        {/* </Provider> */}
       </TamaguiProvider>
     </ThemeProvider>
   );

@@ -47,7 +47,7 @@ const OrderItemListItem = ({
         <RemoteImage
           path={item.products?.image}
           fallback={defaultPizzaImage}
-          style={styles.image}
+          placeholderStyle={styles.image}
           resizeMode="contain"
         />
         <View style={{ flex: 1 }}>

@@ -1,5 +1,3 @@
-import { View } from "react-native";
-import { forwardRef } from "react";
 import { Input as InputField } from "tamagui";
 
 export type InputProps = {

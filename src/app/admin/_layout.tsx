@@ -3,7 +3,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Redirect, Tabs } from "expo-router";
 
 import Colors from "../../lib/constants/Colors";
-import { useColorScheme } from "../../components/useColorScheme/useColorScheme";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
 import { Platform } from "react-native";

@@ -11,11 +11,13 @@ import Animated, {
   Easing,
   StyleProps,
 } from "react-native-reanimated";
+import { useWindowDimensions } from "tamagui";
 
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 
 export default function SvgBackground() {
   const color = useSharedValue(0);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     color.value = withRepeat(
@@ -41,14 +43,15 @@ export default function SvgBackground() {
       style={[styles.svg, colorChange]}
       width="110%"
       height="110%"
-      viewBox="12.1 75 150 150"
+      viewBox={`${width <= 667 ? 13.1 : 200} ${width <= 667 ? 73 : 20} ${width <= 667 ? 200 : 300} ${width <= 667 ? 200 : 300}`}
       stroke="currentColor"
       opacity="0.4"
     >
+      <Path d="M0 0h666.8v448.4H0z" />
       <G>
         <Path
           strokeOpacity={0.25}
-          d="M12 4M24 0v448.4M36 0v448.4M48 0v448.4M60 0v448.4"
+          d="M12 0v448.4M24 0v448.4M36 0v448.4M48 0v448.4M60 0v448.4"
         />
         <Path strokeOpacity={0.25} d="M72 0v448.4" />
         <Path
@@ -56,6 +59,10 @@ export default function SvgBackground() {
           d="M84 0v448.4M96 0v448.4M108 0v448.4M120 0v448.4M132 0v448.4"
         />
         <Path strokeOpacity={0.25} d="M144 0v448.4" />
+        <Path
+          strokeOpacity={0.25}
+          d="M156 0v448.4M168 0v448.4M180 0v448.4M192 0v448.4M204 0v448.4"
+        />
         <Path strokeOpacity={0.25} d="M216 0v448.4" />
         <Path
           strokeOpacity={0.25}
@@ -91,6 +98,7 @@ export default function SvgBackground() {
           strokeOpacity={0.25}
           d="M660 0v448.4M0 12h666.8M0 24h666.8M0 36h666.8M0 48h666.8M0 60h666.8"
         />
+        <Path strokeOpacity={0.25} d="M0 72h666.8" />
         <Path
           strokeOpacity={0.25}
           d="M0 84h666.8M0 96h666.8M0 108h666.8M0 120h666.8M0 132h666.8"
@@ -108,8 +116,15 @@ export default function SvgBackground() {
         <Path strokeOpacity={0.25} d="M0 288h666.8" />
         <Path
           strokeOpacity={0.25}
-          d="M0 300h666.8M0 312h666.8M0 336h666.8M0 348h666.8"
+          d="M0 300h666.8M0 312h666.8M0 324h666.8M0 336h666.8M0 348h666.8"
         />
+        <Path strokeOpacity={0.25} d="M0 360h666.8" />
+        <Path
+          strokeOpacity={0.25}
+          d="M0 372h666.8M0 384h666.8M0 396h666.8M0 408h666.8M0 420h666.8"
+        />
+        <Path strokeOpacity={0.25} d="M0 432h666.8" />
+        <Path strokeOpacity={0.25} d="M0 444h666.8" />
       </G>
     </AnimatedSvg>
   );

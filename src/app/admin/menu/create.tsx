@@ -1,12 +1,25 @@
 import { useEffect } from "react";
-import { Alert, Platform, useColorScheme } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  useColorScheme,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase/supabase";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ScrollView, Image, Text, Theme, View, YStack } from "tamagui";
+import {
+  ScrollView,
+  Image,
+  Text,
+  Theme,
+  View,
+  YStack,
+  GetProps,
+} from "tamagui";
 import {
   uploadProductImageMobile,
   uploadProductImageWeb,
@@ -219,124 +232,132 @@ export default function CreateProductScreen() {
       />
       {Platform.OS === "web" && <Header />}
 
-      <ScrollView width="100%" height="100%" backgroundColor="$background">
-        <YStack {...styles.container}>
-          <View>
-            <Image
-              {...styles.image}
-              source={{
-                width: 200,
-                height: 200,
-                uri: getValues("image") || defaultPizzaImage,
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={65}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView width="100%" height="100%" backgroundColor="$background">
+          <YStack {...styles.container}>
+            <View>
+              <Image
+                {...styles.image}
+                source={{
+                  width: 200,
+                  height: 200,
+                  uri: getValues("image") || defaultPizzaImage,
+                }}
+              />
+            </View>
+            {Platform.OS === "web" ? (
+              <Text {...styles.textButton} position="relative">
+                Select Image
+                <input type="file" onChange={pickImage} />
+              </Text>
+            ) : (
+              <Text {...styles.textButton} onPress={pickImage}>
+                Select Image
+              </Text>
+            )}
+
+            <Text {...styles.label}>Name</Text>
+            <Controller
+              control={control}
+              rules={{
+                required: "Name is required",
               }}
+              name="name"
+              render={({ field: { value, onChange, onBlur } }) => (
+                <Input
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="Name"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                />
+              )}
             />
-          </View>
-          {Platform.OS === "web" ? (
-            <Text {...styles.textButton} position="relative">
-              Select Image
-              <input type="file" onChange={pickImage} />
-            </Text>
-          ) : (
-            <Text {...styles.textButton} onPress={pickImage}>
-              Select Image
-            </Text>
-          )}
-
-          <Text {...styles.label}>Name</Text>
-          <Controller
-            control={control}
-            rules={{
-              required: "Name is required",
-            }}
-            name="name"
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="Name"
-                placeholderTextColor="grey"
-                style={styles.input}
-              />
+            {errors.name && (
+              <Text {...styles.errorMessage}>{errors.name?.message}</Text>
             )}
-          />
-          {errors.name && (
-            <Text {...styles.errorMessage}>{errors.name?.message}</Text>
-          )}
 
-          <Text {...styles.label}>Description</Text>
-          <Controller
-            control={control}
-            rules={{
-              required: "A description is required",
-            }}
-            name="description"
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="Description"
-                placeholderTextColor="grey"
-                style={styles.input}
-              />
+            <Text {...styles.label}>Description</Text>
+            <Controller
+              control={control}
+              rules={{
+                required: "A description is required",
+              }}
+              name="description"
+              render={({ field: { value, onChange, onBlur } }) => (
+                <Input
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="Description"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                />
+              )}
+            />
+            {errors.name && (
+              <Text {...styles.errorMessage}>
+                {errors.description?.message}
+              </Text>
             )}
-          />
-          {errors.name && (
-            <Text {...styles.errorMessage}>{errors.description?.message}</Text>
-          )}
 
-          <Text {...styles.label}>Price</Text>
-          <Controller
-            control={control}
-            rules={{
-              required: "Price is required",
-            }}
-            name="price"
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                placeholder="9.99"
-                placeholderTextColor="grey"
-                style={styles.input}
-                keyboardType="numeric"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
+            <Text {...styles.label}>Price</Text>
+            <Controller
+              control={control}
+              rules={{
+                required: "Price is required",
+              }}
+              name="price"
+              render={({ field: { value, onChange, onBlur } }) => (
+                <Input
+                  placeholder="9.99"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+            {errors.price && (
+              <Text {...styles.errorMessage}>{errors.price?.message}</Text>
             )}
-          />
-          {errors.price && (
-            <Text {...styles.errorMessage}>{errors.price?.message}</Text>
-          )}
 
-          <Button
-            text={isUpdate ? "Update" : "Create"}
-            onPress={handleSubmit(onSubmit)}
-          />
-
-          {isUpdate && (
             <Button
-              backgroundColor="$red7"
-              text="Delete Product"
-              onPress={onDelete}
+              text={isUpdate ? "Update" : "Create"}
+              onPress={handleSubmit(onSubmit)}
             />
-          )}
-        </YStack>
-      </ScrollView>
+
+            {isUpdate && (
+              <Button
+                backgroundColor="$red7"
+                text="Delete Product"
+                onPress={onDelete}
+              />
+            )}
+          </YStack>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Theme>
   );
 }
 
 interface StyleProps {
-  container: React.PropsWithoutRef<typeof YStack>;
-  image: React.PropsWithoutRef<typeof Image>;
-  textButton: React.PropsWithoutRef<typeof Text>;
-  label: React.PropsWithoutRef<typeof Text>;
-  input: React.PropsWithoutRef<typeof Input>;
-  errorMessage: React.PropsWithoutRef<typeof Text>;
+  container: GetProps<typeof YStack>;
+  image: GetProps<typeof Image>;
+  textButton: GetProps<typeof Text>;
+  label: GetProps<typeof Text>;
+  input: GetProps<typeof Input>;
+  errorMessage: GetProps<typeof Text>;
 }
 
-const styles = {
+const styles: StyleProps = {
   container: {
     width: "100%",
     $gtMd: { width: "50%" },

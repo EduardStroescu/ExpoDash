@@ -26,7 +26,7 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
       <RemoteImage
         path={cartItem.product.image}
         fallback={defaultPizzaImage}
-        style={styles.image}
+        placeholderStyle={styles.image}
         resizeMode="contain"
       />
 

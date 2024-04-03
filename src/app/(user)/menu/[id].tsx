@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Stack, router, useLocalSearchParams } from "expo-router";
-import { Platform, useColorScheme } from "react-native";
+import { KeyboardAvoidingView, Platform, useColorScheme } from "react-native";
 import Button from "@/components/Button";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/lib/features/cartSlice";
@@ -19,6 +19,7 @@ import {
   Button as Pressable,
   YStack,
   XStack,
+  GetProps,
 } from "tamagui";
 import Input from "@/components/Input";
 import { FontAwesome } from "@expo/vector-icons";
@@ -78,103 +79,131 @@ export default function ProductDetailsScreen() {
       <Stack.Screen options={{ title: product?.name }} />
       {Platform.OS === "web" && <Header slug={id} />}
 
-      <ScrollView {...styles.container}>
-        <YStack $gtMd={{ width: "30%", alignSelf: "center" }}>
-          <RemoteImage
-            path={product?.image}
-            fallback={defaultPizzaImage}
-            style={{
-              width: 400,
-              height: 400,
-              aspectRatio: 1,
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={65}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView {...styles.container}>
+          <YStack
+            $gtXs={{
+              width: "60%",
               alignSelf: "center",
+              justifyContent: "center",
             }}
-            resizeMode="contain"
-          />
-          <Text {...styles.description}>
-            Product Description: {product?.description}
-          </Text>
-          <View marginTop={20}>
-            <Text {...styles.sizeText}>Select size</Text>
-            <XStack {...styles.sizes}>
-              {sizes.map((size) => {
-                return (
-                  <Pressable
-                    key={size}
-                    {...styles.size}
-                    circular
-                    backgroundColor={
-                      selectedSize === size ? "$blue10" : "$background"
-                    }
-                    onPress={() => setSelectedSize(size)}
-                  >
-                    <Text
-                      {...styles.sizeText}
-                      color={selectedSize === size ? "$color" : "$color10"}
+            $gtMd={{
+              width: "50%",
+              alignSelf: "center",
+              justifyContent: "center",
+            }}
+          >
+            <RemoteImage
+              path={product?.image}
+              fallback={defaultPizzaImage}
+              width="100%"
+              aspectRatio={1}
+              alignSelf="center"
+              resizeMode="cover"
+              placeholderStyle={{
+                width: 500,
+                height: 500,
+                aspectRatio: 1,
+                alignSelf: "center",
+              }}
+              $gtXs={{ width: "100%", height: "auto" }}
+              $gtLg={{ width: "50%", height: "auto" }}
+            />
+            <Text {...styles.description}>
+              Product Description: {product?.description}
+            </Text>
+            <View
+              marginTop={20}
+              justifyContent="center"
+              alignItems="center"
+              width="100%"
+              $gtXs={{ flexDirection: "row", gap: "$5" }}
+            >
+              <Text {...styles.sizeText}>Select size</Text>
+              <XStack {...styles.sizes}>
+                {sizes.map((size) => {
+                  return (
+                    <Pressable
+                      key={size}
+                      {...styles.size}
+                      circular
+                      backgroundColor={
+                        selectedSize === size ? "$blue10" : "$background"
+                      }
+                      onPress={() => setSelectedSize(size)}
                     >
-                      {size}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </XStack>
-            <XStack {...styles.sizes}>
-              <Text {...styles.sizeText}>Select Quantity</Text>
-              <XStack {...styles.quantitySelector}>
-                <FontAwesome
-                  onPress={() =>
-                    setSelectedQuantity((prev) => (prev <= 1 ? 1 : prev - 1))
-                  }
-                  name="minus"
-                  color="gray"
-                  style={{ padding: 5 }}
-                />
-                <Input
-                  width={50}
-                  padding={0}
-                  textAlign="center"
-                  inputMode="numeric"
-                  value={String(selectedQuantity)}
-                  onChangeText={(t) =>
-                    !isNaN(parseFloat(t))
-                      ? setSelectedQuantity(parseFloat(t))
-                      : 1
-                  }
-                />
-                <FontAwesome
-                  onPress={() => setSelectedQuantity((prev) => prev + 1)}
-                  name="plus"
-                  color="gray"
-                  style={{ padding: 5 }}
-                />
+                      <Text
+                        {...styles.sizeText}
+                        color={selectedSize === size ? "$color" : "$color10"}
+                      >
+                        {size}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
               </XStack>
-            </XStack>
-          </View>
-          <Text {...styles.price}>Price: ${price}</Text>
-          <Button
-            marginVertical={20}
-            text="Add to cart"
-            onPress={onAddToCart}
-          />
-        </YStack>
-      </ScrollView>
+              <XStack {...styles.sizes}>
+                <Text {...styles.sizeText}>Select Quantity</Text>
+                <XStack {...styles.quantitySelector}>
+                  <FontAwesome
+                    onPress={() =>
+                      setSelectedQuantity((prev) => (prev <= 1 ? 1 : prev - 1))
+                    }
+                    name="minus"
+                    color="gray"
+                    style={{ padding: 5 }}
+                  />
+                  <Input
+                    width={50}
+                    padding={0}
+                    textAlign="center"
+                    inputMode="numeric"
+                    value={String(selectedQuantity)}
+                    onChangeText={(t) =>
+                      !isNaN(parseFloat(t))
+                        ? setSelectedQuantity(parseFloat(t))
+                        : 1
+                    }
+                  />
+                  <FontAwesome
+                    onPress={() => setSelectedQuantity((prev) => prev + 1)}
+                    name="plus"
+                    color="gray"
+                    style={{ padding: 5 }}
+                  />
+                </XStack>
+              </XStack>
+            </View>
+            <Text {...styles.price}>Price: ${price}</Text>
+            <Button
+              marginVertical={20}
+              text="Add to cart"
+              onPress={onAddToCart}
+            />
+          </YStack>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Theme>
   );
 }
 
 interface StyleProps {
-  container: React.PropsWithoutRef<typeof ScrollView>;
-  price: React.PropsWithoutRef<typeof Text>;
-  sizes: React.PropsWithoutRef<typeof View>;
-  size: React.PropsWithoutRef<typeof Pressable>;
-  sizeText: React.PropsWithoutRef<typeof Text>;
-  description: React.PropsWithoutRef<typeof Text>;
-  quantitySelector: React.PropsWithoutRef<typeof XStack>;
+  container: GetProps<typeof ScrollView>;
+  price: GetProps<typeof Text>;
+  sizes: GetProps<typeof View>;
+  size: GetProps<typeof Pressable>;
+  sizeText: GetProps<typeof Text>;
+  description: GetProps<typeof Text>;
+  quantitySelector: GetProps<typeof XStack>;
 }
 
 const styles: StyleProps = {
   container: {
-    flex: 1,
+    width: "100%",
     padding: 10,
     backgroundColor: "$background",
   },
@@ -189,6 +218,7 @@ const styles: StyleProps = {
     justifyContent: "space-around",
     alignItems: "center",
     marginVertical: 20,
+    gap: "$2",
   },
   size: {
     width: 50,

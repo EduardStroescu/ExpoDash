@@ -3,7 +3,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Link, useSegments } from "expo-router";
 import { useColorScheme, Pressable, ColorSchemeName } from "react-native";
 import { useSelector } from "react-redux";
-import { Separator, Text, Theme, View, XStack, useTheme } from "tamagui";
+import { Separator, Text, View, XStack, useTheme } from "tamagui";
 
 export const headerIcons = {
   menu: "cutlery",
@@ -42,7 +42,7 @@ export default function Header({ slug }: { slug?: number }) {
           name={
             headerIcons[headerTitle?.toLowerCase() as keyof typeof headerIcons]
           }
-          size={20}
+          size={18}
           color={theme.red10.val}
           style={{ transform: [{ translateY: 1 }] }}
         />
@@ -65,7 +65,7 @@ export default function Header({ slug }: { slug?: number }) {
               >
                 <FontAwesome
                   name={!slug ? "plus" : "pencil"}
-                  size={25}
+                  size={20}
                   color={theme.blue10.val}
                   style={{
                     opacity: pressed ? 0.5 : 1,
@@ -132,15 +132,16 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingVertical: 5,
+    paddingVertical: 10,
     borderBottomWidth: 0.3,
     $gtMd: {
       paddingHorizontal: 50,
     },
   },
   text: {
-    fontSize: 22,
+    fontSize: 18,
     color: "$blue10",
+    $gtMd: { fontSize: 22 },
   },
   displayViewSwitch: {
     flexDirection: "row",
@@ -150,6 +151,7 @@ const styles = {
     alignItems: "center",
   },
   switcherText: {
-    fontSize: 20,
+    fontSize: 18,
+    $gtMd: { fontSize: 20 },
   },
 };

@@ -1,4 +1,4 @@
-import { View } from "tamagui";
+import { GetProps, View } from "tamagui";
 import Button, { ButtonProps } from "./Button";
 import { Text } from "tamagui";
 import { supabase } from "@/lib/supabase/supabase";
@@ -59,8 +59,8 @@ export function LogInAsDemoAccount({
 }
 
 interface StyleProps {
-  container: React.PropsWithoutRef<typeof View>;
-  text: React.PropsWithoutRef<typeof Text>;
+  container: GetProps<typeof View>;
+  text: GetProps<typeof Text>;
   button: ButtonProps;
 }
 

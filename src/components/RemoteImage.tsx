@@ -1,4 +1,4 @@
-import { Image, ImageStyle, StyleProp } from "react-native";
+import { ImageStyle, StyleProp } from "react-native";
 import { ComponentProps, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase/supabase";
 import Animated, {
@@ -11,15 +11,21 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { defaultPizzaImage } from "@assets/data/products";
+import { Image } from "tamagui";
 
 type RemoteImageProps = {
   path?: string | null;
   fallback: string;
+  placeholderStyle: any;
 } & Omit<ComponentProps<typeof Image>, "source">;
 
-const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
+const RemoteImage = ({
+  path,
+  fallback,
+  placeholderStyle,
+  ...imageProps
+}: RemoteImageProps) => {
   const [image, setImage] = useState("");
-  const { style } = imageProps;
 
   useEffect(() => {
     if (!path) {
@@ -33,9 +39,19 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
     }
   }, [path]);
 
-  if (!image) return <ImagePlaceholder style={style} image={image} />;
+  if (!image)
+    return <ImagePlaceholder style={placeholderStyle} image={image} />;
 
-  return <Image source={{ uri: image || fallback }} {...imageProps} />;
+  return (
+    <Image
+      {...imageProps}
+      source={{
+        width: 400,
+        height: 400,
+        uri: image || fallback,
+      }}
+    />
+  );
 };
 
 export default RemoteImage;
@@ -48,7 +64,7 @@ interface ImagePlaceholderProps {
 const boneColor = "#413d3c";
 const highlightColor = "#4d4948";
 
-function ImagePlaceholder({ style, image }: ImagePlaceholderProps) {
+function ImagePlaceholder({ style }: ImagePlaceholderProps) {
   const translateX = useSharedValue(400);
   const opacity = useSharedValue(0);
 

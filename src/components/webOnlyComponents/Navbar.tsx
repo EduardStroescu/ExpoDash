@@ -1,7 +1,7 @@
 import { RootState } from "@/lib/reduxStore";
 import { Link, usePathname, useSegments } from "expo-router";
 import { Pressable, useColorScheme } from "react-native";
-import { Separator, Text, Theme, XStack } from "tamagui";
+import { GetProps, Separator, Text, Theme, XStack } from "tamagui";
 import { useSelector } from "react-redux";
 
 export default function Navbar() {
@@ -9,6 +9,10 @@ export default function Navbar() {
   const segments = useSegments();
   const pathname = usePathname();
   const colorScheme = useColorScheme();
+
+  if (segments[0] === "(auth)") {
+    return null;
+  }
 
   if (isAdmin)
     return (
@@ -66,8 +70,8 @@ function AdminNavbar({
 }) {
   const routes = {
     default: [
-      { title: "Admin", href: "/admin/" },
-      { title: "User", href: "/(user)/" },
+      { title: "Admin", href: "/admin" },
+      { title: "User", href: "/(user)" },
     ],
     user: [
       { title: "Orders", href: "/(user)/orders" },
@@ -80,12 +84,9 @@ function AdminNavbar({
     ],
   };
 
-  const currentUserType =
-    segments[0] === "admin"
-      ? (segments[0] as keyof typeof routes)
-      : segments[0] === "(user)"
-        ? (segments[0]?.slice(1, -1) as keyof typeof routes)
-        : "admin";
+  const currentUserType = segments?.[0]
+    ? segments?.[0].replace(/[^\w\s]/gi, "")
+    : "admin";
 
   return (
     <XStack {...styles.primaryContainer}>
@@ -93,9 +94,7 @@ function AdminNavbar({
         <HomeLink />
         <Separator alignSelf="stretch" vertical borderColor="$blue10" />
         {routes.default.map((route) => {
-          const activeRoute =
-            segments[0] &&
-            segments[0].slice(1, -1) === route.title.toLowerCase();
+          const activeRoute = currentUserType === route.title.toLowerCase();
 
           return (
             <Link href={route.href} key={route.title} asChild>
@@ -140,7 +139,7 @@ function HomeLink() {
     <Link href="/" asChild>
       <Pressable>
         <Text {...styles.mainLink} color="$color">
-          Home
+          ExpoDash
         </Text>
       </Pressable>
     </Link>
@@ -148,10 +147,10 @@ function HomeLink() {
 }
 
 interface StyleProps {
-  primaryContainer: React.PropsWithoutRef<typeof XStack>;
-  linksContainer: React.PropsWithoutRef<typeof XStack>;
-  mainLink: React.PropsWithoutRef<typeof Text>;
-  secondaryLink: React.PropsWithoutRef<typeof Text>;
+  primaryContainer: GetProps<typeof XStack>;
+  linksContainer: GetProps<typeof XStack>;
+  mainLink: GetProps<typeof Text>;
+  secondaryLink: GetProps<typeof Text>;
 }
 
 const styles: StyleProps = {
@@ -165,6 +164,7 @@ const styles: StyleProps = {
     alignItems: "center",
     gap: 20,
     paddingHorizontal: 20,
+    paddingVertical: 20,
     $gtMd: {
       paddingHorizontal: 60,
     },

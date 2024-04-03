@@ -1,11 +1,11 @@
 import { View } from "react-native";
 import { forwardRef } from "react";
-import { Button as Pressable } from "tamagui";
+import { GetProps, Button as Pressable } from "tamagui";
 
 export type ButtonProps = {
   text?: string;
   style?: {};
-} & React.ComponentPropsWithoutRef<typeof Pressable>;
+} & GetProps<typeof Pressable>;
 
 const Button = forwardRef<View | null, ButtonProps>(
   ({ text, children, ...pressableProps }, ref) => {
