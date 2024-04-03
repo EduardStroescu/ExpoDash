@@ -1,3 +1,3 @@
-alter table "auth"."saml_providers" add column "name_id_format" text;
+-- alter table "auth"."saml_providers" add column "name_id_format" text;
 
 

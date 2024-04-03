@@ -75,7 +75,7 @@ export default function ProductListItem({
             width: "100%",
             borderRadius: 20,
             objectFit: "cover",
-            alignSelf: "center"
+            alignSelf: "center",
           }}
           resizeMode="cover"
         />

@@ -159,39 +159,36 @@ export default function CreateProductScreen() {
           shouldDirty: true,
         });
       }
-    } else { 
-    if (!e.target.files?.length) return;
-    const fileReader = new FileReader();
-    const file = e.target.files[0];
-    fileReader.readAsDataURL(file);
+    } else {
+      if (!e.target.files?.length) return;
+      const fileReader = new FileReader();
+      const file = e.target.files[0];
+      fileReader.readAsDataURL(file);
 
-    fileReader.onloadend = () => {
-      const content = fileReader.result;
-      if (content && typeof content === "string") {
-        setValue("image", content, {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
-      }}
-    };
+      fileReader.onloadend = () => {
+        const content = fileReader.result;
+        if (content && typeof content === "string") {
+          setValue("image", content, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+        }
+      };
+    }
   };
 
   useEffect(() => {
-    (async () => {
+    (() => {
       if (updatingProduct) {
         if (updatingProduct.image) {
-          const { data: productImage } = await supabase.storage
+          const { data: productImage } = supabase.storage
             .from("product-images")
-            .download(updatingProduct.image);
+            .getPublicUrl(updatingProduct.image);
           if (productImage) {
-            const fr = new FileReader();
-            fr.readAsDataURL(productImage);
-            fr.onload = () => {
-              setValue("image", fr.result as string, {
-                shouldValidate: true,
-                shouldDirty: true,
-              });
-            };
+            setValue("image", productImage.publicUrl, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
           }
         }
         setValue("image", defaultPizzaImage, {
@@ -355,7 +352,7 @@ const styles = {
     aspectRatio: 1,
     alignSelf: "center",
     objectFit: "cover",
-    algnSelf: "center"
+    algnSelf: "center",
   },
   textButton: {
     color: "$blue10",

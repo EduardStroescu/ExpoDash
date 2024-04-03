@@ -25,24 +25,12 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
     if (!path) {
       return setImage(defaultPizzaImage);
     }
-    (async () => {
-      setImage("");
-      const { data, error } = await supabase.storage
-        .from("product-images")
-        .download(path);
+    setImage("");
+    const { data } = supabase.storage.from("product-images").getPublicUrl(path);
 
-      if (error) {
-        setImage(defaultPizzaImage);
-      }
-
-      if (data) {
-        const fr = new FileReader();
-        fr.readAsDataURL(data);
-        fr.onload = () => {
-          setImage(fr.result as string);
-        };
-      }
-    })();
+    if (data) {
+      setImage(data.publicUrl);
+    }
   }, [path]);
 
   if (!image) return <ImagePlaceholder style={style} image={image} />;

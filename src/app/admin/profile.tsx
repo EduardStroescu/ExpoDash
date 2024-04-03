@@ -60,22 +60,16 @@ export default function ProfileScreen() {
   };
 
   useEffect(() => {
-    (async () => {
-      if (user) {
-        if (user.avatar_url) {
-          const { data: userAvatar } = await supabase.storage
-            .from("user-avatars")
-            .download(user.avatar_url);
-          if (userAvatar) {
-            const fr = new FileReader();
-            fr.readAsDataURL(userAvatar);
-            fr.onload = () => {
-              setProfileAvatar(fr.result as string);
-            };
-          }
+    if (user) {
+      if (user.avatar_url) {
+        const { data: userAvatar } = supabase.storage
+          .from("user-avatars")
+          .getPublicUrl(user.avatar_url);
+        if (userAvatar) {
+          setProfileAvatar(userAvatar.publicUrl);
         }
       }
-    })();
+    }
   }, [user]);
 
   return (
