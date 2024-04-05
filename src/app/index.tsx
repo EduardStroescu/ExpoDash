@@ -37,7 +37,7 @@ export default function Page() {
   }
 
   if (session && profile && !isAdmin) {
-    return <Redirect href="/(user)" />;
+    return <Redirect href="/user/" />;
   }
 
   return (
@@ -71,10 +71,10 @@ export default function Page() {
             </Text>
           </View>
           <XStack {...styles.buttonContainer}>
-            <Link href="/(user)" asChild>
+            <Link href="/user/" asChild>
               <Button {...styles.button} text="User" />
             </Link>
-            <Link href="/admin" asChild>
+            <Link href="/admin/" asChild>
               <Button {...styles.button} text="Admin" />
             </Link>
           </XStack>

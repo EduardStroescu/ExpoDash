@@ -100,7 +100,7 @@ export default function ProfileScreen() {
                 <Avatar.Fallback bc="#0c103385" />
               </Avatar>
               <Card.Footer flexDirection="column" alignItems="center" gap="$4">
-                <Text borderRadius="$10">
+                <Text borderRadius="$10" color="white">
                   {user?.username || user?.email?.split("@")[0]}
                 </Text>
                 <XStack gap="$2" flexWrap="wrap" justifyContent="center">
@@ -176,7 +176,9 @@ function ChangeProfileDetailsForm({
       paddingHorizontal="$3"
     >
       <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14}>Username:</Text>
+        <Text fontSize={14} color="white">
+          Username:
+        </Text>
         <Input
           flex={1}
           value={userDetails?.username}
@@ -186,7 +188,9 @@ function ChangeProfileDetailsForm({
         />
       </XStack>
       <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14}>Phone:</Text>
+        <Text fontSize={14} color="white">
+          Phone:
+        </Text>
         <Input
           flex={1}
           value={userDetails?.phone}
@@ -196,7 +200,9 @@ function ChangeProfileDetailsForm({
         />
       </XStack>
       <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14}>Email:</Text>
+        <Text fontSize={14} color="white">
+          Email:
+        </Text>
         <Input
           flex={1}
           value={userDetails?.email}
@@ -206,7 +212,9 @@ function ChangeProfileDetailsForm({
         />
       </XStack>
       <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14}>Address:</Text>
+        <Text fontSize={14} color="white">
+          Address:
+        </Text>
         <Input
           flex={1}
           value={userDetails?.address}
@@ -231,7 +239,14 @@ const styles: StyleProps = {
   page: {
     width: "100%",
     height: "100%",
-    contentContainerStyle: { alignItems: "center" },
+    contentContainerStyle: {
+      alignItems: "center",
+    },
+    $gtMd: {
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   },
   container: {
     width: "95%",

@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
 import { Text, Theme, View, useWindowDimensions } from "tamagui";
 import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
+import PageError from "@/components/PageError";
 
 export default function Menu() {
   const colorScheme = useColorScheme();
@@ -24,17 +25,8 @@ export default function Menu() {
   };
   const columnNumber = useResponsiveStyle(columnBreakpoints, width);
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (isLoading) {
-      dispatch(setIsLoading(true));
-    } else {
-      dispatch(setIsLoading(false));
-    }
-  }, [isLoading, dispatch]);
-
   if (error) {
-    return <Text>Failed to fetch products</Text>;
+    return <PageError />;
   }
 
   return (

@@ -1,7 +1,6 @@
-import { Pressable, Text, View, useColorScheme } from "react-native";
 import { OrderStatusList } from "../lib/types";
-import Colors from "../lib/constants/Colors";
 import { useUpdateOrder } from "../app/api/orders";
+import { Button, Text, View } from "tamagui";
 
 interface OrderStatusSelectorProps {
   activeStatus: string;
@@ -12,7 +11,6 @@ export default function OrderStatusSelector({
   activeStatus,
   orderId,
 }: OrderStatusSelectorProps) {
-  const colorScheme = useColorScheme();
   const { mutate: updateOrder } = useUpdateOrder();
 
   const updateOrderStatus = (status: string) => {
@@ -25,35 +23,25 @@ export default function OrderStatusSelector({
   };
 
   return (
-    <>
-      <View style={{ flexDirection: "row", gap: 5, justifyContent: "center" }}>
-        {OrderStatusList.map((status) => (
-          <Pressable
-            key={status}
-            onPress={() => updateOrderStatus(status)}
-            style={{
-              borderColor: Colors.light.tint,
-              borderWidth: 1,
-              padding: 10,
-              borderRadius: 5,
-              marginVertical: 10,
-              backgroundColor:
-                activeStatus === status ? Colors.light.tint : "transparent",
-            }}
-          >
-            <Text
-              style={{
-                color:
-                  activeStatus === status
-                    ? "white"
-                    : Colors[colorScheme ?? "light"].tint,
-              }}
-            >
-              {status}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-    </>
+    <View flexDirection="row" gap={5} justifyContent="center">
+      {OrderStatusList.map((status) => (
+        <Button
+          unstyled
+          hoverStyle={{ cursor: "pointer" }}
+          key={status}
+          onPress={() => updateOrderStatus(status)}
+          borderColor="$blue10"
+          borderWidth={1}
+          padding={10}
+          borderRadius={5}
+          marginVertical={10}
+          backgroundColor={activeStatus === status ? "$blue10" : "transparent"}
+        >
+          <Text color={activeStatus === status ? "white" : "$blue10"}>
+            {status}
+          </Text>
+        </Button>
+      ))}
+    </View>
   );
 }

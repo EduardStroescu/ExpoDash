@@ -7,6 +7,7 @@ import { setIsLoading } from "@/lib/features/appSlice";
 import { useEffect } from "react";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
 import { Text, Theme, View } from "tamagui";
+import PageError from "@/components/PageError";
 
 export default function OrdersPage() {
   const colorScheme = useColorScheme();
@@ -26,7 +27,7 @@ export default function OrdersPage() {
   }, [isLoading, dispatch]);
 
   if (error) {
-    return <Text>Failed to fetch archived orders</Text>;
+    return <PageError />;
   }
 
   return (
@@ -39,7 +40,7 @@ export default function OrdersPage() {
           renderItem={({ item, index, scrollY }) => (
             <OrderListItem order={item} index={index} scrollY={scrollY} />
           )}
-          contentContainerStyle={{ width: "100%", gap: 10, padding: 10 }}
+          contentContainerStyle={{ gap: 5, padding: 10 }}
         />
       </View>
     </Theme>
@@ -48,7 +49,7 @@ export default function OrdersPage() {
 
 const styles = {
   container: {
-    height: "100%",
+    flex: 1,
     backgroundColor: "$background",
   },
 };

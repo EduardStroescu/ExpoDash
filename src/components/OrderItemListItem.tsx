@@ -1,13 +1,11 @@
-import { View, Text, StyleSheet, useColorScheme } from "react-native";
-import React from "react";
-import Colors from "../lib/constants/Colors";
+import React, { useState } from "react";
 import { Tables } from "../lib/types";
 import { defaultPizzaImage } from "@assets/data/products";
 import RemoteImage from "./RemoteImage";
 import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
-
-export const NOTIFICATION_HEIGHT = 100;
+import { GetProps, Text, View } from "tamagui";
+import { LayoutChangeEvent } from "react-native";
 
 type OrderItemListItemProps = {
   item: { products: Tables<"products"> | null } & Tables<"order_items">;
@@ -20,81 +18,66 @@ const OrderItemListItem = ({
   index,
   scrollY,
 }: OrderItemListItemProps) => {
-  const colorScheme = useColorScheme();
+  const [height, setHeight] = useState(110);
+  const NOTIFICATION_HEIGHT = height + 25;
+
   const { animatedStyle } = useAnimatedFlatList({
     NOTIFICATION_HEIGHT,
     scrollY,
     index,
   });
+
+  const onLayout = (event: LayoutChangeEvent) => {
+    setHeight(event.nativeEvent.layout.height);
+  };
+
   return (
     <Animated.View
+      onLayout={onLayout}
       entering={SlideInDown}
       style={[
         animatedStyle,
         {
-          height: NOTIFICATION_HEIGHT - 10,
+          height: 80,
         },
       ]}
     >
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: Colors[colorScheme ?? "light"].foreground,
-          },
-        ]}
-      >
+      <View {...styles.container}>
         <RemoteImage
+          {...styles.image}
           path={item.products?.image}
           fallback={defaultPizzaImage}
-          placeholderStyle={styles.image}
           resizeMode="contain"
         />
-        <View style={{ flex: 1 }}>
-          <View style={{ flexDirection: "row" }}>
-            <Text
-              style={[
-                styles.title,
-                { color: Colors[colorScheme ?? "light"].text },
-              ]}
-            >
-              {item.products?.name}
-            </Text>
-            <Text style={{ color: Colors[colorScheme ?? "light"].text }}>
-              {" "}
-              -{" "}
-            </Text>
-            <Text
-              style={[
-                styles.price,
-                { color: Colors[colorScheme ?? "light"].tint },
-              ]}
-            >
-              ${item.products?.price.toFixed(2)}
-            </Text>
+        <View flex={1}>
+          <View flexDirection="row">
+            <Text {...styles.title}>{item.products?.name}</Text>
+            <Text color="white"> - </Text>
+            <Text {...styles.price}>${item.products?.price.toFixed(2)}</Text>
           </View>
-          <View style={styles.subtitleContainer}>
-            <Text style={{ color: Colors[colorScheme ?? "light"].subText }}>
-              Size: {item.size}
-            </Text>
+          <View {...styles.subtitleContainer}>
+            <Text color="$color10">Size: {item.size}</Text>
           </View>
         </View>
-        <View style={styles.quantitySelector}>
-          <Text
-            style={[
-              styles.quantity,
-              { color: Colors[colorScheme ?? "light"].text },
-            ]}
-          >
-            {item.quantity}
-          </Text>
+        <View {...styles.quantitySelector}>
+          <Text {...styles.quantity}>{item.quantity}</Text>
         </View>
       </View>
     </Animated.View>
   );
 };
 
-const styles = StyleSheet.create({
+interface StyleProps {
+  container: GetProps<typeof View>;
+  image: GetProps<typeof RemoteImage>;
+  title: GetProps<typeof Text>;
+  subtitleContainer: GetProps<typeof View>;
+  quantitySelector: GetProps<typeof View>;
+  quantity: GetProps<typeof Text>;
+  price: GetProps<typeof Text>;
+}
+
+const styles: StyleProps = {
   container: {
     flex: 1,
     padding: 10,
@@ -102,6 +85,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor: "#262626",
   },
   image: {
     width: 75,
@@ -110,6 +94,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   title: {
+    color: "white",
     fontWeight: "500",
     fontSize: 16,
     marginBottom: 5,
@@ -125,12 +110,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   quantity: {
+    color: "$blue10",
     fontWeight: "500",
     fontSize: 18,
   },
   price: {
+    color: "$blue10",
     fontWeight: "bold",
   },
-});
+};
 
 export default OrderItemListItem;

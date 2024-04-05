@@ -5,7 +5,6 @@ import CartListItem from "../CartListItem";
 import Button from "../Button";
 import { clearCart, getCartTotal } from "../../lib/features/cartSlice";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import Colors from "../../lib/constants/Colors";
 import { useInsertOrder } from "../../app/api/orders";
 import { useRouter } from "expo-router";
 import { useInsertOrderItems } from "../../app/api/order-items";
@@ -22,7 +21,7 @@ import {
   stripePromise,
 } from "@/lib/stripe/stripe.web";
 import Header from "../webOnlyComponents/Header";
-import { ScrollView, Text, Theme, View } from "tamagui";
+import { GetProps, ScrollView, Text, Theme, View } from "tamagui";
 import { InlineGradient } from "../InlineGradient";
 
 export default function Cart() {
@@ -44,12 +43,48 @@ export default function Cart() {
       <ScrollView {...styles.container}>
         {Platform.OS === "web" && <Header />}
 
-        <FlatList
-          data={items}
-          renderItem={({ item }) => <CartListItem cartItem={item} />}
-          contentContainerStyle={{ flex: 1, gap: 10, padding: 10 }}
-          style={{ width: "50%" }}
-        />
+        {!isCheckout && (
+          <FlatList
+            data={items}
+            renderItem={({ item }) => <CartListItem cartItem={item} />}
+            contentContainerStyle={{ gap: 5, padding: 10 }}
+            style={{
+              width: "90%",
+              maxWidth: 800,
+              overflowY: items.length > 0 ? "scroll" : "hidden",
+              height: "50vh",
+            }}
+          />
+        )}
+        {!isCheckout && (
+          <>
+            <View {...styles.cartResults}>
+              <InlineGradient />
+              <Text
+                style={{
+                  alignSelf: "center",
+                  fontSize: 20,
+                  color: "$color",
+                }}
+              >
+                Total:{" "}
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: "$blue10",
+                  }}
+                >
+                  ${total.toFixed(2)}
+                </Text>
+              </Text>
+            </View>
+            <Button
+              text="Go to checkout"
+              onPress={checkout}
+              {...styles.checkoutButton}
+            />
+          </>
+        )}
         {isCheckout && (
           <Elements
             stripe={stripePromise}
@@ -69,35 +104,6 @@ export default function Cart() {
               setIsCheckout={setIsCheckout}
             />
           </Elements>
-        )}
-        {!isCheckout && (
-          <>
-            <View {...styles.cartResults}>
-              <InlineGradient />
-              <Text
-                style={{
-                  alignSelf: "center",
-                  fontSize: 20,
-                  color: Colors[colorScheme ?? "light"].text,
-                }}
-              >
-                Total:{" "}
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    color: Colors[colorScheme ?? "light"].tint,
-                  }}
-                >
-                  ${total.toFixed(2)}
-                </Text>
-              </Text>
-            </View>
-            <Button
-              text="Go to checkout"
-              onPress={checkout}
-              {...styles.checkoutButton}
-            />
-          </>
         )}
       </ScrollView>
     </Theme>
@@ -154,13 +160,13 @@ function CheckoutForm({
         elements,
         clientSecret: clientSecret,
         confirmParams: {
-          return_url: `http://localhost:8081/orders/${order?.id}`,
+          return_url: `${process.env.EXPO_PUBLIC_WEBSITE_URL}/user/orders/${order?.id}`,
         },
       });
 
       dispatch(clearCart());
       setIsCheckout(false);
-      router.replace(`/(user)/orders/${order?.id}`);
+      router.replace(`/user/orders/${order?.id}`);
     };
 
     insertOrder(
@@ -181,7 +187,7 @@ function CheckoutForm({
         <PaymentElement />
       </View>
       <Button
-        text="Pay"
+        text={`Pay $${total.toFixed(2)}`}
         disabled={!stripe || !elements}
         onPress={checkout}
         width="100%"
@@ -190,12 +196,19 @@ function CheckoutForm({
   );
 }
 
-const styles = {
+interface StyleProps {
+  container: GetProps<typeof ScrollView>;
+  cartResults: GetProps<typeof View>;
+  checkoutButton: GetProps<typeof Button>;
+  cartForm: GetProps<typeof View>;
+  paymentSheetGroup: GetProps<typeof View>;
+}
+
+const styles: StyleProps = {
   container: {
     contentContainerStyle: {
       minHeight: "100%",
       alignItems: "center",
-      justifyContent: "center",
       backgroundColor: "$background",
       paddingBottom: 20,
       gap: "$4",
@@ -213,8 +226,8 @@ const styles = {
   },
   cartForm: {
     width: "50%",
-    marginTop: 50,
     gap: "$3",
+    justifyContent: "center",
   },
   paymentSheetGroup: {
     gap: "$3",

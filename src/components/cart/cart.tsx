@@ -6,7 +6,6 @@ import CartListItem from "../CartListItem";
 import Button from "../Button";
 import { clearCart, getCartTotal } from "../../lib/features/cartSlice";
 import { useEffect } from "react";
-import Colors from "../../lib/constants/Colors";
 import { useInsertOrder } from "../../app/api/orders";
 import { useRouter } from "expo-router";
 import { useInsertOrderItems } from "../../app/api/order-items";
@@ -15,8 +14,9 @@ import {
   initialisePaymentSheet,
   openPaymentSheet,
 } from "../../lib/stripe/stripe";
-import { Text, Theme, View } from "tamagui";
+import { GetProps, Text, Theme, View } from "tamagui";
 import { InlineGradient } from "../InlineGradient";
+import AnimatedFlatList from "../AnimatedFlatlist";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);
@@ -49,7 +49,7 @@ export default function Cart() {
       insertOrderItems(orderItems, {
         onSuccess() {
           dispatch(clearCart());
-          router.replace(`/(user)/orders/${order?.id}`);
+          router.replace(`/user/orders/${order?.id}`);
         },
       });
     };
@@ -85,20 +85,9 @@ export default function Cart() {
         />
         <View {...styles.cartResults}>
           <InlineGradient />
-          <Text
-            style={{
-              alignSelf: "center",
-              fontSize: 20,
-              color: "white",
-            }}
-          >
+          <Text alignSelf="center" fontSize={20} color="white">
             Total:{" "}
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: Colors[colorScheme ?? "light"].tint,
-              }}
-            >
+            <Text fontWeight="bold" color="$blue10">
               ${total.toFixed(2)}
             </Text>
           </Text>
@@ -113,7 +102,13 @@ export default function Cart() {
   );
 }
 
-const styles = {
+interface StyleProps {
+  container: GetProps<typeof View>;
+  cartResults: GetProps<typeof View>;
+  cartTotal: GetProps<typeof Text>;
+}
+
+const styles: StyleProps = {
   container: {
     height: "100%",
     paddingBottom: 20,

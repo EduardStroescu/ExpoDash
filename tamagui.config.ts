@@ -4,7 +4,7 @@ import { createMedia } from "@tamagui/react-native-media-driver";
 import { shorthands } from "@tamagui/shorthands";
 import { tokens } from "@tamagui/themes";
 import { themes } from "themes";
-import { createTamagui, styled, SizableText, H1, YStack } from "tamagui";
+import { createTamagui } from "tamagui";
 
 const animations = createAnimations({
   bouncy: {
@@ -29,26 +29,6 @@ const animations = createAnimations({
 const headingFont = createInterFont();
 
 const bodyFont = createInterFont();
-
-export const Container = styled(YStack, {
-  flex: 1,
-  padding: 24,
-});
-
-export const Main = styled(YStack, {
-  flex: 1,
-  justifyContent: "space-between",
-  maxWidth: 960,
-});
-
-export const Title = styled(H1, {
-  size: "$12",
-});
-
-export const Subtitle = styled(SizableText, {
-  color: "#38434D",
-  size: "$9",
-});
 
 const config = createTamagui({
   defaultFont: "body",

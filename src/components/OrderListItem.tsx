@@ -1,12 +1,5 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  useColorScheme,
-  useWindowDimensions,
-} from "react-native";
-import React from "react";
+import { LayoutChangeEvent, useColorScheme } from "react-native";
+import React, { useState } from "react";
 import Colors from "../lib/constants/Colors";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -14,83 +7,80 @@ import { router, useSegments } from "expo-router";
 import { Tables } from "../lib/types";
 import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
+import { View, Text, GetProps, Button } from "tamagui";
+import { StyleSheet } from "react-native";
 dayjs.extend(relativeTime);
-
-export const NOTIFICATION_HEIGHT = 70;
 
 interface OrderListItemProps {
   order: Tables<"orders">;
   index?: number;
   scrollY?: SharedValue<number>;
+  hoverStyle?: GetProps<typeof Button>;
 }
 
 export default function OrderListItem({
   order,
   index,
   scrollY,
+  hoverStyle = { cursor: "pointer" },
 }: OrderListItemProps) {
-  const colorScheme = useColorScheme();
+  const [height, setHeight] = useState(60);
   const segments = useSegments();
+
+  const NOTIFICATION_HEIGHT = height + 5;
+
   const { animatedStyle } = useAnimatedFlatList({
     scrollY,
     NOTIFICATION_HEIGHT,
     index,
   });
 
+  const onLayout = (event: LayoutChangeEvent) => {
+    setHeight(event.nativeEvent.layout.height);
+  };
+
   return (
     <Animated.View
+      onLayout={onLayout}
       entering={SlideInDown}
       style={[
         animatedStyle,
         {
-          backgroundColor: Colors[colorScheme ?? "light"].foreground,
-          height: NOTIFICATION_HEIGHT - 10,
+          backgroundColor: "#262626",
+          height: 60,
         },
       ]}
     >
-      <Pressable
-        style={styles.container}
-        onPress={() => router.push(`/${segments[0]}/orders/${order.id}`)}
+      <Button
+        unstyled
+        hoverStyle={hoverStyle}
+        style={style.container}
+        onPress={() => router.navigate(`/${segments[0]}/orders/${order.id}`)}
       >
-        <View style={{ flex: 1 }}>
-          <View style={{ flexDirection: "row", gap: 10, marginBottom: 10 }}>
-            <Text
-              style={[
-                styles.title,
-                { color: Colors[colorScheme ?? "light"].text },
-              ]}
-            >
-              Order #{order.id}
-            </Text>
-            <Text style={{ color: Colors[colorScheme ?? "light"].text }}>
-              -
-            </Text>
-            <Text
-              style={[
-                styles.price,
-                { color: Colors[colorScheme ?? "light"].tint },
-              ]}
-            >
-              ${order.total.toFixed(2)}
-            </Text>
+        <View flex={1}>
+          <View flexDirection="row" gap={10} marginBottom={10}>
+            <Text {...styles.title}>Order #{order.id}</Text>
+            <Text color="white">-</Text>
+            <Text {...styles.price}>${order.total.toFixed(2)}</Text>
           </View>
-          <View style={styles.subtitleContainer}>
-            <Text style={{ color: Colors[colorScheme ?? "light"].subText }}>
-              {dayjs(order.created_at).fromNow()}
-            </Text>
+          <View {...styles.subtitleContainer}>
+            <Text color="$color10">{dayjs(order.created_at).fromNow()}</Text>
           </View>
         </View>
         <View>
-          <Text style={{ color: Colors[colorScheme ?? "light"].text }}>
-            {order.status}
-          </Text>
+          <Text color="white">{order.status}</Text>
         </View>
-      </Pressable>
+      </Button>
     </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({
+interface StyleProps {
+  title: GetProps<typeof Text>;
+  subtitleContainer: GetProps<typeof View>;
+  price: GetProps<typeof Text>;
+}
+const style = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
@@ -98,8 +88,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor: "#262626",
   },
+});
+
+const styles: StyleProps = {
   title: {
+    color: "white",
     fontWeight: "500",
     fontSize: 16,
   },
@@ -108,7 +103,8 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   price: {
+    color: "$blue10",
     fontWeight: "bold",
     fontSize: 16,
   },
-});
+};

@@ -3,7 +3,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Link, useSegments } from "expo-router";
 import { useColorScheme, Pressable, ColorSchemeName } from "react-native";
 import { useSelector } from "react-redux";
-import { Separator, Text, View, XStack, useTheme } from "tamagui";
+import { GetProps, Separator, Text, View, XStack, useTheme } from "tamagui";
 
 export const headerIcons = {
   menu: "cutlery",
@@ -125,7 +125,14 @@ function ViewSwitcher({
   );
 }
 
-const styles = {
+interface StyleProps {
+  container: GetProps<typeof View>;
+  text: GetProps<typeof Text>;
+  displayViewSwitch: GetProps<typeof View>;
+  switcherText: GetProps<typeof Text>;
+}
+
+const styles: StyleProps = {
   container: {
     width: "100%",
     flexDirection: "row",
@@ -146,7 +153,6 @@ const styles = {
   displayViewSwitch: {
     flexDirection: "row",
     gap: 20,
-    padding: 10,
     justifyContent: "center",
     alignItems: "center",
   },

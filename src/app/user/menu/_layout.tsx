@@ -45,7 +45,7 @@ export default function MenuStack() {
 const renderHeaderRight = (pathname: string, colorScheme: ColorSchemeName) => {
   if (!pathname?.includes("cart")) {
     return (
-      <Link href="/(user)/menu/cart" asChild>
+      <Link href="/user/menu/cart" asChild>
         <Pressable>
           {({ pressed }) => (
             <FontAwesome

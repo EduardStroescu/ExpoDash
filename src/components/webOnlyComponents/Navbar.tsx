@@ -1,7 +1,7 @@
 import { RootState } from "@/lib/reduxStore";
 import { Link, usePathname, useSegments } from "expo-router";
-import { Pressable, useColorScheme } from "react-native";
-import { GetProps, Separator, Text, Theme, XStack } from "tamagui";
+import { useColorScheme } from "react-native";
+import { Button, GetProps, Separator, Text, Theme, XStack } from "tamagui";
 import { useSelector } from "react-redux";
 
 export default function Navbar() {
@@ -30,10 +30,10 @@ export default function Navbar() {
 
 function UserNavbar({ pathname }: { pathname: string }) {
   const routes = [
-    { title: "Menu", href: "/(user)/menu" },
-    { title: "Orders", href: "/(user)/orders" },
-    { title: "Profile", href: "/(user)/profile" },
-    { title: "Cart", href: "/(user)/menu/cart" },
+    { title: "Menu", href: "/user/menu" },
+    { title: "Orders", href: "/user/orders" },
+    { title: "Profile", href: "/user/profile" },
+    { title: "Cart", href: "/user/menu/cart" },
   ];
   return (
     <XStack {...styles.primaryContainer}>
@@ -45,14 +45,14 @@ function UserNavbar({ pathname }: { pathname: string }) {
             .includes(route.title.toLowerCase());
           return (
             <Link href={route.href} key={route.title} asChild>
-              <Pressable>
+              <Button unstyled>
                 <Text
                   {...styles.mainLink}
                   color={isLinkActive ? "$blue10" : "$color"}
                 >
                   {route.title}
                 </Text>
-              </Pressable>
+              </Button>
             </Link>
           );
         })}
@@ -70,16 +70,16 @@ function AdminNavbar({
 }) {
   const routes = {
     default: [
-      { title: "Admin", href: "/admin" },
-      { title: "User", href: "/(user)" },
+      { title: "Admin", href: "/admin/" },
+      { title: "User", href: "/user/" },
     ],
     user: [
-      { title: "Orders", href: "/(user)/orders" },
-      { title: "Profile", href: "/(user)/profile" },
-      { title: "Cart", href: "/(user)/menu/cart" },
+      { title: "Orders", href: "/user/orders/" },
+      { title: "Profile", href: "/user/profile" },
+      { title: "Cart", href: "/user/menu/cart" },
     ],
     admin: [
-      { title: "Orders", href: "/admin/orders" },
+      { title: "Orders", href: "/admin/orders/list" },
       { title: "Profile", href: "/admin/profile" },
     ],
   };
@@ -98,14 +98,14 @@ function AdminNavbar({
 
           return (
             <Link href={route.href} key={route.title} asChild>
-              <Pressable>
+              <Button unstyled>
                 <Text
                   {...styles.secondaryLink}
                   color={activeRoute ? "$red10" : "$color"}
                 >
                   {route.title}
                 </Text>
-              </Pressable>
+              </Button>
             </Link>
           );
         })}
@@ -118,14 +118,14 @@ function AdminNavbar({
 
           return (
             <Link href={route.href} key={route.title} asChild>
-              <Pressable>
+              <Button unstyled>
                 <Text
                   {...styles.mainLink}
                   color={isLinkActive ? "$blue10" : "$color"}
                 >
                   {route.title}
                 </Text>
-              </Pressable>
+              </Button>
             </Link>
           );
         })}
@@ -137,11 +137,11 @@ function AdminNavbar({
 function HomeLink() {
   return (
     <Link href="/" asChild>
-      <Pressable>
+      <Button unstyled>
         <Text {...styles.mainLink} color="$color">
           ExpoDash
         </Text>
-      </Pressable>
+      </Button>
     </Link>
   );
 }

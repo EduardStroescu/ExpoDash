@@ -23,6 +23,7 @@ import {
 } from "tamagui";
 import Input from "@/components/Input";
 import { FontAwesome } from "@expo/vector-icons";
+import PageError from "@/components/PageError";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -57,21 +58,13 @@ export default function ProductDetailsScreen() {
           quantity: selectedQuantity,
         }),
       );
-      router.push("/(user)/menu/cart");
+      // router.navigate("/user/menu/cart");
     }
     return;
   };
 
-  useEffect(() => {
-    if (isLoading) {
-      dispatch(setIsLoading(true));
-    } else {
-      dispatch(setIsLoading(false));
-    }
-  }, [isLoading, dispatch]);
-
   if (error) {
-    return <Text>Failed to fetch products</Text>;
+    return <PageError />;
   }
 
   return (

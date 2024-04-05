@@ -1,13 +1,13 @@
-import { LayoutChangeEvent, Pressable } from "react-native";
+import { LayoutChangeEvent } from "react-native";
 import { Tables } from "../lib/types";
 import { defaultPizzaImage } from "@assets/data/products";
 import { router, useSegments } from "expo-router";
 import RemoteImage from "./RemoteImage";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
-import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
-import { GetProps, XStack, YStack, useWindowDimensions } from "tamagui";
+import Animated, { SharedValue } from "react-native-reanimated";
+import { Button, GetProps, XStack, YStack, useWindowDimensions } from "tamagui";
 import { Text } from "tamagui";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
 
 interface ProductListItemProps {
@@ -50,7 +50,6 @@ export default function ProductListItem({
   return (
     <Animated.View
       onLayout={onLayout}
-      entering={SlideInDown}
       style={[
         animatedStyle,
         {
@@ -58,10 +57,13 @@ export default function ProductListItem({
         },
       ]}
     >
-      <Pressable
-        style={{ flex: 1, paddingHorizontal: 10 }}
+      <Button
+        unstyled
+        hoverStyle={{ cursor: "pointer" }}
+        flex={1}
+        paddingHorizontal={10}
         onPress={() =>
-          router.push({
+          router.navigate({
             pathname: `${segments[0]}/menu/[id]`,
             params: { id: product.id },
           })
@@ -71,6 +73,13 @@ export default function ProductListItem({
           path={product.image}
           fallback={defaultPizzaImage}
           placeholderStyle={{
+            height: width <= 600 ? 110 : 300,
+            width: "100%",
+            borderRadius: 20,
+            objectFit: "cover",
+            alignSelf: "center",
+          }}
+          style={{
             height: width <= 600 ? 110 : 300,
             width: "100%",
             borderRadius: 20,
@@ -90,7 +99,7 @@ export default function ProductListItem({
             <Text {...styles.price}>${product.price}</Text>
           </XStack>
         </YStack>
-      </Pressable>
+      </Button>
     </Animated.View>
   );
 }
@@ -115,7 +124,7 @@ const styles: StyleProps = {
   },
   title: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
     marginVertical: 10,
     color: "$color",
   },

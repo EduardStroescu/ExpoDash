@@ -1,6 +1,3 @@
-import { View, Text, StyleSheet, useColorScheme } from "react-native";
-import React from "react";
-import Colors from "../lib/constants/Colors";
 import { CartItem } from "../lib/types";
 import { FontAwesome } from "@expo/vector-icons";
 import { defaultPizzaImage } from "@assets/data/products";
@@ -8,6 +5,8 @@ import { useDispatch } from "react-redux";
 import { updateQuantity } from "../lib/features/cartSlice";
 import RemoteImage from "./RemoteImage";
 import Input from "./Input";
+import { GetProps, View } from "tamagui";
+import { Text } from "tamagui";
 
 type CartListItemProps = {
   cartItem: CartItem;
@@ -15,42 +14,24 @@ type CartListItemProps = {
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
   const dispatch = useDispatch();
-  const colorScheme = useColorScheme();
+
   return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: Colors[colorScheme ?? "light"].foreground },
-      ]}
-    >
+    <View {...styles.container}>
       <RemoteImage
+        {...styles.image}
         path={cartItem.product.image}
         fallback={defaultPizzaImage}
-        placeholderStyle={styles.image}
         resizeMode="contain"
       />
 
-      <View style={{ flex: 1 }}>
-        <Text
-          style={[styles.title, { color: Colors[colorScheme ?? "light"].text }]}
-        >
-          {cartItem.product.name}
-        </Text>
-        <View style={styles.subtitleContainer}>
-          <Text
-            style={[
-              styles.price,
-              { color: Colors[colorScheme ?? "light"].tint },
-            ]}
-          >
-            ${cartItem.product.price.toFixed(2)}
-          </Text>
-          <Text style={{ color: Colors[colorScheme ?? "light"].subText }}>
-            Size: {cartItem.size}
-          </Text>
+      <View flex={1}>
+        <Text {...styles.title}>{cartItem.product.name}</Text>
+        <View {...styles.subtitleContainer}>
+          <Text {...styles.price}>${cartItem.product.price.toFixed(2)}</Text>
+          <Text color="$color10">Size: {cartItem.size}</Text>
         </View>
       </View>
-      <View style={styles.quantitySelector}>
+      <View {...styles.quantitySelector}>
         <FontAwesome
           onPress={() =>
             dispatch(
@@ -91,21 +72,33 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+interface StyleProps {
+  container: GetProps<typeof View>;
+  image: GetProps<typeof RemoteImage>;
+  title: GetProps<typeof Text>;
+  subtitleContainer: GetProps<typeof View>;
+  quantitySelector: GetProps<typeof View>;
+  quantity: GetProps<typeof Text>;
+  price: GetProps<typeof Text>;
+}
+
+const styles: StyleProps = {
   container: {
     borderRadius: 10,
     padding: 5,
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "#262626",
   },
   image: {
     width: 75,
+    height: 75,
     aspectRatio: 1,
-    alignSelf: "center",
     marginRight: 10,
   },
   title: {
+    color: "$color",
     fontWeight: "500",
     fontSize: 16,
     marginBottom: 5,
@@ -126,7 +119,8 @@ const styles = StyleSheet.create({
   },
   price: {
     fontWeight: "bold",
+    color: "$blue10",
   },
-});
+};
 
 export default CartListItem;

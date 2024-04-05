@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
 import { Text, Theme, View } from "tamagui";
+import PageError from "@/components/PageError";
 
 export default function OrderDetailsPage() {
   const colorScheme = useColorScheme();
@@ -25,7 +26,7 @@ export default function OrderDetailsPage() {
   }, [isLoading, dispatch]);
 
   if (error || !order) {
-    return <Text>Failed to fetch orders</Text>;
+    return <PageError />;
   }
 
   return (
@@ -44,7 +45,7 @@ export default function OrderDetailsPage() {
           renderItem={({ item, index, scrollY }) => (
             <OrderItemListItem item={item} index={index} scrollY={scrollY} />
           )}
-          contentContainerStyle={{ gap: 10 }}
+          contentContainerStyle={{ gap: 5, padding: 10 }}
         />
       </View>
     </Theme>
@@ -53,7 +54,6 @@ export default function OrderDetailsPage() {
 
 const styles = {
   container: {
-    padding: 10,
     flex: 1,
     gap: 10,
     backgroundColor: "$background",

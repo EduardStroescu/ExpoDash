@@ -1,9 +1,8 @@
-import { Pressable } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PieChart } from "react-native-gifted-charts";
 import { useOrderStatistics } from "@/app/api/orders";
 import { useRealtimeAdminOrderStatistics } from "@/lib/hooks/useSupabaseRealtime";
-import { Separator, View } from "tamagui";
+import { Button, Separator, View } from "tamagui";
 import { Text } from "tamagui";
 
 const DOT_COLORS = ["#009FFF", "#cf80f3"];
@@ -51,7 +50,11 @@ export function Stats() {
           {DisplayableStatDates.map((date, idx) => {
             return (
               <View key={idx} flexDirection="row" gap={10} alignItems="center">
-                <Pressable onPress={() => setSelectedTimePeriod(date)}>
+                <Button
+                  unstyled
+                  hoverStyle={{ cursor: "pointer" }}
+                  onPress={() => setSelectedTimePeriod(date)}
+                >
                   <Text
                     fontSize={12}
                     fontWeight="bold"
@@ -60,7 +63,7 @@ export function Stats() {
                   >
                     {date}
                   </Text>
-                </Pressable>
+                </Button>
                 {idx !== date.length - 1 && (
                   <Separator
                     alignSelf="stretch"
@@ -115,22 +118,20 @@ function RenderDot(color: string) {
 
 function RenderLegendComponent(displayedStats: number[]) {
   return (
-    <>
-      <View
-        flexDirection="row"
-        justifyContent="center"
-        marginBottom={10}
-        gap={40}
-      >
-        <View flexDirection="row" alignItems="center">
-          {RenderDot(DOT_COLORS[0])}
-          <Text color="white">New: {displayedStats[0]}</Text>
-        </View>
-        <View flexDirection="row" alignItems="center">
-          {RenderDot(DOT_COLORS[1])}
-          <Text color="white">Delivered: {displayedStats[1]}</Text>
-        </View>
+    <View
+      flexDirection="row"
+      justifyContent="center"
+      marginBottom={10}
+      gap={40}
+    >
+      <View flexDirection="row" alignItems="center">
+        {RenderDot(DOT_COLORS[0])}
+        <Text color="white">New: {displayedStats[0]}</Text>
       </View>
-    </>
+      <View flexDirection="row" alignItems="center">
+        {RenderDot(DOT_COLORS[1])}
+        <Text color="white">Delivered: {displayedStats[1]}</Text>
+      </View>
+    </View>
   );
 }

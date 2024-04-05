@@ -15,8 +15,8 @@ import { Image } from "tamagui";
 
 type RemoteImageProps = {
   path?: string | null;
-  fallback: string;
-  placeholderStyle: any;
+  fallback?: string;
+  placeholderStyle?: any;
 } & Omit<ComponentProps<typeof Image>, "source">;
 
 const RemoteImage = ({

@@ -6,10 +6,8 @@ import { useProduct } from "../../api/products";
 import RemoteImage from "@/components/RemoteImage";
 import { defaultPizzaImage } from "@assets/data/products";
 import Header from "@/components/webOnlyComponents/Header";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "@/lib/features/appSlice";
-import { useEffect } from "react";
 import { GetProps, ScrollView, Text, Theme, YStack } from "tamagui";
+import PageError from "@/components/PageError";
 
 export default function ProductDetailsScreen() {
   const { id: idString } = useLocalSearchParams<{ id: string }>();
@@ -19,17 +17,8 @@ export default function ProductDetailsScreen() {
   const { data: product, error, isLoading } = useProduct(id);
   const colorScheme = useColorScheme();
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (isLoading) {
-      dispatch(setIsLoading(true));
-    } else {
-      dispatch(setIsLoading(false));
-    }
-  }, [isLoading, dispatch]);
-
   if (error) {
-    return <Text>Failed to fetch products</Text>;
+    return <PageError />;
   }
 
   return (

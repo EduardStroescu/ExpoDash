@@ -28,7 +28,7 @@ export default function OrderListNavigator() {
         }}
       >
         <TopTabs.Screen name="index" options={{ title: "Active" }} />
-        <TopTabs.Screen name="archive" options={{ title: "Fulfilled" }} />
+        <TopTabs.Screen name="archive" options={{ title: "Archive" }} />
       </TopTabs>
     </SafeAreaView>
   );

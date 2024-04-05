@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import Svg, { G, Path } from "react-native-svg";
-import React from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,

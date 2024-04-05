@@ -1,5 +1,5 @@
 import { useColorScheme } from "react-native";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 import OrderListItem from "@/components/OrderListItem";
 import OrderItemListItem from "@/components/OrderItemListItem";
@@ -38,14 +38,14 @@ export default function OrderDetailsPage() {
       />
 
       <View {...styles.container}>
-        <OrderListItem order={order} />
+        <OrderListItem order={order} hoverStyle={{ cursor: "default" }} />
 
         <AnimatedFlatList
           data={order.order_items}
           renderItem={({ item, index, scrollY }) => (
             <OrderItemListItem item={item} index={index} scrollY={scrollY} />
           )}
-          contentContainerStyle={{ gap: 10 }}
+          contentContainerStyle={{ gap: 5, padding: 10 }}
         />
         <OrderStatusSelector activeStatus={order.status} orderId={id} />
       </View>
@@ -56,9 +56,8 @@ export default function OrderDetailsPage() {
 const styles = {
   container: {
     backgroundColor: "$background",
-    paddingHorizontal: 10,
     paddingTop: 10,
     flex: 1,
-    gap: 10,
+    gap: 5,
   },
 };

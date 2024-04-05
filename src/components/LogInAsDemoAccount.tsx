@@ -4,7 +4,7 @@ import { Text } from "tamagui";
 import { supabase } from "@/lib/supabase/supabase";
 import { Alert } from "react-native";
 import { useRouter } from "expo-router";
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 interface LogInAsDemoAccountProps {
   loading: boolean;
