@@ -1,44 +1,33 @@
+import Button from "@/components/Button";
 import { Link, Stack } from "expo-router";
-import { Platform, StyleSheet } from "react-native";
-import { Text, View } from "tamagui";
+import { Platform, useColorScheme } from "react-native";
+import { Text, Theme, YStack } from "tamagui";
 
 export default function NotFoundScreen() {
+  const colorScheme = useColorScheme();
   return (
-    <>
+    <Theme name={colorScheme}>
       <Stack.Screen
         options={{
           headerShown: Platform.OS === "web" ? false : true,
           title: "Oops!",
         }}
       />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn't exist.</Text>
-
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
+      <YStack
+        width="100%"
+        height="100%"
+        gap="$10"
+        alignItems="center"
+        justifyContent="center"
+        padding={20}
+      >
+        <Text color="$red9" fontSize="$9" textAlign="center">
+          We're sorry! This page does not exist.
+        </Text>
+        <Link href="/">
+          <Button color="$blue10">Go back to Home Page</Button>
         </Link>
-      </View>
-    </>
+      </YStack>
+    </Theme>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  linkText: {
-    fontSize: 14,
-    color: "#2e78b7",
-  },
-});

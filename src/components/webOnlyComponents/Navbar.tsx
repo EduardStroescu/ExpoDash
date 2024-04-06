@@ -84,9 +84,10 @@ function AdminNavbar({
     ],
   };
 
-  const currentUserType = segments?.[0]
-    ? segments?.[0].replace(/[^\w\s]/gi, "")
-    : "admin";
+  const currentUserType =
+    segments?.[0] === "admin" || segments?.[0] === "user"
+      ? segments?.[0].replace(/[^\w\s]/gi, "")
+      : "admin";
 
   return (
     <XStack {...styles.primaryContainer}>

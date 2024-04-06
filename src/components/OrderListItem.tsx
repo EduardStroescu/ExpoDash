@@ -1,6 +1,5 @@
-import { LayoutChangeEvent, useColorScheme } from "react-native";
-import React, { useState } from "react";
-import Colors from "../lib/constants/Colors";
+import { LayoutChangeEvent } from "react-native";
+import { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { router, useSegments } from "expo-router";
@@ -8,7 +7,6 @@ import { Tables } from "../lib/types";
 import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
 import { View, Text, GetProps, Button } from "tamagui";
-import { StyleSheet } from "react-native";
 dayjs.extend(relativeTime);
 
 interface OrderListItemProps {
@@ -54,7 +52,7 @@ export default function OrderListItem({
       <Button
         unstyled
         hoverStyle={hoverStyle}
-        style={style.container}
+        {...styles.container}
         onPress={() => router.navigate(`/${segments[0]}/orders/${order.id}`)}
       >
         <View flex={1}>
@@ -76,11 +74,13 @@ export default function OrderListItem({
 }
 
 interface StyleProps {
+  container: GetProps<typeof Button>;
   title: GetProps<typeof Text>;
   subtitleContainer: GetProps<typeof View>;
   price: GetProps<typeof Text>;
 }
-const style = StyleSheet.create({
+
+const styles: StyleProps = {
   container: {
     flex: 1,
     padding: 10,
@@ -90,9 +90,6 @@ const style = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#262626",
   },
-});
-
-const styles: StyleProps = {
   title: {
     color: "white",
     fontWeight: "500",
