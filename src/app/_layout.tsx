@@ -21,6 +21,8 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useSession } from "@/lib/hooks/useSession";
+import { Toasts } from "@backpackapp-io/react-native-toast";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -75,20 +77,23 @@ function RootLayoutNav() {
         <StripePlatformProvider>
           <QueryProvider>
             <AnimatedLoader />
-            {Platform.OS === "web" && <Navbar />}
-            <Stack
-              screenOptions={{
-                headerShown: Platform.OS === "web" ? false : true,
-                contentStyle: {
-                  backgroundColor: "#000000",
-                },
-              }}
-            >
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="admin" options={{ headerShown: false }} />
-              <Stack.Screen name="user" options={{ headerShown: false }} />
-            </Stack>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              {Platform.OS === "web" && <Navbar />}
+              <Stack
+                screenOptions={{
+                  headerShown: Platform.OS === "web" ? false : true,
+                  contentStyle: {
+                    backgroundColor: "#000000",
+                  },
+                }}
+              >
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="admin" options={{ headerShown: false }} />
+                <Stack.Screen name="user" options={{ headerShown: false }} />
+              </Stack>
+              <Toasts />
+            </GestureHandlerRootView>
           </QueryProvider>
         </StripePlatformProvider>
       </TamaguiProvider>

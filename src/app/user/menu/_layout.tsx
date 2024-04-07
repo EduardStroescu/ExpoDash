@@ -1,17 +1,22 @@
 import Colors from "@/lib/constants/Colors";
+import { RootState } from "@/lib/reduxStore";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, Stack, usePathname } from "expo-router";
 import {
   ColorSchemeName,
   Platform,
   Pressable,
+  Text,
   View,
   useColorScheme,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function MenuStack() {
   const colorScheme = useColorScheme();
   const pathname = usePathname();
+  const { items } = useSelector((state: RootState) => state.cart);
+  const cartItemsNumber = items.length;
 
   return (
     <Stack
@@ -20,7 +25,8 @@ export default function MenuStack() {
         contentStyle: {
           backgroundColor: "black",
         },
-        headerRight: () => renderHeaderRight(pathname, colorScheme),
+        headerRight: () =>
+          renderHeaderRight(pathname, colorScheme, cartItemsNumber),
       }}
     >
       <Stack.Screen
@@ -42,18 +48,57 @@ export default function MenuStack() {
   );
 }
 
-const renderHeaderRight = (pathname: string, colorScheme: ColorSchemeName) => {
+const renderHeaderRight = (
+  pathname: string,
+  colorScheme: ColorSchemeName,
+  cartItemsNumber: number,
+) => {
   if (!pathname?.includes("cart")) {
     return (
       <Link href="/user/menu/cart" asChild>
         <Pressable>
           {({ pressed }) => (
-            <FontAwesome
-              name="shopping-cart"
-              size={25}
-              color={Colors[colorScheme ?? "light"].tint}
-              style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-            />
+            <View
+              style={{
+                position: "relative",
+                marginRight: 15,
+                opacity: pressed ? 0.5 : 1,
+              }}
+            >
+              <FontAwesome
+                name="shopping-cart"
+                size={25}
+                color={
+                  pressed
+                    ? Colors[colorScheme ?? "light"].tint
+                    : Colors[colorScheme ?? "light"].text
+                }
+              />
+              {cartItemsNumber > 0 && (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "50%",
+                    backgroundColor: "red",
+                    width: 20,
+                    height: 20,
+                    position: "absolute",
+                    right: -12,
+                    top: -9,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: Colors[colorScheme ?? "light"].text,
+                      fontSize: 12,
+                    }}
+                  >
+                    {cartItemsNumber}
+                  </Text>
+                </View>
+              )}
+            </View>
           )}
         </Pressable>
       </Link>

@@ -10,8 +10,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { defaultPizzaImage } from "@assets/data/products";
 import { Image } from "tamagui";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 type RemoteImageProps = {
   path?: string | null;
@@ -29,7 +29,7 @@ const RemoteImage = ({
 
   useEffect(() => {
     if (!path) {
-      return setImage(defaultPizzaImage);
+      return setImage(imagePlaceholder);
     }
     setImage("");
     const { data } = supabase.storage.from("product-images").getPublicUrl(path);

@@ -16,7 +16,8 @@ import {
 } from "../../lib/stripe/stripe";
 import { GetProps, Text, Theme, View } from "tamagui";
 import { InlineGradient } from "../InlineGradient";
-import AnimatedFlatList from "../AnimatedFlatlist";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);
@@ -35,6 +36,11 @@ export default function Cart() {
       await initialisePaymentSheet(Math.round(total * 100), "usd");
       const payed = await openPaymentSheet();
       if (!payed) {
+        toast.error(
+          "Error! Please try again later!",
+          ToastOptions({ iconName: "exclamation", iconColor: "red" }),
+        );
+        router.replace("/user/menu/");
         return;
       }
 

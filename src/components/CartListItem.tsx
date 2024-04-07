@@ -1,12 +1,12 @@
 import { CartItem } from "../lib/types";
 import { FontAwesome } from "@expo/vector-icons";
-import { defaultPizzaImage } from "@assets/data/products";
 import { useDispatch } from "react-redux";
 import { updateQuantity } from "../lib/features/cartSlice";
 import RemoteImage from "./RemoteImage";
 import Input from "./Input";
 import { GetProps, View } from "tamagui";
 import { Text } from "tamagui";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 type CartListItemProps = {
   cartItem: CartItem;
@@ -20,7 +20,7 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
       <RemoteImage
         {...styles.image}
         path={cartItem.product.image}
-        fallback={defaultPizzaImage}
+        fallback={imagePlaceholder}
         resizeMode="contain"
       />
 

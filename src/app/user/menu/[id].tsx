@@ -7,10 +7,8 @@ import { addToCart } from "@/lib/features/cartSlice";
 import { PizzaSize } from "@/lib/types";
 import { randomUUID } from "expo-crypto";
 import { useProduct } from "../../api/products";
-import { defaultPizzaImage } from "@assets/data/products";
 import RemoteImage from "@/components/RemoteImage";
 import Header from "@/components/webOnlyComponents/Header";
-import { setIsLoading } from "@/lib/features/appSlice";
 import {
   ScrollView,
   Text,
@@ -24,6 +22,9 @@ import {
 import Input from "@/components/Input";
 import { FontAwesome } from "@expo/vector-icons";
 import PageError from "@/components/PageError";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -58,7 +59,10 @@ export default function ProductDetailsScreen() {
           quantity: selectedQuantity,
         }),
       );
-      // router.navigate("/user/menu/cart");
+      toast.success(
+        "Product added to cart successfully!",
+        ToastOptions({ iconName: "check" }),
+      );
     }
     return;
   };
@@ -92,7 +96,7 @@ export default function ProductDetailsScreen() {
           >
             <RemoteImage
               path={product?.image}
-              fallback={defaultPizzaImage}
+              fallback={imagePlaceholder}
               width="100%"
               aspectRatio={1}
               alignSelf="center"

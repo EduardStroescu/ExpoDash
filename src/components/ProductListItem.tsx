@@ -1,6 +1,5 @@
 import { LayoutChangeEvent } from "react-native";
 import { Tables } from "../lib/types";
-import { defaultPizzaImage } from "@assets/data/products";
 import { router, useSegments } from "expo-router";
 import RemoteImage from "./RemoteImage";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
@@ -9,6 +8,7 @@ import { Button, GetProps, XStack, YStack, useWindowDimensions } from "tamagui";
 import { Text } from "tamagui";
 import { useState } from "react";
 import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 interface ProductListItemProps {
   product: Tables<"products">;
@@ -71,7 +71,7 @@ export default function ProductListItem({
       >
         <RemoteImage
           path={product.image}
-          fallback={defaultPizzaImage}
+          fallback={imagePlaceholder}
           placeholderStyle={{
             height: width <= 600 ? 110 : 300,
             width: "100%",

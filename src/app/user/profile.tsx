@@ -27,8 +27,8 @@ import Input from "@/components/Input";
 import { UpdateTables } from "@/lib/types";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
-import { defaultPizzaImage } from "@assets/data/products";
 import SvgBackground from "@/components/svgBackground/SvgBackground";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 export default function ProfileScreen() {
   const [profileAvatar, setProfileAvatar] = useState("");
@@ -96,7 +96,7 @@ export default function ProfileScreen() {
           <YStack {...styles.container}>
             <Card {...styles.card}>
               <Avatar circular size="$15" elevate elevation="$1">
-                <Avatar.Image src={profileAvatar || defaultPizzaImage} />
+                <Avatar.Image src={profileAvatar || imagePlaceholder} />
                 <Avatar.Fallback bc="#0c103385" />
               </Avatar>
               <Card.Footer flexDirection="column" alignItems="center" gap="$4">

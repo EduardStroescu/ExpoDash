@@ -23,6 +23,8 @@ import {
 import Header from "../webOnlyComponents/Header";
 import { GetProps, ScrollView, Text, Theme, View } from "tamagui";
 import { InlineGradient } from "../InlineGradient";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);
@@ -40,9 +42,9 @@ export default function Cart() {
 
   return (
     <Theme name={colorScheme}>
-      <ScrollView {...styles.container}>
-        {Platform.OS === "web" && <Header />}
+      {Platform.OS === "web" && <Header />}
 
+      <ScrollView {...styles.container}>
         {!isCheckout && (
           <FlatList
             data={items}
@@ -135,17 +137,20 @@ function CheckoutForm({
       }
 
       const { error: submitError } = await elements.submit();
-      if (submitError) {
-        // Show error to your customer
-        return;
-      }
+      if (submitError) return;
 
       const { paymentIntent: clientSecret } = await fetchPaymentSheetParams(
         Math.round(total * 100),
         "usd",
       );
 
-      if (!clientSecret) return;
+      if (!clientSecret) {
+        toast.error(
+          "Error! Please try again later!",
+          ToastOptions({ iconName: "exclamation", iconColor: "red" }),
+        );
+        return;
+      }
 
       const orderItems = items.map((cartItem) => ({
         order_id: order?.id,
@@ -163,6 +168,14 @@ function CheckoutForm({
           return_url: `${process.env.EXPO_PUBLIC_WEBSITE_URL}/user/orders/${order?.id}`,
         },
       });
+
+      if (error) {
+        toast.error(
+          "Error! Please try again later!",
+          ToastOptions({ iconName: "exclamation", iconColor: "red" }),
+        );
+        return;
+      }
 
       dispatch(clearCart());
       setIsCheckout(false);
@@ -210,7 +223,7 @@ const styles: StyleProps = {
       minHeight: "100%",
       alignItems: "center",
       backgroundColor: "$background",
-      paddingBottom: 20,
+      padding: 20,
       gap: "$4",
     },
   },
@@ -227,7 +240,6 @@ const styles: StyleProps = {
   cartForm: {
     width: "50%",
     gap: "$3",
-    justifyContent: "center",
   },
   paymentSheetGroup: {
     gap: "$3",

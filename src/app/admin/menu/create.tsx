@@ -11,15 +11,7 @@ import { supabase } from "@/lib/supabase/supabase";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ScrollView,
-  Image,
-  Text,
-  Theme,
-  View,
-  YStack,
-  GetProps,
-} from "tamagui";
+import { ScrollView, Text, Theme, View, YStack, GetProps } from "tamagui";
 import {
   uploadProductImageMobile,
   uploadProductImageWeb,
@@ -33,8 +25,9 @@ import {
 } from "../../api/products";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { defaultPizzaImage } from "@assets/data/products";
 import Header from "@/components/webOnlyComponents/Header";
+import RemoteImage from "@/components/RemoteImage";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 const FormSchema = z.object({
   name: z
@@ -136,24 +129,31 @@ export default function CreateProductScreen() {
     );
   };
 
-  // TODO: Change this for WEB/ Alert not available on WEB
   const onDelete = () => {
-    Alert.alert("Confirm", "Are you sure you want to delete this product?", [
-      {
-        text: "Cancel",
-      },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => {
-          deleteProduct(id, {
-            onSuccess: () => {
-              router.replace("/admin");
-            },
-          });
+    if (Platform.OS !== "web") {
+      Alert.alert("Confirm", "Are you sure you want to delete this product?", [
+        {
+          text: "Cancel",
         },
-      },
-    ]);
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            deleteProduct(id, {
+              onSuccess: () => {
+                router.replace("/admin/menu/");
+              },
+            });
+          },
+        },
+      ]);
+    } else {
+      deleteProduct(id, {
+        onSuccess: () => {
+          router.replace("/admin/menu/");
+        },
+      });
+    }
   };
 
   const pickImage = async (e) => {
@@ -204,7 +204,7 @@ export default function CreateProductScreen() {
             });
           }
         }
-        setValue("image", defaultPizzaImage, {
+        setValue("image", imagePlaceholder, {
           shouldValidate: true,
           shouldDirty: true,
         });
@@ -240,12 +240,12 @@ export default function CreateProductScreen() {
         <ScrollView width="100%" height="100%" backgroundColor="$background">
           <YStack {...styles.container}>
             <View>
-              <Image
+              <RemoteImage
                 {...styles.image}
                 source={{
                   width: 200,
                   height: 200,
-                  uri: getValues("image") || defaultPizzaImage,
+                  uri: getValues("image") || imagePlaceholder,
                 }}
               />
             </View>
@@ -269,12 +269,12 @@ export default function CreateProductScreen() {
               name="name"
               render={({ field: { value, onChange, onBlur } }) => (
                 <Input
+                  {...styles.input}
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   placeholder="Name"
                   placeholderTextColor="grey"
-                  style={styles.input}
                 />
               )}
             />
@@ -291,12 +291,12 @@ export default function CreateProductScreen() {
               name="description"
               render={({ field: { value, onChange, onBlur } }) => (
                 <Input
+                  {...styles.input}
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   placeholder="Description"
                   placeholderTextColor="grey"
-                  style={styles.input}
                 />
               )}
             />
@@ -315,9 +315,9 @@ export default function CreateProductScreen() {
               name="price"
               render={({ field: { value, onChange, onBlur } }) => (
                 <Input
+                  {...styles.input}
                   placeholder="9.99"
                   placeholderTextColor="grey"
-                  style={styles.input}
                   keyboardType="numeric"
                   value={value}
                   onChangeText={onChange}
@@ -350,7 +350,7 @@ export default function CreateProductScreen() {
 
 interface StyleProps {
   container: GetProps<typeof YStack>;
-  image: GetProps<typeof Image>;
+  image: GetProps<typeof RemoteImage>;
   textButton: GetProps<typeof Text>;
   label: GetProps<typeof Text>;
   input: GetProps<typeof Input>;

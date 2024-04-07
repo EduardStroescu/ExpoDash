@@ -4,10 +4,10 @@ import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/lib/constants/Colors";
 import { useProduct } from "../../api/products";
 import RemoteImage from "@/components/RemoteImage";
-import { defaultPizzaImage } from "@assets/data/products";
 import Header from "@/components/webOnlyComponents/Header";
 import { GetProps, ScrollView, Text, Theme, YStack } from "tamagui";
 import PageError from "@/components/PageError";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 export default function ProductDetailsScreen() {
   const { id: idString } = useLocalSearchParams<{ id: string }>();
@@ -59,7 +59,7 @@ export default function ProductDetailsScreen() {
         >
           <RemoteImage
             path={product?.image}
-            fallback={defaultPizzaImage}
+            fallback={imagePlaceholder}
             width="100%"
             aspectRatio={1}
             alignSelf="center"

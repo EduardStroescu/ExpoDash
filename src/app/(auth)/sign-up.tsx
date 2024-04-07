@@ -1,9 +1,4 @@
-import {
-  Alert,
-  useColorScheme,
-  Platform,
-  KeyboardAvoidingView,
-} from "react-native";
+import { useColorScheme, Platform, KeyboardAvoidingView } from "react-native";
 import { useState } from "react";
 import Button from "@/components/Button";
 import { Link, router } from "expo-router";
@@ -14,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Meta from "@/components/Meta";
 import { Form, GetProps, ScrollView, Text, Theme } from "tamagui";
 import Input, { InputProps } from "@/components/Input";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
 
 const SignUpSchema = z.object({
   email: z
@@ -49,7 +46,10 @@ export default function SignUpPage() {
     });
 
     if (error) {
-      Alert.alert(error.message);
+      toast(
+        error.message,
+        ToastOptions({ iconName: "exclamation", iconColor: "red" }),
+      );
       setLoading(false);
       return;
     }

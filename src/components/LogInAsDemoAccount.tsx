@@ -2,9 +2,10 @@ import { GetProps, View } from "tamagui";
 import Button, { ButtonProps } from "./Button";
 import { Text } from "tamagui";
 import { supabase } from "@/lib/supabase/supabase";
-import { Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { Dispatch, SetStateAction } from "react";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
 
 interface LogInAsDemoAccountProps {
   loading: boolean;
@@ -31,7 +32,10 @@ export function LogInAsDemoAccount({
     });
 
     if (error) {
-      Alert.alert(error.message);
+      toast(
+        error.message,
+        ToastOptions({ iconName: "exclamation", iconColor: "red" }),
+      );
       setLoading(false);
       return;
     }

@@ -13,7 +13,6 @@ const fetchPaymentSheetParams = async (amount: number, currency: string) => {
   if (data) {
     return data;
   } else {
-    Alert.alert("Error fetching payment sheet params");
     return {};
   }
 };
@@ -21,11 +20,11 @@ const fetchPaymentSheetParams = async (amount: number, currency: string) => {
 // TODO: CHANGE BILLING DETAILS AFTER ADDING USERS
 export const initialisePaymentSheet = async (
   amount: number,
-  currency: string
+  currency: string,
 ) => {
   const { paymentIntent, publishableKey } = await fetchPaymentSheetParams(
     amount,
-    currency
+    currency,
   );
 
   if (!paymentIntent || !publishableKey) return;
@@ -44,7 +43,6 @@ export const openPaymentSheet = async () => {
   const { error } = await presentPaymentSheet();
 
   if (error) {
-    Alert.alert(error.message);
     return false;
   }
   return true;

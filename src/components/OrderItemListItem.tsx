@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Tables } from "../lib/types";
-import { defaultPizzaImage } from "@assets/data/products";
 import RemoteImage from "./RemoteImage";
 import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
 import { GetProps, Text, View } from "tamagui";
 import { LayoutChangeEvent } from "react-native";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 type OrderItemListItemProps = {
   item: { products: Tables<"products"> | null } & Tables<"order_items">;
@@ -46,7 +46,7 @@ const OrderItemListItem = ({
         <RemoteImage
           {...styles.image}
           path={item.products?.image}
-          fallback={defaultPizzaImage}
+          fallback={imagePlaceholder}
           resizeMode="contain"
         />
         <View flex={1}>
