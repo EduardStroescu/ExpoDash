@@ -18,7 +18,7 @@ export const cartSlice = createSlice({
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const { product, size, quantity } = action.payload;
       const alreadyInCartIndex = state.items.findIndex(
-        (item) => item.product.id === product.id && item.size === size
+        (item) => item.product.id === product.id && item.size === size,
       );
       if (alreadyInCartIndex !== -1) {
         state.items[alreadyInCartIndex].quantity += quantity;
@@ -29,7 +29,7 @@ export const cartSlice = createSlice({
     removeFromCart: (state, action: PayloadAction<CartItem>) => {
       const idToRemove = action.payload.id;
       const indexToRemove = state.items.findIndex(
-        (item) => item.id === idToRemove
+        (item) => item.id === idToRemove,
       );
       if (indexToRemove !== -1) {
         state.items.splice(indexToRemove, 1);
@@ -38,7 +38,7 @@ export const cartSlice = createSlice({
     updateQuantity: (state, action: PayloadAction<CartItem>) => {
       const { id, size, quantity } = action.payload;
       const alreadyInCartIndex = state.items.findIndex(
-        (item) => item.id === id && item.size === size
+        (item) => item.id === id && item.size === size,
       );
       if (alreadyInCartIndex !== -1) {
         if (quantity > 0) {
@@ -49,10 +49,16 @@ export const cartSlice = createSlice({
       }
     },
     getCartTotal: (state): void => {
-      state.total = state.items.reduce(
-        (sum, item) => (sum += item.product.price * item.quantity),
-        0
-      );
+      state.total = state.items.reduce((sum, item) => {
+        const productPrice =
+          item.product[
+            `${item.size.toLowerCase()}_price` as keyof Pick<
+              typeof item.product,
+              "s_price" | "m_price" | "l_price" | "xl_price"
+            >
+          ];
+        return (sum += productPrice * item.quantity);
+      }, 0);
     },
     clearCart: (state): void => {
       state.items = [];

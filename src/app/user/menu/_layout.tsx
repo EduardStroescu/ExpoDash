@@ -79,7 +79,7 @@ const renderHeaderRight = (
                   style={{
                     alignItems: "center",
                     justifyContent: "center",
-                    borderRadius: "50%",
+                    borderRadius: 10,
                     backgroundColor: "red",
                     width: 20,
                     height: 20,

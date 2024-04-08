@@ -53,6 +53,7 @@ export default function Cart() {
             style={{
               width: "90%",
               maxWidth: 800,
+              // @ts-ignore: only available on Web
               overflowY: items.length > 0 ? "scroll" : "hidden",
               height: "50vh",
             }}

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useWindowDimensions } from "tamagui";
 
 interface Breakpoints {
   default: string | number | string[] | number[] | null;

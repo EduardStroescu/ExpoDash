@@ -148,6 +148,7 @@ const styles: StyleProps = {
     backgroundColor: "$background",
     contentContainerStyle: { justifyContent: "center", height: "90%" },
   },
+  // @ts-ignore: onSubmit is not required to function, but added form for the ability to sumbit on pressing "enter" on web
   form: {
     paddingHorizontal: 20,
     alignSelf: "center",
@@ -156,7 +157,7 @@ const styles: StyleProps = {
       width: "30%",
       paddingVertical: 20,
       borderRadius: 20,
-      borderStyle: "double",
+      borderStyle: "double" as "solid",
       borderWidth: 4,
       borderColor: "#7007acff",
       position: "relative",

@@ -14,6 +14,14 @@ type CartListItemProps = {
 
 const CartListItem = ({ cartItem }: CartListItemProps) => {
   const dispatch = useDispatch();
+  const itemPrice = (
+    cartItem.product[
+      `${cartItem.size.toLowerCase()}_price` as keyof Pick<
+        typeof cartItem.product,
+        "s_price" | "m_price" | "l_price" | "xl_price"
+      >
+    ] * cartItem.quantity
+  ).toFixed(2);
 
   return (
     <View {...styles.container}>
@@ -27,7 +35,7 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
       <View flex={1}>
         <Text {...styles.title}>{cartItem.product.name}</Text>
         <View {...styles.subtitleContainer}>
-          <Text {...styles.price}>${cartItem.product.price.toFixed(2)}</Text>
+          <Text {...styles.price}>${itemPrice}</Text>
           <Text color="$color10">Size: {cartItem.size}</Text>
         </View>
       </View>

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import {
   Alert,
+  GestureResponderEvent,
   KeyboardAvoidingView,
   Platform,
   useColorScheme,
@@ -28,6 +29,9 @@ import Button from "@/components/Button";
 import Header from "@/components/webOnlyComponents/Header";
 import RemoteImage from "@/components/RemoteImage";
 import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
+import { ProductSize, Tables } from "@/lib/types";
+
+const sizes: ProductSize[] = ["S", "M", "L", "XL"];
 
 const FormSchema = z.object({
   name: z
@@ -39,8 +43,17 @@ const FormSchema = z.object({
     .min(1, {
       message: "Product description must contain at least one character.",
     }),
-  price: z
-    .string({ required_error: "A product price is required" })
+  s_price: z
+    .string({ required_error: "A small variant price is required" })
+    .min(1, { message: "Price must contain at least one character." }),
+  m_price: z
+    .string({ required_error: "A medium variant price is required" })
+    .min(1, { message: "Price must contain at least one character." }),
+  l_price: z
+    .string({ required_error: "A large variant product price is required" })
+    .min(1, { message: "Price must contain at least one character." }),
+  xl_price: z
+    .string({ required_error: "An XL variant product price is required" })
     .min(1, { message: "Price must contain at least one character." }),
 });
 
@@ -67,7 +80,15 @@ export default function CreateProductScreen() {
     getValues,
     reset,
   } = useForm({
-    defaultValues: { name: "", image: "", description: "", price: "" },
+    defaultValues: {
+      name: "",
+      image: "",
+      description: "",
+      s_price: "",
+      m_price: "",
+      l_price: "",
+      xl_price: "",
+    },
     resolver: zodResolver(FormSchema),
     mode: "onChange",
   });
@@ -76,12 +97,15 @@ export default function CreateProductScreen() {
     name,
     image,
     description,
-    price,
+    s_price,
+    m_price,
+    l_price,
+    xl_price,
   }) => {
     if (isUpdate) {
-      onUpdate(name, image, description, price);
+      onUpdate(name, image, description, s_price, m_price, l_price, xl_price);
     } else {
-      onCreate(name, image, description, price);
+      onCreate(name, image, description, s_price, m_price, l_price, xl_price);
     }
   };
 
@@ -89,7 +113,10 @@ export default function CreateProductScreen() {
     name: string,
     image: string | null,
     description: string,
-    price: string,
+    s_price: string,
+    m_price: string,
+    l_price: string,
+    xl_price: string,
   ) => {
     const imagePath =
       Platform.OS !== "web"
@@ -97,7 +124,15 @@ export default function CreateProductScreen() {
         : await uploadProductImageWeb(image);
 
     insertProduct(
-      { name, image: imagePath, description, price: parseFloat(price) },
+      {
+        name,
+        image: imagePath,
+        description,
+        s_price: parseFloat(s_price),
+        m_price: parseFloat(m_price),
+        l_price: parseFloat(l_price),
+        xl_price: parseFloat(xl_price),
+      },
       {
         onSuccess: () => {
           reset();
@@ -111,7 +146,10 @@ export default function CreateProductScreen() {
     name: string,
     image: string | null,
     description: string,
-    price: string,
+    s_price: string,
+    m_price: string,
+    l_price: string,
+    xl_price: string,
   ) => {
     const imagePath =
       Platform.OS !== "web"
@@ -119,7 +157,16 @@ export default function CreateProductScreen() {
         : await uploadProductImageWeb(image);
 
     updateProduct(
-      { id, name, image: imagePath, description, price: parseFloat(price) },
+      {
+        id,
+        name,
+        image: imagePath,
+        description,
+        s_price: parseFloat(s_price),
+        m_price: parseFloat(m_price),
+        l_price: parseFloat(l_price),
+        xl_price: parseFloat(xl_price),
+      },
       {
         onSuccess: () => {
           reset();
@@ -156,7 +203,9 @@ export default function CreateProductScreen() {
     }
   };
 
-  const pickImage = async (e) => {
+  const pickImage = async (
+    event: React.ChangeEvent<HTMLInputElement> | GestureResponderEvent,
+  ) => {
     if (Platform.OS !== "web") {
       // No permissions request is necessary for launching the image library
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -173,6 +222,7 @@ export default function CreateProductScreen() {
         });
       }
     } else {
+      const e = event as React.ChangeEvent<HTMLInputElement>;
       if (!e.target.files?.length) return;
       const fileReader = new FileReader();
       const file = e.target.files[0];
@@ -217,7 +267,19 @@ export default function CreateProductScreen() {
           shouldValidate: true,
           shouldDirty: true,
         });
-        setValue("price", String(updatingProduct.price), {
+        setValue("s_price", String(updatingProduct.s_price), {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        setValue("m_price", String(updatingProduct.m_price), {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        setValue("l_price", String(updatingProduct.l_price), {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        setValue("xl_price", String(updatingProduct.xl_price), {
           shouldValidate: true,
           shouldDirty: true,
         });
@@ -242,11 +304,20 @@ export default function CreateProductScreen() {
             <View>
               <RemoteImage
                 {...styles.image}
-                source={{
-                  width: 200,
-                  height: 200,
-                  uri: getValues("image") || imagePlaceholder,
+                source={getValues("image")}
+                fallback={imagePlaceholder}
+                width="100%"
+                aspectRatio={1}
+                alignSelf="center"
+                resizeMode="cover"
+                placeholderStyle={{
+                  width: 500,
+                  height: 500,
+                  aspectRatio: 1,
+                  alignSelf: "center",
                 }}
+                $gtXs={{ width: "100%", height: "auto" }}
+                $gtLg={{ width: "50%", height: "auto" }}
               />
             </View>
             {Platform.OS === "web" ? (
@@ -306,27 +377,57 @@ export default function CreateProductScreen() {
               </Text>
             )}
 
-            <Text {...styles.label}>Price</Text>
-            <Controller
-              control={control}
-              rules={{
-                required: "Price is required",
-              }}
-              name="price"
-              render={({ field: { value, onChange, onBlur } }) => (
-                <Input
-                  {...styles.input}
-                  placeholder="9.99"
-                  placeholderTextColor="grey"
-                  keyboardType="numeric"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                />
-              )}
-            />
-            {errors.price && (
-              <Text {...styles.errorMessage}>{errors.price?.message}</Text>
+            <Text {...styles.label}>Prices</Text>
+            <View
+              flexDirection="row"
+              gap="$3"
+              justifyContent="center"
+              width="100%"
+            >
+              {sizes.map((size) => {
+                const inputName = `${size.toLowerCase()}_price` as keyof Pick<
+                  Tables<"products">,
+                  "s_price" | "m_price" | "l_price" | "xl_price"
+                >;
+                return (
+                  <View alignItems="center" key={size}>
+                    <Text {...styles.label}>{size}</Text>
+                    <Controller
+                      control={control}
+                      rules={{
+                        required: `${size} Price is required`,
+                      }}
+                      name={inputName}
+                      render={({ field: { value, onChange, onBlur } }) => (
+                        <Input
+                          {...styles.input}
+                          width={50}
+                          padding={0}
+                          textAlign="center"
+                          placeholder="9.99"
+                          placeholderTextColor="grey"
+                          keyboardType="numeric"
+                          value={value}
+                          onChangeText={onChange}
+                          onBlur={onBlur}
+                        />
+                      )}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+            {errors.s_price && (
+              <Text {...styles.errorMessage}>{errors.s_price?.message}</Text>
+            )}
+            {errors.m_price && (
+              <Text {...styles.errorMessage}>{errors.m_price?.message}</Text>
+            )}
+            {errors.l_price && (
+              <Text {...styles.errorMessage}>{errors.l_price?.message}</Text>
+            )}
+            {errors.xl_price && (
+              <Text {...styles.errorMessage}>{errors.xl_price?.message}</Text>
             )}
 
             <Button
@@ -390,6 +491,7 @@ const styles: StyleProps = {
     marginBottom: 20,
   },
   errorMessage: {
+    fontSize: 14,
     color: "red",
   },
 };

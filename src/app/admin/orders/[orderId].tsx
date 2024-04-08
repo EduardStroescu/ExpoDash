@@ -8,7 +8,8 @@ import { useOrderDetails } from "../../api/orders";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
-import { Text, Theme, View } from "tamagui";
+import { Theme, View } from "tamagui";
+import PageError from "@/components/PageError";
 
 export default function OrderDetailsPage() {
   const colorScheme = useColorScheme();
@@ -26,7 +27,7 @@ export default function OrderDetailsPage() {
   }, [isLoading, dispatch]);
 
   if (error || !order) {
-    return <Text>Order not found!</Text>;
+    return <PageError />;
   }
 
   return (

@@ -1,4 +1,3 @@
-import OrderListItem from "@/components/OrderListItem";
 import { Platform, useColorScheme } from "react-native";
 import { useAdminOrderList } from "@/app/api/orders";
 import { useRealtimeAdminOrders } from "@/lib/hooks/useSupabaseRealtime";
@@ -7,8 +6,9 @@ import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import { useEffect } from "react";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
-import { Text, Theme, View } from "tamagui";
+import { Theme, View } from "tamagui";
 import PageError from "@/components/PageError";
+import AnimatedOrderListItem from "@/components/AnimatedOrderListItem";
 
 export default function OrdersPage() {
   const colorScheme = useColorScheme();
@@ -40,7 +40,11 @@ export default function OrdersPage() {
         <AnimatedFlatList
           data={orders}
           renderItem={({ item, index, scrollY }) => (
-            <OrderListItem order={item} index={index} scrollY={scrollY} />
+            <AnimatedOrderListItem
+              order={item}
+              index={index}
+              scrollY={scrollY}
+            />
           )}
           contentContainerStyle={{
             gap: 5,

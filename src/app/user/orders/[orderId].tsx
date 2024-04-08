@@ -7,7 +7,7 @@ import { useOrderDetails } from "../../api/orders";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/lib/features/appSlice";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
-import { Text, Theme, View } from "tamagui";
+import { Theme, View } from "tamagui";
 import PageError from "@/components/PageError";
 
 export default function OrderDetailsPage() {

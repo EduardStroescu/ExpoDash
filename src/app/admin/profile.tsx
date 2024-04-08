@@ -24,20 +24,23 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/supabase";
 import Input from "@/components/Input";
-import { UpdateTables } from "@/lib/types";
+import { UpdateTables, Tables } from "@/lib/types";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
 import SvgBackground from "@/components/svgBackground/SvgBackground";
 import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
+import { GestureResponderEvent } from "react-native";
 
 export default function ProfileScreen() {
   const [profileAvatar, setProfileAvatar] = useState("");
   const colorScheme = useColorScheme();
-  const { profile: user } = useSelector((state: RootState) => state.auth);
 
+  const { profile: user } = useSelector((state: RootState) => state.auth);
   const { mutate: updatedProfileAvatar } = useUpdateProfileAvatar();
 
-  const pickImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const pickImage = async (
+    event: React.ChangeEvent<HTMLInputElement> | GestureResponderEvent,
+  ) => {
     if (Platform.OS !== "web") {
       // No permissions request is necessary for launching the image library
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -53,6 +56,7 @@ export default function ProfileScreen() {
         setProfileAvatar(result.assets[0].uri);
       }
     } else {
+      const e = event as React.ChangeEvent<HTMLInputElement>;
       if (!e.target.files?.length) return;
       const fileReader = new FileReader();
       const file = e.target.files[0];
@@ -81,6 +85,8 @@ export default function ProfileScreen() {
       }
     }
   }, [user]);
+
+  if (!user) return;
 
   return (
     <Theme name={colorScheme}>
@@ -132,11 +138,7 @@ export default function ProfileScreen() {
   );
 }
 
-function ChangeProfileDetailsForm({
-  user,
-}: {
-  user: UpdateTables<"profiles">;
-}) {
+function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
   const [userDetails, setUserDetails] = useState<UpdateTables<"profiles">>({
     username: "Not added yet",
     phone: "Not added yet",
@@ -154,7 +156,7 @@ function ChangeProfileDetailsForm({
 
   useEffect(() => {
     setUserDetails((prev) => {
-      const updatedDetails: typeof user = { ...prev };
+      const updatedDetails = { ...prev };
       for (const key in prev) {
         if (user?.[key as keyof typeof user]) {
           updatedDetails[key as keyof typeof user] = user?.[
@@ -181,7 +183,7 @@ function ChangeProfileDetailsForm({
         </Text>
         <Input
           flex={1}
-          value={userDetails?.username}
+          value={userDetails?.username as string}
           onChangeText={(value) =>
             setUserDetails((prev) => ({ ...prev, username: value }))
           }
@@ -193,7 +195,7 @@ function ChangeProfileDetailsForm({
         </Text>
         <Input
           flex={1}
-          value={userDetails?.phone}
+          value={userDetails?.phone as string}
           onChangeText={(value) =>
             setUserDetails((prev) => ({ ...prev, phone: value }))
           }
@@ -217,7 +219,7 @@ function ChangeProfileDetailsForm({
         </Text>
         <Input
           flex={1}
-          value={userDetails?.address}
+          value={userDetails?.address as string}
           onChangeText={(value) =>
             setUserDetails((prev) => ({ ...prev, address: value }))
           }

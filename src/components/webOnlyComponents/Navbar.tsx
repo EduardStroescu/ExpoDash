@@ -13,6 +13,7 @@ import {
 } from "tamagui";
 import { useSelector } from "react-redux";
 import { FontAwesome } from "@expo/vector-icons";
+import { UseThemeResult } from "@tamagui/web";
 
 export default function Navbar() {
   const { isAdmin } = useSelector((state: RootState) => state.auth);
@@ -65,7 +66,7 @@ function UserNavbar({
             <View
               alignItems="center"
               justifyContent="center"
-              borderRadius="50%"
+              borderRadius={10}
               backgroundColor="red"
               width={20}
               height={20}
@@ -135,14 +136,14 @@ function AdminNavbar({
       {
         title: "Cart",
         href: "/user/menu/cart",
-        icon: ({ color }: { color: string }) => (
+        icon: ({ color, theme }: { color: string; theme: UseThemeResult }) => (
           <View position="relative">
             <FontAwesome name="shopping-cart" size={25} color={color} />
             {cartItemsNumber > 0 && (
               <View
                 alignItems="center"
                 justifyContent="center"
-                borderRadius="50%"
+                borderRadius={10}
                 backgroundColor="red"
                 width={20}
                 height={20}
@@ -150,7 +151,7 @@ function AdminNavbar({
                 right={-12}
                 top={-10}
               >
-                <Text color={color} fontSize={12}>
+                <Text color={theme.color.val} fontSize={12}>
                   {cartItemsNumber}
                 </Text>
               </View>
@@ -204,6 +205,7 @@ function AdminNavbar({
                 {route.icon &&
                   route.icon({
                     color: isLinkActive ? theme.blue10.val : theme.color.val,
+                    theme: theme,
                   })}
                 {route.title !== "Cart" && (
                   <Text

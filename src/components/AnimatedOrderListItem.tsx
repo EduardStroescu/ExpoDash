@@ -1,29 +1,53 @@
+import { LayoutChangeEvent } from "react-native";
+import { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { router, useSegments } from "expo-router";
 import { Tables } from "../lib/types";
-import Animated, { SlideInDown } from "react-native-reanimated";
+import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
+import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
 import { View, Text, GetProps, Button } from "tamagui";
 dayjs.extend(relativeTime);
 
-interface OrderListItemProps {
+interface AnimatedOrderListItemProps {
   order: Tables<"orders">;
+  index: number;
+  scrollY: SharedValue<number>;
   hoverStyle?: GetProps<typeof Button>;
 }
 
-export default function OrderListItem({
+export default function AnimatedOrderListItem({
   order,
+  index,
+  scrollY,
   hoverStyle = { cursor: "pointer" },
-}: OrderListItemProps) {
+}: AnimatedOrderListItemProps) {
+  const [height, setHeight] = useState(60);
   const segments = useSegments();
+
+  const NOTIFICATION_HEIGHT = height + 5;
+
+  const { animatedStyle } = useAnimatedFlatList({
+    scrollY,
+    NOTIFICATION_HEIGHT,
+    index,
+  });
+
+  const onLayout = (event: LayoutChangeEvent) => {
+    setHeight(event.nativeEvent.layout.height);
+  };
 
   return (
     <Animated.View
+      onLayout={onLayout}
       entering={SlideInDown}
-      style={{
-        backgroundColor: "#262626",
-        height: 60,
-      }}
+      style={[
+        animatedStyle,
+        {
+          backgroundColor: "#262626",
+          height: 60,
+        },
+      ]}
     >
       <Button
         unstyled

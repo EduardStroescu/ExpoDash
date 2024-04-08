@@ -19,7 +19,10 @@ export const ToastOptions = ({
 }: ToastOptionsProps): DefaultToastOptions => ({
   position: ToastPosition.TOP,
   disableShadow: true,
-  icon: () => <FontAwesome name={iconName} size={iconSize} color={iconColor} />,
+  // @ts-ignore
+  icon: () => (
+    <FontAwesome name={iconName as any} size={iconSize} color={iconColor} />
+  ),
   customToast: (toast) => {
     return (
       <View
@@ -27,7 +30,7 @@ export const ToastOptions = ({
         borderRadius={20}
         borderColor="#7007ac"
         borderWidth={Platform.OS === "web" ? 4 : 0}
-        borderStyle={Platform.OS === "web" ? "double" : "solid"}
+        borderStyle={(Platform.OS === "web" ? "double" : "solid") as "solid"}
         alignItems="center"
         justifyContent="center"
         flexDirection="row"
@@ -40,10 +43,13 @@ export const ToastOptions = ({
           width={25}
           height={25}
           backgroundColor="#5800fcff"
-          borderRadius="50%"
+          borderRadius={15}
           padding={3}
         >
-          {toast.icon()}
+          {
+            // @ts-ignore
+            toast.icon && typeof toast.icon === "function" && toast.icon()
+          }
         </View>
         <Text color="white" fontSize="$3">
           {toast.message}

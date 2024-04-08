@@ -46,7 +46,10 @@ export const useInsertProduct = () => {
           name: data.name,
           image: data.image,
           description: data.description,
-          price: data.price,
+          s_price: data.s_price,
+          m_price: data.m_price,
+          l_price: data.l_price,
+          xl_price: data.xl_price,
         })
         .single();
 
@@ -75,7 +78,10 @@ export const useUpdateProduct = () => {
           name: data.name,
           image: data.image,
           description: data.description,
-          price: data.price,
+          s_price: data.s_price,
+          m_price: data.m_price,
+          l_price: data.l_price,
+          xl_price: data.xl_price,
         })
         .eq("id", data.id)
         .select()

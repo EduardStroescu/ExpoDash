@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Stack, router, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { KeyboardAvoidingView, Platform, useColorScheme } from "react-native";
 import Button from "@/components/Button";
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/lib/features/cartSlice";
-import { PizzaSize } from "@/lib/types";
+import { ProductSize } from "@/lib/types";
 import { randomUUID } from "expo-crypto";
 import { useProduct } from "../../api/products";
 import RemoteImage from "@/components/RemoteImage";
@@ -14,7 +14,6 @@ import {
   Text,
   Theme,
   View,
-  Button as Pressable,
   YStack,
   XStack,
   GetProps,
@@ -26,7 +25,7 @@ import { toast } from "@backpackapp-io/react-native-toast";
 import { ToastOptions } from "@/lib/constants/ToastOptions";
 import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
-const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
+const sizes: ProductSize[] = ["S", "M", "L", "XL"];
 
 export default function ProductDetailsScreen() {
   const { id: idString } = useLocalSearchParams<{ id: string }>();
@@ -35,21 +34,32 @@ export default function ProductDetailsScreen() {
   );
   const { data: product, error, isLoading } = useProduct(Number(id));
 
-  const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
+  const [selectedSize, setSelectedSize] = useState<ProductSize>("M");
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
   const [price, setPrice] = useState<number | undefined>(12);
 
   useEffect(() => {
     if (product) {
-      setPrice(parseFloat((product.price * selectedQuantity).toFixed(2)));
+      setPrice(
+        parseFloat(
+          (
+            product[
+              `${selectedSize?.toLowerCase()}_price` as keyof Pick<
+                typeof product,
+                "l_price" | "m_price" | "s_price" | "xl_price"
+              >
+            ] * selectedQuantity
+          ).toFixed(2),
+        ),
+      );
     }
-  }, [selectedQuantity, product]);
+  }, [product, selectedQuantity, selectedSize]);
 
   const dispatch = useDispatch();
   const colorScheme = useColorScheme();
 
   const onAddToCart = () => {
-    if (product && selectedQuantity) {
+    if (product && selectedSize && selectedQuantity) {
       dispatch(
         addToCart({
           id: randomUUID(),
@@ -64,7 +74,6 @@ export default function ProductDetailsScreen() {
         ToastOptions({ iconName: "check" }),
       );
     }
-    return;
   };
 
   if (error) {
@@ -83,6 +92,7 @@ export default function ProductDetailsScreen() {
       >
         <ScrollView {...styles.container}>
           <YStack
+            gap="$3"
             $gtXs={{
               width: "60%",
               alignSelf: "center",
@@ -110,41 +120,43 @@ export default function ProductDetailsScreen() {
               $gtXs={{ width: "100%", height: "auto" }}
               $gtLg={{ width: "50%", height: "auto" }}
             />
-            <Text {...styles.description}>
-              Product Description: {product?.description}
-            </Text>
+            <YStack>
+              <Text {...styles.rowTitle}>Product Description:</Text>
+              <Text {...styles.description}>{product?.description}</Text>
+            </YStack>
             <View
-              marginTop={20}
               justifyContent="center"
               alignItems="center"
               width="100%"
               $gtXs={{ flexDirection: "row", gap: "$5" }}
             >
-              <Text {...styles.sizeText}>Select size</Text>
+              <Text {...styles.rowTitle}>Select size</Text>
               <XStack {...styles.sizes}>
                 {sizes.map((size) => {
                   return (
-                    <Pressable
+                    <Button
                       key={size}
                       {...styles.size}
                       circular
                       backgroundColor={
                         selectedSize === size ? "$blue10" : "$background"
                       }
+                      color={selectedSize === size ? "$color" : "$color10"}
+                      fontSize={20}
+                      fontWeight="bold"
+                      hoverStyle={{
+                        backgroundColor: "$blue10",
+                        // @ts-ignore: workaround
+                        color: "$color",
+                      }}
                       onPress={() => setSelectedSize(size)}
-                    >
-                      <Text
-                        {...styles.sizeText}
-                        color={selectedSize === size ? "$color" : "$color10"}
-                      >
-                        {size}
-                      </Text>
-                    </Pressable>
+                      text={size}
+                    />
                   );
                 })}
               </XStack>
               <XStack {...styles.sizes}>
-                <Text {...styles.sizeText}>Select Quantity</Text>
+                <Text {...styles.rowTitle}>Select Quantity</Text>
                 <XStack {...styles.quantitySelector}>
                   <FontAwesome
                     onPress={() =>
@@ -175,7 +187,10 @@ export default function ProductDetailsScreen() {
                 </XStack>
               </XStack>
             </View>
-            <Text {...styles.price}>Price: ${price}</Text>
+            <XStack alignSelf="center" alignItems="center">
+              <Text {...styles.rowTitle}>Price </Text>
+              <Text {...styles.price}>${price}</Text>
+            </XStack>
             <Button
               marginVertical={20}
               text="Add to cart"
@@ -192,8 +207,8 @@ interface StyleProps {
   container: GetProps<typeof ScrollView>;
   price: GetProps<typeof Text>;
   sizes: GetProps<typeof View>;
-  size: GetProps<typeof Pressable>;
-  sizeText: GetProps<typeof Text>;
+  size: GetProps<typeof Button>;
+  rowTitle: GetProps<typeof Text>;
   description: GetProps<typeof Text>;
   quantitySelector: GetProps<typeof XStack>;
 }
@@ -212,7 +227,6 @@ const styles: StyleProps = {
     color: "$blue10",
   },
   sizes: {
-    justifyContent: "space-around",
     alignItems: "center",
     marginVertical: 20,
     gap: "$2",
@@ -223,7 +237,7 @@ const styles: StyleProps = {
     alignItems: "center",
     justifyContent: "center",
   },
-  sizeText: {
+  rowTitle: {
     fontSize: 20,
     fontWeight: "500",
     textAlign: "center",
@@ -232,8 +246,7 @@ const styles: StyleProps = {
   description: {
     marginTop: 20,
     alignSelf: "center",
-    textAlign: "justify",
-    color: "$color",
+    color: "$color10",
   },
   quantitySelector: {
     alignItems: "center",

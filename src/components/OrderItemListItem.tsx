@@ -9,8 +9,8 @@ import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 type OrderItemListItemProps = {
   item: { products: Tables<"products"> | null } & Tables<"order_items">;
-  index?: number;
-  scrollY?: SharedValue<number>;
+  index: number;
+  scrollY: SharedValue<number>;
 };
 
 const OrderItemListItem = ({
@@ -30,6 +30,16 @@ const OrderItemListItem = ({
   const onLayout = (event: LayoutChangeEvent) => {
     setHeight(event.nativeEvent.layout.height);
   };
+  const itemPrice =
+    item &&
+    (
+      (item.products?.[
+        `${item.size.toLowerCase()}_price` as keyof Pick<
+          typeof item.products,
+          "s_price" | "m_price" | "l_price" | "xl_price"
+        >
+      ] as number) * item?.quantity
+    ).toFixed(2);
 
   return (
     <Animated.View
@@ -53,7 +63,7 @@ const OrderItemListItem = ({
           <View flexDirection="row">
             <Text {...styles.title}>{item.products?.name}</Text>
             <Text color="white"> - </Text>
-            <Text {...styles.price}>${item.products?.price.toFixed(2)}</Text>
+            <Text {...styles.price}>${itemPrice}</Text>
           </View>
           <View {...styles.subtitleContainer}>
             <Text color="$color10">Size: {item.size}</Text>

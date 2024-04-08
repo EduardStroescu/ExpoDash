@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Session } from "@supabase/supabase-js";
-import { Profile } from "../types";
+import { Tables } from "../types";
 
 export interface AuthState {
   session: Session | null;
-  profile: Profile | null;
+  profile: Tables<"profiles"> | null;
   loading: boolean;
   isAdmin: boolean;
 }

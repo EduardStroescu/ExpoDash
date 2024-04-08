@@ -1,21 +1,51 @@
 import { Link, Stack, useLocalSearchParams } from "expo-router";
 import { Platform, Pressable, useColorScheme } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import Colors from "@/lib/constants/Colors";
 import { useProduct } from "../../api/products";
 import RemoteImage from "@/components/RemoteImage";
 import Header from "@/components/webOnlyComponents/Header";
-import { GetProps, ScrollView, Text, Theme, YStack } from "tamagui";
+import {
+  GetProps,
+  ScrollView,
+  Text,
+  Theme,
+  XStack,
+  YStack,
+  useTheme,
+} from "tamagui";
 import PageError from "@/components/PageError";
 import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
+import { useEffect, useState } from "react";
+import { ProductSize } from "@/lib/types";
+import Button from "@/components/Button";
+
+const sizes: ProductSize[] = ["S", "M", "L", "XL"];
 
 export default function ProductDetailsScreen() {
+  const theme = useTheme();
   const { id: idString } = useLocalSearchParams<{ id: string }>();
   const id = parseFloat(
     typeof idString === "string" ? idString : idString?.[0],
   );
   const { data: product, error, isLoading } = useProduct(id);
   const colorScheme = useColorScheme();
+  const [selectedSize, setSelectedSize] = useState<ProductSize>("M");
+  const [price, setPrice] = useState<number | undefined>(12);
+
+  useEffect(() => {
+    if (product) {
+      setPrice(
+        parseFloat(
+          product[
+            `${selectedSize?.toLowerCase()}_price` as keyof Pick<
+              typeof product,
+              "l_price" | "m_price" | "s_price" | "xl_price"
+            >
+          ].toFixed(2),
+        ),
+      );
+    }
+  }, [product, selectedSize]);
 
   if (error) {
     return <PageError />;
@@ -33,7 +63,7 @@ export default function ProductDetailsScreen() {
                   <FontAwesome
                     name="pencil"
                     size={25}
-                    color={Colors.light.tint}
+                    color={theme.blue10.val}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -46,6 +76,7 @@ export default function ProductDetailsScreen() {
 
       <ScrollView {...styles.container}>
         <YStack
+          gap="$3"
           $gtXs={{
             width: "60%",
             alignSelf: "center",
@@ -73,10 +104,36 @@ export default function ProductDetailsScreen() {
             $gtXs={{ width: "100%", height: "auto" }}
             $gtLg={{ width: "50%", height: "auto" }}
           />
-          <Text {...styles.description}>
-            Product Description: {product?.description}
-          </Text>
-          <Text {...styles.price}>Price: ${product?.price}</Text>
+          <YStack>
+            <Text {...styles.rowTitle}>Product Description:</Text>
+            <Text {...styles.description}>{product?.description}</Text>
+          </YStack>
+          <XStack {...styles.sizes}>
+            <Text {...styles.rowTitle}>Sizes</Text>
+            {sizes.map((size) => {
+              return (
+                <Button
+                  key={size}
+                  {...styles.size}
+                  circular
+                  backgroundColor={
+                    selectedSize === size ? "$blue10" : "$background"
+                  }
+                  fontSize={20}
+                  color={selectedSize === size ? "$color" : "$color10"}
+                  fontWeight="bold"
+                  // @ts-ignore: workaround
+                  hoverStyle={{ backgroundColor: "$blue10", color: "$color" }}
+                  onPress={() => setSelectedSize(size)}
+                  text={size}
+                />
+              );
+            })}
+          </XStack>
+          <XStack alignSelf="center" alignItems="center" paddingBottom={40}>
+            <Text {...styles.rowTitle}>Price </Text>
+            <Text {...styles.price}>${price}</Text>
+          </XStack>
         </YStack>
       </ScrollView>
     </Theme>
@@ -87,6 +144,9 @@ interface StyleProps {
   container: GetProps<typeof ScrollView>;
   price: GetProps<typeof Text>;
   description: GetProps<typeof Text>;
+  sizes: GetProps<typeof XStack>;
+  size: GetProps<typeof Button>;
+  rowTitle: GetProps<typeof Text>;
 }
 
 const styles: StyleProps = {
@@ -99,13 +159,29 @@ const styles: StyleProps = {
     fontSize: 18,
     fontWeight: "bold",
     alignSelf: "center",
-    marginTop: 20,
     color: "$blue10",
   },
   description: {
     marginTop: 20,
     alignSelf: "center",
-    textAlign: "justify",
+    color: "$color10",
+  },
+  sizes: {
+    alignItems: "center",
+    marginVertical: 20,
+    gap: "$2",
+    alignSelf: "center",
+  },
+  size: {
+    width: 50,
+    aspectRatio: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rowTitle: {
+    fontSize: 20,
+    fontWeight: "500",
+    textAlign: "center",
     color: "$color",
   },
 };

@@ -1,4 +1,3 @@
-import { Alert } from "react-native";
 import { supabase } from "../supabase/supabase";
 import {
   initPaymentSheet,
@@ -17,10 +16,10 @@ const fetchPaymentSheetParams = async (amount: number, currency: string) => {
   }
 };
 
-// TODO: CHANGE BILLING DETAILS AFTER ADDING USERS
 export const initialisePaymentSheet = async (
   amount: number,
   currency: string,
+  name: string = "John Doe",
 ) => {
   const { paymentIntent, publishableKey } = await fetchPaymentSheetParams(
     amount,
@@ -34,7 +33,7 @@ export const initialisePaymentSheet = async (
     paymentIntentClientSecret: paymentIntent,
     returnURL: "your-app://stripe-redirect",
     defaultBillingDetails: {
-      name: "Jane Doe",
+      name: name,
     },
   });
 };

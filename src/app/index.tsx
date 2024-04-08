@@ -115,7 +115,7 @@ const styles: StyleTypes = {
       maxWidth: 1000,
       backgroundColor: "#0c1033b2",
       borderRadius: 20,
-      borderStyle: "double", // Only works on web
+      borderStyle: "double" as "solid",
       borderWidth: 4,
       borderColor: "#7007acff",
     },

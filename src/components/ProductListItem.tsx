@@ -96,7 +96,7 @@ export default function ProductListItem({
           </Text>
           <XStack {...styles.secondaryContainer}>
             <Text {...styles.title}>{product.name}</Text>
-            <Text {...styles.price}>${product.price}</Text>
+            <Text {...styles.price}>${product.m_price}</Text>
           </XStack>
         </YStack>
       </Button>

@@ -165,7 +165,7 @@ const styles: StyleProps = {
       width: "30%",
       paddingVertical: 20,
       borderRadius: 20,
-      borderStyle: "double",
+      borderStyle: "double" as "solid",
       borderWidth: 4,
       borderColor: "#7007acff",
       position: "relative",

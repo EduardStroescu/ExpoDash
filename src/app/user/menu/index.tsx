@@ -33,7 +33,7 @@ export default function Menu() {
             {...styles.contentContainerStyle}
             data={Array(14)}
             key={columnNumber}
-            renderItem={({ item, index, scrollY }) => (
+            renderItem={({ index, scrollY }) => (
               <SkeletonProductListItem
                 index={index}
                 scrollY={scrollY}

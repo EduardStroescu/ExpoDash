@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase/supabase";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/reduxStore";
 import { UpdateTables } from "@/lib/types";
