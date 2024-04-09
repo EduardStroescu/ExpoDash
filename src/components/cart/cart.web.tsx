@@ -210,7 +210,7 @@ function CheckoutForm({
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof ScrollView>;
   cartResults: GetProps<typeof View>;
   checkoutButton: GetProps<typeof Button>;
@@ -218,7 +218,7 @@ interface StyleProps {
   paymentSheetGroup: GetProps<typeof View>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     contentContainerStyle: {
       minHeight: "100%",

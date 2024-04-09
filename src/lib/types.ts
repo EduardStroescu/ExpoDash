@@ -26,4 +26,15 @@ export const OrderStatusList: OrderStatus[] = [
   "Delivered",
 ];
 
+export interface ProductData {
+  id: number;
+  name: string;
+  description: string;
+  s_price: number;
+  m_price: number;
+  l_price: number;
+  xl_price: number;
+  image?: string;
+}
+
 export type OrderStatus = "New" | "Cooking" | "Delivering" | "Delivered";

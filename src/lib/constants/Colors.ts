@@ -21,3 +21,6 @@ export default {
     tabIconSelected: tintColorDark,
   },
 };
+
+export const boneColor = "#413d3c";
+export const highlightColor = "#4d4948";

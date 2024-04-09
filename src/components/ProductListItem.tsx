@@ -30,10 +30,10 @@ export default function ProductListItem({
     default: height,
     sm: height,
     md: (25 / 100) * (columnNumber * height),
-    gtMd: (12 / 100) * (columnNumber * height),
-    lg: (7.7 / 100) * (columnNumber * height),
-    xl: (3.6 / 100) * (columnNumber * height),
-    gtXl: (3.65 / 100) * (columnNumber * height),
+    gtMd: (10 / 100) * (columnNumber * height),
+    lg: (6.1 / 100) * (columnNumber * height),
+    xl: (2.54 / 100) * (columnNumber * height),
+    gtXl: (3 / 100) * (columnNumber * height),
   };
   const NOTIFICATION_HEIGHT = useResponsiveStyle(columnBreakpoints, width);
 
@@ -89,9 +89,9 @@ export default function ProductListItem({
           resizeMode="cover"
         />
         <YStack {...styles.primaryContainer}>
-          <Text {...styles.productDescription}>
-            {product.description?.length >= 200
-              ? `${product.description?.slice(0, 200)}...`
+          <Text {...styles.productDescription} height={width <= 600 ? 30 : 45}>
+            {product.description?.length >= 100
+              ? `${product.description?.slice(0, 100)}...`
               : product.description}
           </Text>
           <XStack {...styles.secondaryContainer}>
@@ -104,7 +104,7 @@ export default function ProductListItem({
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   primaryContainer: GetProps<typeof YStack>;
   secondaryContainer: GetProps<typeof XStack>;
   title: GetProps<typeof Text>;
@@ -112,7 +112,7 @@ interface StyleProps {
   price: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   primaryContainer: {
     width: "100%",
     padding: 10,
@@ -129,6 +129,7 @@ const styles: StyleProps = {
     color: "$color",
   },
   productDescription: {
+    width: "100%",
     fontSize: 11,
     color: "$color10",
   },

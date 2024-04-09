@@ -49,14 +49,14 @@ export default function OrderListItem({
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof Button>;
   title: GetProps<typeof Text>;
   subtitleContainer: GetProps<typeof View>;
   price: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     flex: 1,
     padding: 10,

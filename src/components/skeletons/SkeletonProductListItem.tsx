@@ -1,9 +1,19 @@
 import { LayoutChangeEvent } from "react-native";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
-import Animated, { SharedValue } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { GetProps, View, XStack, YStack, useWindowDimensions } from "tamagui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
+import { boneColor, highlightColor } from "@/lib/constants/Colors";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface SkeletonProductListItemProps {
   index: number;
@@ -28,6 +38,8 @@ export function SkeletonProductListItem({
     gtXl: (3.65 / 100) * (columnNumber * height),
   };
   const NOTIFICATION_HEIGHT = useResponsiveStyle(columnBreakpoints, width);
+  const translateX = useSharedValue(400);
+  const opacity = useSharedValue(0);
 
   const { animatedStyle } = useAnimatedFlatList({
     scrollY,
@@ -38,6 +50,41 @@ export function SkeletonProductListItem({
   const onLayout = (event: LayoutChangeEvent) => {
     setHeight(event.nativeEvent.layout.height);
   };
+
+  useEffect(() => {
+    translateX.value = withRepeat(
+      withSequence(
+        withTiming(-400, { duration: 2000, easing: Easing.inOut(Easing.quad) }),
+      ),
+      -1,
+      false,
+    );
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0.3, {
+          duration: 2000,
+          easing: Easing.inOut(Easing.quad),
+        }),
+        withTiming(0.4, {
+          duration: 300,
+          easing: Easing.inOut(Easing.quad),
+        }),
+      ),
+      -1,
+      true,
+    );
+  }, []);
+
+  const animatedTranslateX = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: translateX.value }],
+    };
+  });
+  const animatedOpacity = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
+    };
+  });
 
   return (
     <Animated.View
@@ -51,22 +98,83 @@ export function SkeletonProductListItem({
     >
       <View flex={1} paddingHorizontal={10}>
         {/* Image */}
-        <View
-          height={width <= 600 ? 110 : 300}
-          width="100%"
-          borderRadius={20}
-          alignSelf="center"
-          backgroundColor="#262626"
-        />
+        <Animated.View
+          style={[
+            animatedOpacity,
+            {
+              height: width <= 600 ? 110 : 300,
+              width: "100%",
+              borderRadius: 20,
+              alignSelf: "center",
+              backgroundColor: boneColor,
+              overflow: "hidden",
+              position: "relative",
+            },
+          ]}
+        >
+          <ShineAnimation animatedTranslateX={animatedTranslateX} />
+        </Animated.View>
         <YStack {...styles.primaryContainer}>
           {/* Description */}
-          <View backgroundColor="#262626" width={"100%"} height={11} />
-          <View backgroundColor="#262626" width={200} height={11} />
+          <Animated.View
+            style={[
+              animatedOpacity,
+              {
+                backgroundColor: boneColor,
+                width: "100%",
+                height: 11,
+                overflow: "hidden",
+                position: "relative",
+              },
+            ]}
+          >
+            <ShineAnimation animatedTranslateX={animatedTranslateX} />
+          </Animated.View>
+          <Animated.View
+            style={[
+              animatedOpacity,
+              {
+                backgroundColor: boneColor,
+                width: "100%",
+                height: 11,
+                overflow: "hidden",
+                position: "relative",
+              },
+            ]}
+          >
+            <ShineAnimation animatedTranslateX={animatedTranslateX} />
+          </Animated.View>
           <XStack {...styles.secondaryContainer}>
             {/* Name */}
-            <View backgroundColor="#262626" width={50} height={16} />
+            <Animated.View
+              style={[
+                animatedOpacity,
+                {
+                  backgroundColor: boneColor,
+                  width: 50,
+                  height: 16,
+                  overflow: "hidden",
+                  position: "relative",
+                },
+              ]}
+            >
+              <ShineAnimation animatedTranslateX={animatedTranslateX} />
+            </Animated.View>
             {/* Price */}
-            <View backgroundColor="#262626" width={20} height={16} />
+            <Animated.View
+              style={[
+                animatedOpacity,
+                {
+                  backgroundColor: boneColor,
+                  width: 40,
+                  height: 16,
+                  overflow: "hidden",
+                  position: "relative",
+                },
+              ]}
+            >
+              <ShineAnimation animatedTranslateX={animatedTranslateX} />
+            </Animated.View>
           </XStack>
         </YStack>
       </View>
@@ -74,12 +182,43 @@ export function SkeletonProductListItem({
   );
 }
 
-interface StyleProps {
+function ShineAnimation({
+  animatedTranslateX,
+}: {
+  animatedTranslateX: {
+    transform: {
+      translateX: number;
+    }[];
+  };
+}) {
+  return (
+    <Animated.View
+      style={[
+        animatedTranslateX,
+        {
+          height: "100%",
+          position: "absolute",
+          width: "100%",
+          zIndex: 9999,
+        },
+      ]}
+    >
+      <LinearGradient
+        style={{ flex: 1 }}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        colors={[boneColor!, highlightColor!, boneColor!]}
+      />
+    </Animated.View>
+  );
+}
+
+interface StyleTypes {
   primaryContainer: GetProps<typeof YStack>;
   secondaryContainer: GetProps<typeof XStack>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   primaryContainer: {
     width: "100%",
     padding: 10,

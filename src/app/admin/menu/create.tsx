@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   GestureResponderEvent,
@@ -10,9 +10,16 @@ import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "@/lib/supabase/supabase";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ScrollView, Text, Theme, View, YStack, GetProps } from "tamagui";
+import {
+  ScrollView,
+  Text,
+  Theme,
+  View,
+  YStack,
+  GetProps,
+  Image,
+} from "tamagui";
 import {
   uploadProductImageMobile,
   uploadProductImageWeb,
@@ -26,36 +33,14 @@ import {
 } from "../../api/products";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import Header from "@/components/webOnlyComponents/Header";
-import RemoteImage from "@/components/RemoteImage";
 import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
-import { ProductSize, Tables } from "@/lib/types";
+import { ProductData, ProductSize, Tables } from "@/lib/types";
+import { FormSchema } from "@/lib/formSchemas/createOrUpdateSchema";
+import z from "zod";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
 
 const sizes: ProductSize[] = ["S", "M", "L", "XL"];
-
-const FormSchema = z.object({
-  name: z
-    .string({ required_error: "A product name is required" })
-    .min(3, { message: "Name must contain at least three characters." }),
-  image: z.string().nullable(),
-  description: z
-    .string({ required_error: "A product description is required" })
-    .min(1, {
-      message: "Product description must contain at least one character.",
-    }),
-  s_price: z
-    .string({ required_error: "A small variant price is required" })
-    .min(1, { message: "Price must contain at least one character." }),
-  m_price: z
-    .string({ required_error: "A medium variant price is required" })
-    .min(1, { message: "Price must contain at least one character." }),
-  l_price: z
-    .string({ required_error: "A large variant product price is required" })
-    .min(1, { message: "Price must contain at least one character." }),
-  xl_price: z
-    .string({ required_error: "An XL variant product price is required" })
-    .min(1, { message: "Price must contain at least one character." }),
-});
 
 export default function CreateProductScreen() {
   const router = useRouter();
@@ -71,6 +56,9 @@ export default function CreateProductScreen() {
   const { mutate: insertProduct } = useInsertProduct();
   const { mutate: updateProduct } = useUpdateProduct();
   const { mutate: deleteProduct } = useDeleteProduct();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [changedProductImage, setChangedProductImage] =
+    useState<boolean>(false);
 
   const {
     control,
@@ -84,10 +72,10 @@ export default function CreateProductScreen() {
       name: "",
       image: "",
       description: "",
-      s_price: "",
-      m_price: "",
-      l_price: "",
-      xl_price: "",
+      s_price: "" as unknown as number,
+      m_price: "" as unknown as number,
+      l_price: "" as unknown as number,
+      xl_price: "" as unknown as number,
     },
     resolver: zodResolver(FormSchema),
     mode: "onChange",
@@ -113,11 +101,12 @@ export default function CreateProductScreen() {
     name: string,
     image: string | null,
     description: string,
-    s_price: string,
-    m_price: string,
-    l_price: string,
-    xl_price: string,
+    s_price: number,
+    m_price: number,
+    l_price: number,
+    xl_price: number,
   ) => {
+    setIsLoading(true);
     const imagePath =
       Platform.OS !== "web"
         ? await uploadProductImageMobile(image)
@@ -128,15 +117,20 @@ export default function CreateProductScreen() {
         name,
         image: imagePath,
         description,
-        s_price: parseFloat(s_price),
-        m_price: parseFloat(m_price),
-        l_price: parseFloat(l_price),
-        xl_price: parseFloat(xl_price),
+        s_price: s_price,
+        m_price: m_price,
+        l_price: l_price,
+        xl_price: xl_price,
       },
       {
         onSuccess: () => {
           reset();
           router.back();
+          toast(
+            "Product created successfully",
+            ToastOptions({ iconName: "check" }),
+          );
+          setIsLoading(false);
         },
       },
     );
@@ -146,34 +140,45 @@ export default function CreateProductScreen() {
     name: string,
     image: string | null,
     description: string,
-    s_price: string,
-    m_price: string,
-    l_price: string,
-    xl_price: string,
+    s_price: number,
+    m_price: number,
+    l_price: number,
+    xl_price: number,
   ) => {
-    const imagePath =
-      Platform.OS !== "web"
-        ? await uploadProductImageMobile(image)
-        : await uploadProductImageWeb(image);
+    setIsLoading(true);
+    let imagePath = null;
+    if (changedProductImage && image) {
+      imagePath =
+        Platform.OS !== "web"
+          ? await uploadProductImageMobile(image)
+          : await uploadProductImageWeb(image);
+    }
 
-    updateProduct(
-      {
-        id,
-        name,
-        image: imagePath,
-        description,
-        s_price: parseFloat(s_price),
-        m_price: parseFloat(m_price),
-        l_price: parseFloat(l_price),
-        xl_price: parseFloat(xl_price),
+    const productData: ProductData = {
+      id,
+      name,
+      description,
+      s_price,
+      m_price,
+      l_price,
+      xl_price,
+    };
+
+    if (changedProductImage && imagePath) {
+      productData.image = imagePath;
+    }
+
+    updateProduct(productData, {
+      onSuccess: () => {
+        setChangedProductImage(false);
+        router.back();
+        toast(
+          "Product updated successfully",
+          ToastOptions({ iconName: "check" }),
+        );
+        setIsLoading(false);
       },
-      {
-        onSuccess: () => {
-          reset();
-          router.back();
-        },
-      },
-    );
+    });
   };
 
   const onDelete = () => {
@@ -189,6 +194,10 @@ export default function CreateProductScreen() {
             deleteProduct(id, {
               onSuccess: () => {
                 router.replace("/admin/menu/");
+                toast(
+                  "Product deleted successfully",
+                  ToastOptions({ iconName: "check" }),
+                );
               },
             });
           },
@@ -198,6 +207,10 @@ export default function CreateProductScreen() {
       deleteProduct(id, {
         onSuccess: () => {
           router.replace("/admin/menu/");
+          toast(
+            "Product deleted successfully",
+            ToastOptions({ iconName: "check" }),
+          );
         },
       });
     }
@@ -220,6 +233,7 @@ export default function CreateProductScreen() {
           shouldValidate: true,
           shouldDirty: true,
         });
+        setChangedProductImage(true);
       }
     } else {
       const e = event as React.ChangeEvent<HTMLInputElement>;
@@ -235,6 +249,7 @@ export default function CreateProductScreen() {
             shouldValidate: true,
             shouldDirty: true,
           });
+          setChangedProductImage(true);
         }
       };
     }
@@ -254,10 +269,6 @@ export default function CreateProductScreen() {
             });
           }
         }
-        setValue("image", imagePlaceholder, {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
 
         setValue("name", updatingProduct.name, {
           shouldValidate: true,
@@ -267,19 +278,19 @@ export default function CreateProductScreen() {
           shouldValidate: true,
           shouldDirty: true,
         });
-        setValue("s_price", String(updatingProduct.s_price), {
+        setValue("s_price", updatingProduct.s_price, {
           shouldValidate: true,
           shouldDirty: true,
         });
-        setValue("m_price", String(updatingProduct.m_price), {
+        setValue("m_price", updatingProduct.m_price, {
           shouldValidate: true,
           shouldDirty: true,
         });
-        setValue("l_price", String(updatingProduct.l_price), {
+        setValue("l_price", updatingProduct.l_price, {
           shouldValidate: true,
           shouldDirty: true,
         });
-        setValue("xl_price", String(updatingProduct.xl_price), {
+        setValue("xl_price", updatingProduct.xl_price, {
           shouldValidate: true,
           shouldDirty: true,
         });
@@ -292,7 +303,6 @@ export default function CreateProductScreen() {
       <Stack.Screen
         options={{ title: isUpdate ? "Update Product" : "Add New Product" }}
       />
-      {Platform.OS === "web" && <Header />}
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -302,20 +312,17 @@ export default function CreateProductScreen() {
         <ScrollView width="100%" height="100%" backgroundColor="$background">
           <YStack {...styles.container}>
             <View>
-              <RemoteImage
+              <Image
                 {...styles.image}
-                source={getValues("image")}
-                fallback={imagePlaceholder}
+                source={{
+                  uri: getValues("image") || imagePlaceholder,
+                  width: 400,
+                  height: 400,
+                }}
                 width="100%"
                 aspectRatio={1}
                 alignSelf="center"
                 resizeMode="cover"
-                placeholderStyle={{
-                  width: 500,
-                  height: 500,
-                  aspectRatio: 1,
-                  alignSelf: "center",
-                }}
                 $gtXs={{ width: "100%", height: "auto" }}
                 $gtLg={{ width: "50%", height: "auto" }}
               />
@@ -368,10 +375,12 @@ export default function CreateProductScreen() {
                   onBlur={onBlur}
                   placeholder="Description"
                   placeholderTextColor="grey"
+                  multiline
+                  numberOfLines={5}
                 />
               )}
             />
-            {errors.name && (
+            {errors.description && (
               <Text {...styles.errorMessage}>
                 {errors.description?.message}
               </Text>
@@ -407,7 +416,7 @@ export default function CreateProductScreen() {
                           placeholder="9.99"
                           placeholderTextColor="grey"
                           keyboardType="numeric"
-                          value={value}
+                          value={String(value)}
                           onChangeText={onChange}
                           onBlur={onBlur}
                         />
@@ -431,8 +440,11 @@ export default function CreateProductScreen() {
             )}
 
             <Button
-              text={isUpdate ? "Update" : "Create"}
+              text={
+                !isLoading ? (isUpdate ? "Update" : "Create") : "Submitting..."
+              }
               onPress={handleSubmit(onSubmit)}
+              disabled={isLoading}
             />
 
             {isUpdate && (
@@ -440,6 +452,7 @@ export default function CreateProductScreen() {
                 backgroundColor="$red7"
                 text="Delete Product"
                 onPress={onDelete}
+                disabled={isLoading}
               />
             )}
           </YStack>
@@ -449,19 +462,19 @@ export default function CreateProductScreen() {
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof YStack>;
-  image: GetProps<typeof RemoteImage>;
+  image: GetProps<typeof Image>;
   textButton: GetProps<typeof Text>;
   label: GetProps<typeof Text>;
   input: GetProps<typeof Input>;
   errorMessage: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     width: "100%",
-    $gtMd: { width: "50%" },
+    $gtMd: { width: "50%", paddingBottom: "$10" },
     height: "100%",
     alignSelf: "center",
     backgroundColor: "$background",

@@ -7,20 +7,20 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Meta from "@/components/Meta";
-import { Form, GetProps, ScrollView, Text, Theme } from "tamagui";
+import {
+  Form,
+  GetProps,
+  ScrollView,
+  Text,
+  Theme,
+  XStack,
+  YStack,
+} from "tamagui";
 import Input, { InputProps } from "@/components/Input";
 import { LogInAsDemoAccount } from "@/components/LogInAsDemoAccount";
 import { toast } from "@backpackapp-io/react-native-toast";
 import { ToastOptions } from "@/lib/constants/ToastOptions";
-
-const SignInSchema = z.object({
-  email: z
-    .string({ required_error: "E-mail is required." })
-    .email({ message: "Invalid E-mail address" }),
-  password: z
-    .string({ required_error: "Password is required." })
-    .min(8, { message: "Password must contain at least 8 characters." }),
-});
+import { SignInSchema } from "@/lib/formSchemas/signInSchema";
 
 export default function SignInPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -72,66 +72,76 @@ export default function SignInPage() {
       >
         <ScrollView {...styles.container}>
           <Text {...styles.title}>Sign In</Text>
-          <Form {...styles.form} id="box-shadow">
-            <Text {...styles.label}>Email</Text>
-            <Controller
-              control={control}
-              rules={{
-                required: "E-Mail is required",
-              }}
-              name="email"
-              render={({ field: { value, onChange, onBlur } }) => (
-                <Input
-                  {...styles.input}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder="johnDoe@gmail.com"
-                  placeholderTextColor="grey"
-                  clearButtonMode="while-editing"
-                  autoCorrect={false}
-                  returnKeyType="done"
-                />
+          <Form {...styles.form} id="box-shadow" gap="$3">
+            <YStack gap="$2">
+              <Text {...styles.label}>Email</Text>
+              <Controller
+                control={control}
+                rules={{
+                  required: "E-Mail is required",
+                }}
+                name="email"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <Input
+                    {...styles.input}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="johnDoe@gmail.com"
+                    placeholderTextColor="grey"
+                    clearButtonMode="while-editing"
+                    autoCorrect={false}
+                    returnKeyType="done"
+                  />
+                )}
+              />
+              {errors.email && (
+                <Text {...styles.errorMessage}>{errors.email.message}</Text>
               )}
-            />
-            {errors.email && (
-              <Text {...styles.errorMessage}>{errors.email.message}</Text>
-            )}
+            </YStack>
 
-            <Text {...styles.label}>Password</Text>
-            <Controller
-              control={control}
-              rules={{
-                required: "Password is required",
-              }}
-              name="password"
-              render={({ field: { value, onChange, onBlur } }) => (
-                <Input
-                  {...styles.input}
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  placeholder=""
-                  clearButtonMode="while-editing"
-                  textContentType="password"
-                  secureTextEntry
-                  autoCorrect={false}
-                  returnKeyType="done"
-                />
+            <YStack gap="$2">
+              <Text {...styles.label}>Password</Text>
+              <Controller
+                control={control}
+                rules={{
+                  required: "Password is required",
+                }}
+                name="password"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <Input
+                    {...styles.input}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder=""
+                    clearButtonMode="while-editing"
+                    textContentType="password"
+                    secureTextEntry
+                    autoCorrect={false}
+                    returnKeyType="done"
+                  />
+                )}
+              />
+              {errors.password && (
+                <Text {...styles.errorMessage}>{errors.password.message}</Text>
               )}
-            />
-            {errors.password && (
-              <Text {...styles.errorMessage}>{errors.password.message}</Text>
-            )}
+            </YStack>
 
             <Button
               text={loading ? "Signing in..." : "Sign In"}
               disabled={loading}
               onPress={handleSubmit(onSubmit)}
+              marginVertical="$4"
             />
-            <Link asChild href="/sign-up">
-              <Text {...styles.link}>Create an Account</Text>
-            </Link>
+            <XStack alignSelf="center" gap="$2" alignItems="center">
+              <Text fontSize={13} fontWeight="unset">
+                Don't have an account?
+              </Text>
+              <Link asChild href="/sign-up">
+                <Text {...styles.link}>Create an Account</Text>
+              </Link>
+            </XStack>
             <LogInAsDemoAccount loading={loading} setLoading={setLoading} />
           </Form>
         </ScrollView>
@@ -140,7 +150,7 @@ export default function SignInPage() {
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof ScrollView>;
   form: GetProps<typeof Form>;
   title: GetProps<typeof Text>;
@@ -150,13 +160,14 @@ interface StyleProps {
   errorMessage: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     width: "100%",
     minHeight: "100%",
     backgroundColor: "$background",
-    contentContainerStyle: { justifyContent: "center", height: "90%" },
+    contentContainerStyle: { justifyContent: "center", height: "100%" },
   },
+  // @ts-ignore: onSubmit is not necessary, but using form for submit on pressing "enter"
   form: {
     paddingHorizontal: 20,
     alignSelf: "center",
@@ -178,24 +189,20 @@ const styles: StyleProps = {
     alignSelf: "center",
     color: "$blue10",
     marginBottom: 20,
-    $gtMd: { marginVertical: 40 },
   },
   label: { fontSize: 16, color: "$color10" },
   input: {
     borderWidth: 1,
     padding: 10,
-    marginTop: 5,
-    marginBottom: 20,
     borderRadius: 5,
   },
   link: {
-    alignSelf: "center",
-    marginVertical: 20,
     fontWeight: "bold",
     color: "$blue10",
-    hoverStyle: { cursor: "pointer" },
+    hoverStyle: { cursor: "pointer", color: "$blue11" },
   },
   errorMessage: {
+    fontSize: 14,
     color: "red",
   },
 };

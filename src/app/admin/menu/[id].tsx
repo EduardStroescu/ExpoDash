@@ -104,6 +104,15 @@ export default function ProductDetailsScreen() {
             $gtXs={{ width: "100%", height: "auto" }}
             $gtLg={{ width: "50%", height: "auto" }}
           />
+          <Text
+            {...styles.rowTitle}
+            fontWeight="800"
+            color="$blue10"
+            marginTop={10}
+            fontSize={20}
+          >
+            {product?.name}
+          </Text>
           <YStack>
             <Text {...styles.rowTitle}>Product Description:</Text>
             <Text {...styles.description}>{product?.description}</Text>
@@ -140,7 +149,7 @@ export default function ProductDetailsScreen() {
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof ScrollView>;
   price: GetProps<typeof Text>;
   description: GetProps<typeof Text>;
@@ -149,7 +158,7 @@ interface StyleProps {
   rowTitle: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     width: "100%",
     padding: 10,
@@ -179,7 +188,7 @@ const styles: StyleProps = {
     justifyContent: "center",
   },
   rowTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "500",
     textAlign: "center",
     color: "$color",

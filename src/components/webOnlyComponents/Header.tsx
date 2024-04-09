@@ -125,14 +125,14 @@ function ViewSwitcher({
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof View>;
   text: GetProps<typeof Text>;
   displayViewSwitch: GetProps<typeof View>;
   switcherText: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     width: "100%",
     flexDirection: "row",

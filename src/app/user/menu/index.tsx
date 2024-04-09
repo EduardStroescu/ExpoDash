@@ -31,7 +31,7 @@ export default function Menu() {
         <View {...styles.container}>
           <AnimatedFlatList
             {...styles.contentContainerStyle}
-            data={Array(14)}
+            data={Array(10)}
             key={columnNumber}
             renderItem={({ index, scrollY }) => (
               <SkeletonProductListItem

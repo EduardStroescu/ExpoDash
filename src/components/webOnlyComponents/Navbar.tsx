@@ -236,14 +236,14 @@ function HomeLink() {
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   primaryContainer: GetProps<typeof XStack>;
   linksContainer: GetProps<typeof XStack>;
   mainLink: GetProps<typeof Text>;
   secondaryLink: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   primaryContainer: {
     width: "100%",
     height: 60,

@@ -77,7 +77,7 @@ const OrderItemListItem = ({
   );
 };
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof View>;
   image: GetProps<typeof RemoteImage>;
   title: GetProps<typeof Text>;
@@ -87,7 +87,7 @@ interface StyleProps {
   price: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     flex: 1,
     padding: 10,

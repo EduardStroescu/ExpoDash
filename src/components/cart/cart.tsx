@@ -57,6 +57,12 @@ export default function Cart() {
           dispatch(clearCart());
           router.replace(`/user/orders/${order?.id}`);
         },
+        onError() {
+          toast.error(
+            "There was an error processing the order. Please try again later!",
+            ToastOptions({ iconName: "exclamation", iconColor: "red" }),
+          );
+        },
       });
     };
 
@@ -108,13 +114,13 @@ export default function Cart() {
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof View>;
   cartResults: GetProps<typeof View>;
   cartTotal: GetProps<typeof Text>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     height: "100%",
     paddingBottom: 20,

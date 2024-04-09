@@ -62,13 +62,13 @@ export function LogInAsDemoAccount({
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   container: GetProps<typeof View>;
   text: GetProps<typeof Text>;
   button: ButtonProps;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   container: {
     gap: "$2",
   },

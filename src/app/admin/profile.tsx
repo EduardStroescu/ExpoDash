@@ -33,6 +33,7 @@ import { GestureResponderEvent } from "react-native";
 
 export default function ProfileScreen() {
   const [profileAvatar, setProfileAvatar] = useState("");
+  const [isAvatarLoading, setIsAvatarLoading] = useState(false);
   const colorScheme = useColorScheme();
 
   const { profile: user } = useSelector((state: RootState) => state.auth);
@@ -42,6 +43,7 @@ export default function ProfileScreen() {
     event: React.ChangeEvent<HTMLInputElement> | GestureResponderEvent,
   ) => {
     if (Platform.OS !== "web") {
+      setIsAvatarLoading(true);
       // No permissions request is necessary for launching the image library
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -54,8 +56,10 @@ export default function ProfileScreen() {
         const imagePath = await uploadUserAvatarMobile(result.assets[0].uri);
         updatedProfileAvatar({ avatar_url: imagePath });
         setProfileAvatar(result.assets[0].uri);
+        setIsAvatarLoading(false);
       }
     } else {
+      setIsAvatarLoading(true);
       const e = event as React.ChangeEvent<HTMLInputElement>;
       if (!e.target.files?.length) return;
       const fileReader = new FileReader();
@@ -68,6 +72,7 @@ export default function ProfileScreen() {
           const imagePath = await uploadUserAvatarWeb(content);
           updatedProfileAvatar({ avatar_url: imagePath });
           setProfileAvatar(content);
+          setIsAvatarLoading(false);
         }
       };
     }
@@ -113,16 +118,22 @@ export default function ProfileScreen() {
                   {Platform.OS !== "web" ? (
                     <Button
                       {...styles.smallButton}
-                      text="Change Avatar"
+                      text={
+                        !isAvatarLoading ? "Change Avatar" : "Changing avatar"
+                      }
                       onPress={pickImage}
+                      disabled={isAvatarLoading}
                     />
                   ) : (
                     <Button
                       {...styles.smallButton}
                       position="relative"
                       overflow="hidden"
+                      disabled={isAvatarLoading}
                     >
-                      Change Avatar
+                      {!isAvatarLoading
+                        ? "Change Avatar"
+                        : "Changing avatar..."}
                       <input type="file" onChange={pickImage} />
                     </Button>
                   )}
@@ -145,12 +156,16 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
     email: "Not added yet",
     address: "Not added yet",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { mutate: updatedProfileData } = useUpdateProfileDetails();
 
   const onUpdateProfileDetails = () => {
     if (userDetails) {
-      updatedProfileData(userDetails);
+      setIsSubmitting(true);
+      updatedProfileData(userDetails, {
+        onSuccess: () => setIsSubmitting(false),
+      });
     }
   };
 
@@ -225,19 +240,21 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
           }
         />
       </XStack>
-      <Button onPress={onUpdateProfileDetails}>Change Details</Button>
+      <Button onPress={onUpdateProfileDetails} disabled={isSubmitting}>
+        {!isSubmitting ? "Change Details" : "Updaing Profile"}
+      </Button>
     </YStack>
   );
 }
 
-interface StyleProps {
+interface StyleTypes {
   page: GetProps<typeof ScrollView>;
   container: GetProps<typeof YStack>;
   card: GetProps<typeof Card>;
   smallButton: GetProps<typeof Button>;
 }
 
-const styles: StyleProps = {
+const styles: StyleTypes = {
   page: {
     width: "100%",
     height: "100%",

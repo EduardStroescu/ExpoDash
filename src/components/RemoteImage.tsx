@@ -12,6 +12,7 @@ import Animated, {
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "tamagui";
 import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
+import { boneColor, highlightColor } from "@/lib/constants/Colors";
 
 type RemoteImageProps = {
   path?: string | null;
@@ -60,9 +61,6 @@ interface ImagePlaceholderProps {
   style: StyleProp<ImageStyle>;
   image: string;
 }
-
-const boneColor = "#413d3c";
-const highlightColor = "#4d4948";
 
 function ImagePlaceholder({ style }: ImagePlaceholderProps) {
   const translateX = useSharedValue(400);

@@ -8,7 +8,8 @@ const Input = ({ ...inputProps }: InputProps) => {
   return (
     <InputField
       {...inputProps}
-      borderColor="$purple10"
+      borderColor="$color10"
+      focusStyle={{ outlineColor: "$purple10" }}
       hoverStyle={{ borderColor: "$purple10" }}
       pressStyle={{ borderColor: "$purple10" }}
       placeholderTextColor="$color10"
