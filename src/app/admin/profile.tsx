@@ -30,6 +30,8 @@ import { RootState } from "@/lib/reduxStore";
 import SvgBackground from "@/components/svgBackground/SvgBackground";
 import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 import { GestureResponderEvent } from "react-native";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
 
 export default function ProfileScreen() {
   const [profileAvatar, setProfileAvatar] = useState("");
@@ -151,10 +153,13 @@ export default function ProfileScreen() {
 
 function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
   const [userDetails, setUserDetails] = useState<UpdateTables<"profiles">>({
-    username: "Not added yet",
-    phone: "Not added yet",
-    email: "Not added yet",
-    address: "Not added yet",
+    username: "",
+    email: "",
+    address: "",
+    country: "",
+    city: "",
+    phone: "",
+    postal_code: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -164,7 +169,10 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
     if (userDetails) {
       setIsSubmitting(true);
       updatedProfileData(userDetails, {
-        onSuccess: () => setIsSubmitting(false),
+        onSuccess: () => {
+          toast.success("Profile updated", ToastOptions({ iconName: "check" }));
+          setIsSubmitting(false);
+        },
       });
     }
   };
@@ -194,25 +202,14 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
     >
       <XStack alignItems="center" gap="$2" width="100%">
         <Text fontSize={14} color="white">
-          Username:
+          Full Name:
         </Text>
         <Input
           flex={1}
           value={userDetails?.username as string}
+          placeholder="Not added yet"
           onChangeText={(value) =>
             setUserDetails((prev) => ({ ...prev, username: value }))
-          }
-        />
-      </XStack>
-      <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14} color="white">
-          Phone:
-        </Text>
-        <Input
-          flex={1}
-          value={userDetails?.phone as string}
-          onChangeText={(value) =>
-            setUserDetails((prev) => ({ ...prev, phone: value }))
           }
         />
       </XStack>
@@ -223,10 +220,65 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
         <Input
           flex={1}
           value={userDetails?.email}
+          placeholder="Not added yet"
           onChangeText={(value) =>
             setUserDetails((prev) => ({ ...prev, email: value }))
           }
         />
+      </XStack>
+      <XStack alignItems="center" gap="$2" width="100%">
+        <Text fontSize={14} color="white">
+          Phone:
+        </Text>
+        <Input
+          flex={1}
+          value={userDetails?.phone as string}
+          placeholder="Not added yet"
+          onChangeText={(value) =>
+            setUserDetails((prev) => ({ ...prev, phone: value }))
+          }
+        />
+      </XStack>
+      <XStack gap="$2" width="100%">
+        <XStack alignItems="center" gap="$2" flex={1 / 3}>
+          <Text fontSize={14} color="white">
+            Country:
+          </Text>
+          <Input
+            flex={1}
+            value={userDetails?.country as string}
+            placeholder="Not added yet"
+            onChangeText={(value) =>
+              setUserDetails((prev) => ({ ...prev, country: value }))
+            }
+          />
+        </XStack>
+        <XStack alignItems="center" gap="$2" flex={1 / 3}>
+          <Text fontSize={14} color="white">
+            City:
+          </Text>
+          <Input
+            flex={1}
+            value={userDetails?.city as string}
+            placeholder="Not added yet"
+            onChangeText={(value) =>
+              setUserDetails((prev) => ({ ...prev, city: value }))
+            }
+          />
+        </XStack>
+        <XStack alignItems="center" gap="$2" flex={1 / 3}>
+          <Text fontSize={14} color="white" textAlign="center">
+            Postal Code:
+          </Text>
+          <Input
+            flex={1}
+            value={userDetails?.postal_code as string}
+            placeholder="Not added yet"
+            onChangeText={(value) =>
+              setUserDetails((prev) => ({ ...prev, postal_code: value }))
+            }
+          />
+        </XStack>
       </XStack>
       <XStack alignItems="center" gap="$2" width="100%">
         <Text fontSize={14} color="white">
@@ -235,6 +287,7 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
         <Input
           flex={1}
           value={userDetails?.address as string}
+          placeholder="Not added yet"
           onChangeText={(value) =>
             setUserDetails((prev) => ({ ...prev, address: value }))
           }

@@ -59,9 +59,19 @@ function UserNavbar({
     {
       title: "Cart",
       href: "/user/menu/cart",
-      icon: ({ color }: { color: string }) => (
+      icon: ({
+        isLinkActive,
+        theme,
+      }: {
+        isLinkActive: boolean;
+        theme: UseThemeResult;
+      }) => (
         <View position="relative">
-          <FontAwesome name="shopping-cart" size={25} color={color} />
+          <FontAwesome
+            name="shopping-cart"
+            size={25}
+            color={isLinkActive ? theme.blue10.val : theme.color.val}
+          />
           {cartItemsNumber > 0 && (
             <View
               alignItems="center"
@@ -74,7 +84,7 @@ function UserNavbar({
               right={-12}
               top={-10}
             >
-              <Text color={color} fontSize={12}>
+              <Text color={theme.color.val} fontSize={12}>
                 {cartItemsNumber}
               </Text>
             </View>
@@ -93,10 +103,11 @@ function UserNavbar({
             .includes(route.title.toLowerCase());
           return (
             <Link href={route.href as Href<string>} key={route.href} asChild>
-              <Button unstyled>
+              <Button unstyled flexDirection="row" alignItems="center">
                 {route.icon &&
                   route.icon({
-                    color: isLinkActive ? theme.blue10.val : theme.color.val,
+                    isLinkActive: isLinkActive,
+                    theme: theme,
                   })}
                 {route.title !== "Cart" && (
                   <Text
@@ -136,9 +147,19 @@ function AdminNavbar({
       {
         title: "Cart",
         href: "/user/menu/cart",
-        icon: ({ color, theme }: { color: string; theme: UseThemeResult }) => (
+        icon: ({
+          isLinkActive,
+          theme,
+        }: {
+          isLinkActive: boolean;
+          theme: UseThemeResult;
+        }) => (
           <View position="relative">
-            <FontAwesome name="shopping-cart" size={25} color={color} />
+            <FontAwesome
+              name="shopping-cart"
+              size={25}
+              color={isLinkActive ? theme.blue10.val : theme.color.val}
+            />
             {cartItemsNumber > 0 && (
               <View
                 alignItems="center"
@@ -204,7 +225,7 @@ function AdminNavbar({
               <Button unstyled flexDirection="row" alignItems="center">
                 {route.icon &&
                   route.icon({
-                    color: isLinkActive ? theme.blue10.val : theme.color.val,
+                    isLinkActive: isLinkActive,
                     theme: theme,
                   })}
                 {route.title !== "Cart" && (

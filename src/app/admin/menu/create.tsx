@@ -323,7 +323,7 @@ export default function CreateProductScreen() {
                 aspectRatio={1}
                 alignSelf="center"
                 resizeMode="cover"
-                $gtXs={{ width: "100%", height: "auto" }}
+                $gtXs={{ width: "60%", height: "auto" }}
                 $gtLg={{ width: "50%", height: "auto" }}
               />
             </View>
@@ -479,6 +479,7 @@ const styles: StyleTypes = {
     alignSelf: "center",
     backgroundColor: "$background",
     padding: 10,
+    $gtXs: { paddingHorizontal: 40 },
     gap: "$3",
   },
   image: {

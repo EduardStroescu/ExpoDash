@@ -61,7 +61,9 @@ const OrderItemListItem = ({
         />
         <View flex={1}>
           <View flexDirection="row">
-            <Text {...styles.title}>{item.products?.name}</Text>
+            <Text {...styles.title}>
+              {`${item.products?.name?.substring(0, 17)}...`}
+            </Text>
             <Text color="white"> - </Text>
             <Text {...styles.price}>${itemPrice}</Text>
           </View>

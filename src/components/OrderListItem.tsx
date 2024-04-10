@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { router, useSegments } from "expo-router";
 import { Tables } from "../lib/types";
-import Animated, { SlideInDown } from "react-native-reanimated";
+import Animated, { SlideInUp } from "react-native-reanimated";
 import { View, Text, GetProps, Button } from "tamagui";
 dayjs.extend(relativeTime);
 
@@ -19,7 +19,7 @@ export default function OrderListItem({
 
   return (
     <Animated.View
-      entering={SlideInDown}
+      entering={SlideInUp.duration(1000)}
       style={{
         backgroundColor: "#262626",
         height: 60,

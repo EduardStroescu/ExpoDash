@@ -25,13 +25,13 @@ export const useSession = () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      dispatch(setSession(session))
+      dispatch(setSession(session));
     };
 
     fetchSession();
     supabase.auth.onAuthStateChange((_event, session) => {
       dispatch(setSession(session));
-      updateProfile(session)
+      updateProfile(session);
     });
   }, []);
 };

@@ -163,6 +163,7 @@ const styles: StyleTypes = {
     width: "100%",
     padding: 10,
     backgroundColor: "$background",
+    $gtXs: { paddingHorizontal: 40 },
   },
   price: {
     fontSize: 18,

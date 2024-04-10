@@ -5,10 +5,10 @@ import CartListItem from "../CartListItem";
 import Button from "../Button";
 import { clearCart, getCartTotal } from "../../lib/features/cartSlice";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useInsertOrder } from "../../app/api/orders";
+import { useInsertOrder, useUpdateOrder } from "../../app/api/orders";
 import { useRouter } from "expo-router";
 import { useInsertOrderItems } from "../../app/api/order-items";
-import { CartItem, Tables } from "../../lib/types";
+import { CartItem, Tables, UpdateTables } from "../../lib/types";
 import {
   AddressElement,
   Elements,
@@ -37,7 +37,14 @@ export default function Cart() {
   }, [items]);
 
   const checkout = () => {
-    setIsCheckout(true);
+    if (items.length > 0) {
+      setIsCheckout(true);
+    } else {
+      toast.error(
+        "Please add a product to you cart first",
+        ToastOptions({ iconName: "exclamation", iconColor: "red" }),
+      );
+    }
   };
 
   return (
@@ -122,34 +129,35 @@ function CheckoutForm({
   items: CartItem[];
   setIsCheckout: Dispatch<SetStateAction<boolean>>;
 }) {
+  const { profile } = useSelector((state: RootState) => state.auth);
   const { mutate: insertOrder } = useInsertOrder();
   const { mutate: insertOrderItems } = useInsertOrderItems();
+  const { mutate: updateOrder } = useUpdateOrder();
   const router = useRouter();
   const dispatch = useDispatch();
 
   const stripe = useStripe();
   const elements = useElements();
 
+  const cancelCheckout = () => {
+    setIsCheckout(false);
+  };
+
+  const cancelOrder = (orderId: number) => {
+    updateOrder({
+      id: orderId,
+      updatedFields: {
+        status: "Cancelled",
+      },
+    });
+  };
+
   const checkout = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     const saveOrderItems = async (order: Tables<"orders"> | null) => {
-      if (!stripe || !elements || !order) {
-        return;
-      }
-
-      const { error: submitError } = await elements.submit();
-      if (submitError) return;
-
-      const { paymentIntent: clientSecret } = await fetchPaymentSheetParams(
-        Math.round(total * 100),
-        "usd",
-      );
-
-      if (!clientSecret) {
-        toast.error(
-          "Error! Please try again later!",
-          ToastOptions({ iconName: "exclamation", iconColor: "red" }),
-        );
+      if (!order) return;
+      if (!stripe || !elements) {
+        cancelOrder(order.id);
         return;
       }
 
@@ -160,22 +168,22 @@ function CheckoutForm({
         size: cartItem.size,
       }));
 
-      insertOrderItems(orderItems);
+      insertOrderItems(orderItems, { onError: () => cancelOrder(order.id) });
 
       const { error } = await stripe.confirmPayment({
         elements,
         clientSecret: clientSecret,
         confirmParams: {
-          return_url: `${process.env.EXPO_PUBLIC_WEBSITE_URL}/user/orders/${order?.id}`,
+          return_url: `${process.env.EXPO_PUBLIC_WEBSITE_URL ?? "http://localhost:8081"}/user/orders/${order?.id}`,
         },
       });
 
       if (error) {
+        cancelOrder(order.id);
         toast.error(
           "Error! Please try again later!",
           ToastOptions({ iconName: "exclamation", iconColor: "red" }),
         );
-        return;
       }
 
       dispatch(clearCart());
@@ -183,18 +191,78 @@ function CheckoutForm({
       router.replace(`/user/orders/${order?.id}`);
     };
 
-    insertOrder(
-      { total },
-      {
-        onSuccess: saveOrderItems,
-      },
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const { error: submitError } = await elements.submit();
+    if (submitError) return;
+
+    const { paymentIntent: clientSecret } = await fetchPaymentSheetParams(
+      Math.round(total * 100),
+      "usd",
     );
+
+    if (!clientSecret) {
+      toast.error(
+        "Error! Please try again later!",
+        ToastOptions({ iconName: "exclamation", iconColor: "red" }),
+      );
+      return;
+    }
+
+    const addressElement = elements.getElement("address");
+    if (!addressElement) return;
+
+    const { complete, value } = await addressElement.getValue();
+
+    if (complete) {
+      const orderToInsert: {
+        total: number;
+        user_name: string;
+        address: string;
+        country: string;
+        city: string;
+        postal_code: string;
+        phone?: string;
+      } = {
+        total,
+        user_name: value.name,
+        address: value.address.line1,
+        country: value.address.country,
+        city: value.address.city,
+        postal_code: value.address.postal_code,
+      };
+      if (value.phone) {
+        orderToInsert.phone = value.phone;
+      }
+      insertOrder(orderToInsert, {
+        onSuccess: saveOrderItems,
+      });
+    }
   };
+  if (!profile) return;
+
   return (
     <View {...styles.cartForm}>
       <View {...styles.paymentSheetGroup}>
         <Text color="$color">Shipping Details:</Text>
-        <AddressElement options={{ mode: "shipping" }} />
+        <AddressElement
+          options={{
+            mode: "shipping",
+            fields: { phone: "always" },
+            defaultValues: {
+              name: profile.username,
+              address: {
+                country: profile.country?.substring(0, 2),
+                line1: profile.address,
+                city: profile.city,
+                postal_code: profile.postal_code,
+              },
+              phone: profile.phone,
+            },
+          }}
+        />
       </View>
       <View {...styles.paymentSheetGroup}>
         <Text color="$color">Payment</Text>
@@ -205,6 +273,11 @@ function CheckoutForm({
         disabled={!stripe || !elements}
         onPress={checkout}
         width="100%"
+      />
+      <Button
+        text="Cancel Order"
+        onPress={cancelCheckout}
+        backgroundColor="$red8"
       />
     </View>
   );

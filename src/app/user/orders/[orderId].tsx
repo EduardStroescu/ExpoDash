@@ -9,6 +9,7 @@ import { setIsLoading } from "@/lib/features/appSlice";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
 import { Theme, View } from "tamagui";
 import PageError from "@/components/PageError";
+import OrderIdOrderDetails from "@/components/OrderIdOrderDetails";
 
 export default function OrderDetailsPage() {
   const colorScheme = useColorScheme();
@@ -38,7 +39,10 @@ export default function OrderDetailsPage() {
       />
 
       <View {...styles.container}>
-        <OrderListItem order={order} />
+        <View>
+          <OrderListItem order={order} hoverStyle={{ cursor: "default" }} />
+          <OrderIdOrderDetails order={order} />
+        </View>
 
         <AnimatedFlatList
           data={order.order_items}
