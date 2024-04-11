@@ -1,7 +1,7 @@
 import React from "react";
 import { FlatListProps, StyleProp, ViewStyle } from "react-native";
-import Animated, { SharedValue } from "react-native-reanimated";
-import {
+import Animated, {
+  SharedValue,
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";

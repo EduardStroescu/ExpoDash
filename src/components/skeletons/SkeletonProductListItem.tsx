@@ -1,5 +1,9 @@
-import { LayoutChangeEvent } from "react-native";
+import { boneColor, highlightColor } from "@/lib/constants/Colors";
 import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
+import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState } from "react";
+import { LayoutChangeEvent } from "react-native";
 import Animated, {
   Easing,
   SharedValue,
@@ -10,10 +14,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { GetProps, View, XStack, YStack, useWindowDimensions } from "tamagui";
-import { useEffect, useState } from "react";
-import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
-import { boneColor, highlightColor } from "@/lib/constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
 
 interface SkeletonProductListItemProps {
   index: number;

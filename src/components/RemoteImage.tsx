@@ -1,6 +1,8 @@
-import { ImageStyle, StyleProp } from "react-native";
+import { boneColor, highlightColor } from "@/lib/constants/Colors";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
+import { LinearGradient } from "expo-linear-gradient";
 import { ComponentProps, useEffect, useState } from "react";
-import { supabase } from "../lib/supabase/supabase";
+import { ImageStyle, StyleProp } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -9,30 +11,26 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
-import { Image } from "tamagui";
-import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
-import { boneColor, highlightColor } from "@/lib/constants/Colors";
+import { Image, View } from "tamagui";
+import { supabase } from "../lib/supabase/supabase";
 
 type RemoteImageProps = {
   path?: string | null;
-  fallback?: string;
   placeholderStyle?: any;
 } & Omit<ComponentProps<typeof Image>, "source">;
 
 const RemoteImage = ({
   path,
-  fallback,
   placeholderStyle,
   ...imageProps
 }: RemoteImageProps) => {
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(imagePlaceholder);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     if (!path) {
-      return setImage(imagePlaceholder);
+      return;
     }
-    setImage("");
     const { data } = supabase.storage.from("product-images").getPublicUrl(path);
 
     if (data) {
@@ -40,29 +38,34 @@ const RemoteImage = ({
     }
   }, [path]);
 
-  if (!image)
-    return <ImagePlaceholder style={placeholderStyle} image={image} />;
+  const onLoad = () => {
+    if (image !== imagePlaceholder) {
+      setImageLoaded(true);
+    }
+  };
 
   return (
-    <Image
-      {...imageProps}
-      source={{
-        width: 400,
-        height: 400,
-        uri: image || fallback,
-      }}
-    />
+    <View position="relative">
+      <Image
+        {...imageProps}
+        opacity={!imageLoaded ? 0 : 1}
+        onLoad={onLoad}
+        source={{
+          uri: image,
+        }}
+      />
+      {!imageLoaded && <ImageSkeleton style={placeholderStyle} />}
+    </View>
   );
 };
 
 export default RemoteImage;
 
-interface ImagePlaceholderProps {
+interface ImageSkeletonProps {
   style: StyleProp<ImageStyle>;
-  image: string;
 }
 
-function ImagePlaceholder({ style }: ImagePlaceholderProps) {
+function ImageSkeleton({ style }: ImageSkeletonProps) {
   const translateX = useSharedValue(400);
   const opacity = useSharedValue(0);
 
@@ -110,6 +113,7 @@ function ImagePlaceholder({ style }: ImagePlaceholderProps) {
           backgroundColor: boneColor,
           justifyContent: "center",
           alignItems: "center",
+          position: "absolute",
         },
       ]}
     >

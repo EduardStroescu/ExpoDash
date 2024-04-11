@@ -1,7 +1,7 @@
-import { StyleSheet } from "react-native";
-import LottieView from "lottie-react-native";
-import Animated, { FadeOut } from "react-native-reanimated";
 import { RootState } from "@/lib/reduxStore";
+import LottieView from "lottie-react-native";
+import { StyleSheet } from "react-native";
+import Animated, { FadeOut } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 
 export default function AnimatedLoader({

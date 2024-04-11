@@ -1,7 +1,7 @@
 import { Href, Link, useSegments } from "expo-router";
+import { useColorScheme } from "react-native";
 import { Text, Theme, YStack } from "tamagui";
 import Button from "./Button";
-import { useColorScheme } from "react-native";
 
 export default function PageError() {
   const segments = useSegments();

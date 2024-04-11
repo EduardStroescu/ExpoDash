@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
+import { useState } from "react";
+import { LayoutChangeEvent } from "react-native";
+import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
+import { GetProps, Text, View } from "tamagui";
 import { Tables } from "../lib/types";
 import RemoteImage from "./RemoteImage";
-import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
-import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
-import { GetProps, Text, View } from "tamagui";
-import { LayoutChangeEvent } from "react-native";
-import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
 
 type OrderItemListItemProps = {
   item: { products: Tables<"products"> | null } & Tables<"order_items">;
@@ -56,14 +55,12 @@ const OrderItemListItem = ({
         <RemoteImage
           {...styles.image}
           path={item.products?.image}
-          fallback={imagePlaceholder}
+          placeholderStyle={styles.image}
           resizeMode="contain"
         />
         <View flex={1}>
-          <View flexDirection="row">
-            <Text {...styles.title}>
-              {`${item.products?.name?.substring(0, 17)}...`}
-            </Text>
+          <View flexDirection="row" flexWrap="wrap">
+            <Text {...styles.title}>{item.products?.name}</Text>
             <Text color="white"> - </Text>
             <Text {...styles.price}>${itemPrice}</Text>
           </View>
@@ -110,6 +107,7 @@ const styles: StyleTypes = {
     fontWeight: "500",
     fontSize: 16,
     marginBottom: 5,
+    numberOfLines: 2,
   },
   subtitleContainer: {
     flexDirection: "row",

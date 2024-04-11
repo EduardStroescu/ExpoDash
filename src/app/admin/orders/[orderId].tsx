@@ -1,17 +1,19 @@
-import { useColorScheme } from "react-native";
-import { useEffect } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
-import OrderListItem from "@/components/OrderListItem";
-import OrderItemListItem from "@/components/OrderItemListItem";
-import OrderStatusSelector from "@/components/OrderStatusSelector";
-import { useOrderDetails } from "../../api/orders";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "@/lib/features/appSlice";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
-import { Theme, View } from "tamagui";
+import OrderIdOrderDetails from "@/components/OrderIdOrderDetails";
+import OrderItemListItem from "@/components/OrderItemListItem";
+import OrderListItem from "@/components/OrderListItem";
+import OrderStatusSelector from "@/components/OrderStatusSelector";
 import PageError from "@/components/PageError";
+import { setIsLoading } from "@/lib/features/appSlice";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+import { useColorScheme } from "react-native";
+import { useDispatch } from "react-redux";
+import { Theme, View, useWindowDimensions } from "tamagui";
+import { useOrderDetails } from "../../api/orders";
 
 export default function OrderDetailsPage() {
+  const { height } = useWindowDimensions();
   const colorScheme = useColorScheme();
   const { orderId } = useLocalSearchParams();
   const id = parseFloat(typeof orderId === "string" ? orderId : orderId?.[0]);
@@ -39,13 +41,17 @@ export default function OrderDetailsPage() {
       />
 
       <View {...styles.container}>
-        <OrderListItem order={order} hoverStyle={{ cursor: "default" }} />
+        <View>
+          <OrderListItem order={order} hoverStyle={{ cursor: "default" }} />
+          <OrderIdOrderDetails order={order} />
+        </View>
 
         <AnimatedFlatList
           data={order.order_items}
           renderItem={({ item, index, scrollY }) => (
             <OrderItemListItem item={item} index={index} scrollY={scrollY} />
           )}
+          style={{ height: height - 390 }}
           contentContainerStyle={{ gap: 5, padding: 10 }}
         />
         <OrderStatusSelector activeStatus={order.status} orderId={id} />

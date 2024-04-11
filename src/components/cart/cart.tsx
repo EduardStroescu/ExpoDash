@@ -1,24 +1,24 @@
+import { ToastOptions } from "@/lib/constants/ToastOptions";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { AddressDetails, AddressSheet } from "@stripe/stripe-react-native";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import { Alert, FlatList, Platform, useColorScheme } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../lib/reduxStore";
-import CartListItem from "../CartListItem";
-import Button from "../Button";
-import { clearCart, getCartTotal } from "../../lib/features/cartSlice";
-import { useEffect, useState } from "react";
-import { useInsertOrder, useUpdateOrder } from "../../app/api/orders";
-import { useRouter } from "expo-router";
+import { GetProps, Text, Theme, View } from "tamagui";
 import { useInsertOrderItems } from "../../app/api/order-items";
-import { Tables } from "../../lib/types";
+import { useInsertOrder, useUpdateOrder } from "../../app/api/orders";
+import { clearCart, getCartTotal } from "../../lib/features/cartSlice";
+import { RootState } from "../../lib/reduxStore";
 import {
   initialisePaymentSheet,
   openPaymentSheet,
 } from "../../lib/stripe/stripe";
-import { GetProps, Text, Theme, View } from "tamagui";
+import { Tables } from "../../lib/types";
+import Button from "../Button";
+import CartListItem from "../CartListItem";
 import { InlineGradient } from "../InlineGradient";
-import { toast } from "@backpackapp-io/react-native-toast";
-import { ToastOptions } from "@/lib/constants/ToastOptions";
-import { AddressDetails, AddressSheet } from "@stripe/stripe-react-native";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);

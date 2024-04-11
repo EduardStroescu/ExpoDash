@@ -1,7 +1,7 @@
 import { RootState } from "@/lib/reduxStore";
 import { FontAwesome } from "@expo/vector-icons";
 import { Link, useSegments } from "expo-router";
-import { useColorScheme, Pressable, ColorSchemeName } from "react-native";
+import { ColorSchemeName, Pressable, useColorScheme } from "react-native";
 import { useSelector } from "react-redux";
 import { GetProps, Separator, Text, View, XStack, useTheme } from "tamagui";
 

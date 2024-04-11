@@ -1,11 +1,10 @@
-import { GetProps, View } from "tamagui";
-import Button, { ButtonProps } from "./Button";
-import { Text } from "tamagui";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
 import { supabase } from "@/lib/supabase/supabase";
+import { toast } from "@backpackapp-io/react-native-toast";
 import { useRouter } from "expo-router";
 import { Dispatch, SetStateAction } from "react";
-import { toast } from "@backpackapp-io/react-native-toast";
-import { ToastOptions } from "@/lib/constants/ToastOptions";
+import { GetProps, Text, View } from "tamagui";
+import Button, { ButtonProps } from "./Button";
 
 interface LogInAsDemoAccountProps {
   loading: boolean;

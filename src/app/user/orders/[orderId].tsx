@@ -1,15 +1,15 @@
-import { useColorScheme } from "react-native";
-import { useEffect } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
-import OrderListItem from "@/components/OrderListItem";
-import OrderItemListItem from "@/components/OrderItemListItem";
-import { useOrderDetails } from "../../api/orders";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "@/lib/features/appSlice";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
-import { Theme, View } from "tamagui";
-import PageError from "@/components/PageError";
 import OrderIdOrderDetails from "@/components/OrderIdOrderDetails";
+import OrderItemListItem from "@/components/OrderItemListItem";
+import OrderListItem from "@/components/OrderListItem";
+import PageError from "@/components/PageError";
+import { setIsLoading } from "@/lib/features/appSlice";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+import { useColorScheme } from "react-native";
+import { useDispatch } from "react-redux";
+import { Theme, View } from "tamagui";
+import { useOrderDetails } from "../../api/orders";
 
 export default function OrderDetailsPage() {
   const colorScheme = useColorScheme();
@@ -49,6 +49,7 @@ export default function OrderDetailsPage() {
           renderItem={({ item, index, scrollY }) => (
             <OrderItemListItem item={item} index={index} scrollY={scrollY} />
           )}
+          style={{ height: "100%" }}
           contentContainerStyle={{ gap: 5, padding: 10 }}
         />
       </View>

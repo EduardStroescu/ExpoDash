@@ -1,14 +1,9 @@
-import { FlatList, Platform, useColorScheme } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../lib/reduxStore";
-import CartListItem from "../CartListItem";
-import Button from "../Button";
-import { clearCart, getCartTotal } from "../../lib/features/cartSlice";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useInsertOrder, useUpdateOrder } from "../../app/api/orders";
-import { useRouter } from "expo-router";
-import { useInsertOrderItems } from "../../app/api/order-items";
-import { CartItem, Tables, UpdateTables } from "../../lib/types";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
+import {
+  fetchPaymentSheetParams,
+  stripePromise,
+} from "@/lib/stripe/stripe.web";
+import { toast } from "@backpackapp-io/react-native-toast";
 import {
   AddressElement,
   Elements,
@@ -16,15 +11,20 @@ import {
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import {
-  fetchPaymentSheetParams,
-  stripePromise,
-} from "@/lib/stripe/stripe.web";
-import Header from "../webOnlyComponents/Header";
+import { useRouter } from "expo-router";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { FlatList, Platform, useColorScheme } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { GetProps, ScrollView, Text, Theme, View } from "tamagui";
+import { useInsertOrderItems } from "../../app/api/order-items";
+import { useInsertOrder, useUpdateOrder } from "../../app/api/orders";
+import { clearCart, getCartTotal } from "../../lib/features/cartSlice";
+import { RootState } from "../../lib/reduxStore";
+import { CartItem, Tables } from "../../lib/types";
+import Button from "../Button";
+import CartListItem from "../CartListItem";
 import { InlineGradient } from "../InlineGradient";
-import { toast } from "@backpackapp-io/react-native-toast";
-import { ToastOptions } from "@/lib/constants/ToastOptions";
+import Header from "../webOnlyComponents/Header";
 
 export default function Cart() {
   const { items, total } = useSelector((state: RootState) => state.cart);
@@ -303,17 +303,32 @@ const styles: StyleTypes = {
   },
   cartResults: {
     position: "relative",
-    width: "20%",
+    width: "100%",
     alignSelf: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
+    $gtSm: {
+      width: "20%",
+      minWidth: 700,
+      maxWidth: 1000,
+    },
   },
   checkoutButton: {
-    width: "30%",
+    width: "50%",
+    $gtSm: {
+      width: "30%",
+      minWidth: 500,
+      maxWidth: 800,
+    },
   },
   cartForm: {
-    width: "50%",
+    width: "100%",
     gap: "$3",
+    $gtSm: {
+      width: "20%",
+      minWidth: 700,
+      maxWidth: 1000,
+    },
   },
   paymentSheetGroup: {
     gap: "$3",

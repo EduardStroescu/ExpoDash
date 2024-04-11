@@ -49,6 +49,7 @@ a.is_Button, .is_Anchor:has(.is_Button) {
 /* toolbar width */
 ::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
 }
 
 /* toolbar Track */

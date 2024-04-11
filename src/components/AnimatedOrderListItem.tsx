@@ -1,12 +1,12 @@
-import { LayoutChangeEvent } from "react-native";
-import { useState } from "react";
+import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { router, useSegments } from "expo-router";
-import { Tables } from "../lib/types";
+import { useState } from "react";
+import { LayoutChangeEvent } from "react-native";
 import Animated, { SharedValue, SlideInDown } from "react-native-reanimated";
-import useAnimatedFlatList from "@/lib/hooks/useAnimatedFlatList";
-import { View, Text, GetProps, Button } from "tamagui";
+import { Button, GetProps, Text, View } from "tamagui";
+import { Tables } from "../lib/types";
 dayjs.extend(relativeTime);
 
 interface AnimatedOrderListItemProps {

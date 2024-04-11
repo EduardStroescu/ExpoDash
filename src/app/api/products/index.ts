@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase/supabase";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { InsertTables } from "@/lib/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useProductList = () => {
   return useQuery({

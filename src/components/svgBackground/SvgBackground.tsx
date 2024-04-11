@@ -1,15 +1,15 @@
 import { useEffect } from "react";
-import Svg, { G, Path } from "react-native-svg";
 import { StyleSheet } from "react-native";
 import Animated, {
-  useSharedValue,
-  withTiming,
-  withRepeat,
-  interpolateColor,
-  useAnimatedStyle,
   Easing,
   StyleProps,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
 } from "react-native-reanimated";
+import Svg, { G, Path } from "react-native-svg";
 import { useWindowDimensions } from "tamagui";
 
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);

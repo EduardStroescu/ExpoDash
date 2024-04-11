@@ -1,9 +1,12 @@
-import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { Platform, Pressable, useColorScheme } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
-import { useProduct } from "../../api/products";
+import Button from "@/components/Button";
+import PageError from "@/components/PageError";
 import RemoteImage from "@/components/RemoteImage";
 import Header from "@/components/webOnlyComponents/Header";
+import { ProductSize } from "@/lib/types";
+import { FontAwesome } from "@expo/vector-icons";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { Platform, Pressable, useColorScheme } from "react-native";
 import {
   GetProps,
   ScrollView,
@@ -13,11 +16,7 @@ import {
   YStack,
   useTheme,
 } from "tamagui";
-import PageError from "@/components/PageError";
-import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
-import { useEffect, useState } from "react";
-import { ProductSize } from "@/lib/types";
-import Button from "@/components/Button";
+import { useProduct } from "../../api/products";
 
 const sizes: ProductSize[] = ["S", "M", "L", "XL"];
 
@@ -90,14 +89,13 @@ export default function ProductDetailsScreen() {
         >
           <RemoteImage
             path={product?.image}
-            fallback={imagePlaceholder}
             width="100%"
             aspectRatio={1}
             alignSelf="center"
             resizeMode="cover"
             placeholderStyle={{
               width: 500,
-              height: 500,
+              height: "100%",
               aspectRatio: 1,
               alignSelf: "center",
             }}

@@ -1,13 +1,10 @@
-import { Platform, useColorScheme } from "react-native";
 import { useAdminOrderList } from "@/app/api/orders";
-import Header from "@/components/webOnlyComponents/Header";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "@/lib/features/appSlice";
-import { useEffect } from "react";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
-import { Theme, View } from "tamagui";
-import PageError from "@/components/PageError";
 import AnimatedOrderListItem from "@/components/AnimatedOrderListItem";
+import PageError from "@/components/PageError";
+import Header from "@/components/webOnlyComponents/Header";
+import { Platform, useColorScheme } from "react-native";
+import { Theme, View } from "tamagui";
 
 export default function OrdersPage() {
   const colorScheme = useColorScheme();
@@ -16,15 +13,6 @@ export default function OrdersPage() {
     isLoading,
     error,
   } = useAdminOrderList({ archived: true });
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (isLoading) {
-      dispatch(setIsLoading(true));
-    } else {
-      dispatch(setIsLoading(false));
-    }
-  }, [isLoading, dispatch]);
 
   if (error) {
     return <PageError />;

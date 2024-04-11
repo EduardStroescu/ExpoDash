@@ -1,9 +1,9 @@
+import { setProfile } from "@/lib/features/authSlice";
+import { RootState } from "@/lib/reduxStore";
 import { supabase } from "@/lib/supabase/supabase";
+import { UpdateTables } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/lib/reduxStore";
-import { UpdateTables } from "@/lib/types";
-import { setProfile } from "@/lib/features/authSlice";
 
 export const useUpdateProfileAvatar = () => {
   const { session } = useSelector((state: RootState) => state.auth);

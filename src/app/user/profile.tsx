@@ -1,7 +1,27 @@
 import Button from "@/components/Button";
+import Input from "@/components/Input";
 import LogoutButton from "@/components/logoutButton/LogoutButton";
+import SvgBackground from "@/components/svgBackground/SvgBackground";
 import Header from "@/components/webOnlyComponents/Header";
-import { useColorScheme, Platform, KeyboardAvoidingView } from "react-native";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
+import {
+  uploadUserAvatarMobile,
+  uploadUserAvatarWeb,
+} from "@/lib/helpers/uploadImage";
+import { RootState } from "@/lib/reduxStore";
+import { supabase } from "@/lib/supabase/supabase";
+import { Tables, UpdateTables } from "@/lib/types";
+import { toast } from "@backpackapp-io/react-native-toast";
+import * as ImagePicker from "expo-image-picker";
+import { useEffect, useState } from "react";
+import {
+  GestureResponderEvent,
+  KeyboardAvoidingView,
+  Platform,
+  useColorScheme,
+} from "react-native";
+import { useSelector } from "react-redux";
 import {
   Avatar,
   Card,
@@ -11,27 +31,12 @@ import {
   Theme,
   XStack,
   YStack,
+  useWindowDimensions,
 } from "tamagui";
 import {
   useUpdateProfileAvatar,
   useUpdateProfileDetails,
 } from "../api/profiles";
-import { useEffect, useState } from "react";
-import {
-  uploadUserAvatarMobile,
-  uploadUserAvatarWeb,
-} from "@/lib/helpers/uploadImage";
-import { supabase } from "@/lib/supabase/supabase";
-import * as ImagePicker from "expo-image-picker";
-import Input from "@/components/Input";
-import { UpdateTables, Tables } from "@/lib/types";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/reduxStore";
-import SvgBackground from "@/components/svgBackground/SvgBackground";
-import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
-import { GestureResponderEvent } from "react-native";
-import { ToastOptions } from "@/lib/constants/ToastOptions";
-import { toast } from "@backpackapp-io/react-native-toast";
 
 export default function ProfileScreen() {
   const [profileAvatar, setProfileAvatar] = useState("");
@@ -151,6 +156,7 @@ export default function ProfileScreen() {
 }
 
 function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
+  const { width } = useWindowDimensions();
   const [userDetails, setUserDetails] = useState<UpdateTables<"profiles">>({
     username: "",
     email: "",
@@ -200,9 +206,7 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
       paddingHorizontal="$3"
     >
       <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14} color="white">
-          Full Name:
-        </Text>
+        <Text {...styles.rowTitle}>Full Name:</Text>
         <Input
           flex={1}
           value={userDetails?.username as string}
@@ -213,9 +217,7 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
         />
       </XStack>
       <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14} color="white">
-          Email:
-        </Text>
+        <Text {...styles.rowTitle}>Email:</Text>
         <Input
           flex={1}
           value={userDetails?.email as string}
@@ -226,23 +228,19 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
         />
       </XStack>
       <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14} color="white">
-          Address:
-        </Text>
+        <Text {...styles.rowTitle}>Phone:</Text>
         <Input
           flex={1}
-          value={userDetails?.address as string}
+          value={userDetails?.phone as string}
           placeholder="Not added yet"
           onChangeText={(value) =>
-            setUserDetails((prev) => ({ ...prev, address: value }))
+            setUserDetails((prev) => ({ ...prev, phone: value }))
           }
         />
       </XStack>
-      <XStack gap="$2" width="100%">
-        <XStack alignItems="center" gap="$2" flex={1 / 3}>
-          <Text fontSize={14} color="white">
-            Country:
-          </Text>
+      <XStack gap="$3" flexWrap="wrap" width="100%">
+        <XStack alignItems="center" gap="$2" minWidth={170} flex={1}>
+          <Text {...styles.rowTitle}>Country:</Text>
           <Input
             flex={1}
             value={userDetails?.country as string}
@@ -252,8 +250,12 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
             }
           />
         </XStack>
-        <XStack alignItems="center" gap="$2" flex={1 / 3}>
-          <Text fontSize={14} color="white">
+        <XStack alignItems="center" gap="$2" minWidth={160} flex={1}>
+          <Text
+            {...styles.rowTitle}
+            minWidth={width > 414 ? "unset" : 70}
+            $gtXs={{ textAlign: "auto" }}
+          >
             City:
           </Text>
           <Input
@@ -265,8 +267,12 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
             }
           />
         </XStack>
-        <XStack alignItems="center" gap="$2" flex={1 / 3}>
-          <Text fontSize={14} color="white" textAlign="center">
+        <XStack alignItems="center" gap="$2" minWidth={160} flex={1}>
+          <Text
+            {...styles.rowTitle}
+            maxWidth={70}
+            $gtXs={{ textAlign: "center" }}
+          >
             Postal Code:
           </Text>
           <Input
@@ -280,18 +286,17 @@ function ChangeProfileDetailsForm({ user }: { user: Tables<"profiles"> }) {
         </XStack>
       </XStack>
       <XStack alignItems="center" gap="$2" width="100%">
-        <Text fontSize={14} color="white">
-          Phone:
-        </Text>
+        <Text {...styles.rowTitle}>Address:</Text>
         <Input
           flex={1}
-          value={userDetails?.phone as string}
+          value={userDetails?.address as string}
           placeholder="Not added yet"
           onChangeText={(value) =>
-            setUserDetails((prev) => ({ ...prev, phone: value }))
+            setUserDetails((prev) => ({ ...prev, address: value }))
           }
         />
       </XStack>
+
       <Button onPress={onUpdateProfileDetails} disabled={isSubmitting}>
         {!isSubmitting ? "Change Details" : "Updaing Profile"}
       </Button>
@@ -304,6 +309,7 @@ interface StyleTypes {
   container: GetProps<typeof YStack>;
   card: GetProps<typeof Card>;
   smallButton: GetProps<typeof Button>;
+  rowTitle: GetProps<typeof Text>;
 }
 
 const styles: StyleTypes = {
@@ -339,5 +345,10 @@ const styles: StyleTypes = {
   },
   smallButton: {
     fontSize: "$2",
+  },
+  rowTitle: {
+    minWidth: 70,
+    fontSize: 14,
+    color: "white",
   },
 };

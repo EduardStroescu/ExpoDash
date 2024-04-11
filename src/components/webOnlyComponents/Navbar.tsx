@@ -1,6 +1,9 @@
 import { RootState } from "@/lib/reduxStore";
+import { FontAwesome } from "@expo/vector-icons";
+import { UseThemeResult } from "@tamagui/web";
 import { Href, Link, usePathname, useSegments } from "expo-router";
 import { useColorScheme } from "react-native";
+import { useSelector } from "react-redux";
 import {
   Button,
   GetProps,
@@ -11,9 +14,6 @@ import {
   XStack,
   useTheme,
 } from "tamagui";
-import { useSelector } from "react-redux";
-import { FontAwesome } from "@expo/vector-icons";
-import { UseThemeResult } from "@tamagui/web";
 
 export default function Navbar() {
   const { isAdmin } = useSelector((state: RootState) => state.auth);
@@ -267,7 +267,7 @@ interface StyleTypes {
 const styles: StyleTypes = {
   primaryContainer: {
     width: "100%",
-    height: 60,
+    height: 30,
     overflow: "hidden",
     backgroundColor: "$background",
     flexDirection: "row",
@@ -276,6 +276,9 @@ const styles: StyleTypes = {
     gap: 20,
     paddingHorizontal: 20,
     paddingVertical: 20,
+    $gtXs: {
+      height: 60,
+    },
     $gtMd: {
       paddingHorizontal: 60,
     },

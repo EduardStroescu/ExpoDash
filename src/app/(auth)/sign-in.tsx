@@ -1,12 +1,16 @@
-import { useColorScheme, Platform, KeyboardAvoidingView } from "react-native";
-import { useState } from "react";
 import Button from "@/components/Button";
-import { Link, router } from "expo-router";
-import { supabase } from "@/lib/supabase/supabase";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Input, { InputProps } from "@/components/Input";
+import { LogInAsDemoAccount } from "@/components/LogInAsDemoAccount";
 import Meta from "@/components/Meta";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
+import { SignInSchema } from "@/lib/formSchemas/signInSchema";
+import { supabase } from "@/lib/supabase/supabase";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, router } from "expo-router";
+import { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { KeyboardAvoidingView, Platform, useColorScheme } from "react-native";
 import {
   Form,
   GetProps,
@@ -16,11 +20,7 @@ import {
   XStack,
   YStack,
 } from "tamagui";
-import Input, { InputProps } from "@/components/Input";
-import { LogInAsDemoAccount } from "@/components/LogInAsDemoAccount";
-import { toast } from "@backpackapp-io/react-native-toast";
-import { ToastOptions } from "@/lib/constants/ToastOptions";
-import { SignInSchema } from "@/lib/formSchemas/signInSchema";
+import { z } from "zod";
 
 export default function SignInPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -70,7 +70,7 @@ export default function SignInPage() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView {...styles.container}>
+        <ScrollView {...styles.page}>
           <Text {...styles.title}>Sign In</Text>
           <Form {...styles.form} id="box-shadow" gap="$3">
             <YStack gap="$2">
@@ -151,7 +151,7 @@ export default function SignInPage() {
 }
 
 interface StyleTypes {
-  container: GetProps<typeof ScrollView>;
+  page: GetProps<typeof ScrollView>;
   form: GetProps<typeof Form>;
   title: GetProps<typeof Text>;
   label: GetProps<typeof Text>;
@@ -161,19 +161,27 @@ interface StyleTypes {
 }
 
 const styles: StyleTypes = {
-  container: {
+  page: {
     width: "100%",
     minHeight: "100%",
     backgroundColor: "$background",
-    contentContainerStyle: { justifyContent: "center", height: "100%" },
+    contentContainerStyle: {
+      height: "90%",
+      justifyContent: "center",
+      alignItems: "center",
+      paddingTop: Platform.OS === "web" ? 60 : 0,
+      $gtXs: { paddingTop: 0 },
+    },
   },
   // @ts-ignore: onSubmit is not necessary, but using form for submit on pressing "enter"
   form: {
     paddingHorizontal: 20,
     alignSelf: "center",
     width: "100%",
-    $gtMd: {
-      width: "30%",
+    $gtSm: {
+      width: "40%",
+      minWidth: 500,
+      maxWidth: 700,
       paddingVertical: 20,
       borderRadius: 20,
       borderStyle: "double" as "solid",

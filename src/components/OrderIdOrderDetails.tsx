@@ -1,16 +1,16 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Tables } from "../lib/types";
 import Animated, { FadeInLeft } from "react-native-reanimated";
 import {
-  View,
-  Text,
-  GetProps,
   Button,
-  YStack,
+  GetProps,
+  Text,
+  View,
   XStack,
+  YStack,
   useWindowDimensions,
 } from "tamagui";
+import { Tables } from "../lib/types";
 dayjs.extend(relativeTime);
 
 interface OrderIdOrderDetailsProps {
@@ -34,10 +34,7 @@ export default function OrderIdOrderDetails({
           <YStack flex={1} alignItems="flex-start">
             <Text {...styles.detailsRowText}>Name: {order.user_name}</Text>
             <Text {...styles.detailsRowText}>Country: {order.country}</Text>
-            <Text {...styles.detailsRowText}>
-              Address: Str. Miahil Strajan, Nr. 15, Bl. 12, Sc. 1, Fl. 4, Apt.
-              17
-            </Text>
+            <Text {...styles.detailsRowText}>Address: {order.address}</Text>
           </YStack>
           <YStack flex={1} alignItems="flex-end">
             <Text {...styles.detailsRowText}>Phone: {order.phone}</Text>

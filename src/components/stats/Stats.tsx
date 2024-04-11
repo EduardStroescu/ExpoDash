@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
-import { PieChart } from "react-native-gifted-charts";
 import { useOrderStatistics } from "@/app/api/orders";
 import { useRealtimeAdminOrderStatistics } from "@/lib/hooks/useSupabaseRealtime";
-import { Button, Separator, View } from "tamagui";
-import { Text } from "tamagui";
+import { useEffect, useState } from "react";
+import { PieChart } from "react-native-gifted-charts";
+import { Button, Separator, Text, View } from "tamagui";
 
 const DOT_COLORS = ["#009FFF", "#cf80f3"];
 const DOT_GRADIENT_COLORS = ["#023577", "#380152"];

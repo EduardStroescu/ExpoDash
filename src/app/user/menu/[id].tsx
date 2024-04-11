@@ -1,29 +1,28 @@
-import { useEffect, useState } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { KeyboardAvoidingView, Platform, useColorScheme } from "react-native";
 import Button from "@/components/Button";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/lib/features/cartSlice";
-import { ProductSize } from "@/lib/types";
-import { randomUUID } from "expo-crypto";
-import { useProduct } from "../../api/products";
+import Input from "@/components/Input";
+import PageError from "@/components/PageError";
 import RemoteImage from "@/components/RemoteImage";
 import Header from "@/components/webOnlyComponents/Header";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
+import { addToCart } from "@/lib/features/cartSlice";
+import { ProductSize } from "@/lib/types";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { FontAwesome } from "@expo/vector-icons";
+import { randomUUID } from "expo-crypto";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform, useColorScheme } from "react-native";
+import { useDispatch } from "react-redux";
 import {
+  GetProps,
   ScrollView,
   Text,
   Theme,
   View,
-  YStack,
   XStack,
-  GetProps,
+  YStack,
 } from "tamagui";
-import Input from "@/components/Input";
-import { FontAwesome } from "@expo/vector-icons";
-import PageError from "@/components/PageError";
-import { toast } from "@backpackapp-io/react-native-toast";
-import { ToastOptions } from "@/lib/constants/ToastOptions";
-import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
+import { useProduct } from "../../api/products";
 
 const sizes: ProductSize[] = ["S", "M", "L", "XL"];
 
@@ -106,14 +105,13 @@ export default function ProductDetailsScreen() {
           >
             <RemoteImage
               path={product?.image}
-              fallback={imagePlaceholder}
               width="100%"
               aspectRatio={1}
               alignSelf="center"
               resizeMode="cover"
               placeholderStyle={{
                 width: 500,
-                height: 500,
+                height: "100%",
                 aspectRatio: 1,
                 alignSelf: "center",
               }}

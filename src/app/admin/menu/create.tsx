@@ -1,4 +1,13 @@
+import {
+  uploadProductImageMobile,
+  uploadProductImageWeb,
+} from "@/lib/helpers/uploadImage";
+import { supabase } from "@/lib/supabase/supabase";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as ImagePicker from "expo-image-picker";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import {
   Alert,
   GestureResponderEvent,
@@ -6,39 +15,30 @@ import {
   Platform,
   useColorScheme,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { supabase } from "@/lib/supabase/supabase";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  GetProps,
+  Image,
   ScrollView,
   Text,
   Theme,
   View,
   YStack,
-  GetProps,
-  Image,
 } from "tamagui";
-import {
-  uploadProductImageMobile,
-  uploadProductImageWeb,
-} from "@/lib/helpers/uploadImage";
 
+import Button from "@/components/Button";
+import Input from "@/components/Input";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
+import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
+import { FormSchema } from "@/lib/formSchemas/createOrUpdateSchema";
+import { ProductData, ProductSize, Tables } from "@/lib/types";
+import { toast } from "@backpackapp-io/react-native-toast";
+import z from "zod";
 import {
   useDeleteProduct,
   useInsertProduct,
   useProduct,
   useUpdateProduct,
 } from "../../api/products";
-import Input from "@/components/Input";
-import Button from "@/components/Button";
-import { imagePlaceholder } from "@/lib/constants/imagePlaceholder";
-import { ProductData, ProductSize, Tables } from "@/lib/types";
-import { FormSchema } from "@/lib/formSchemas/createOrUpdateSchema";
-import z from "zod";
-import { toast } from "@backpackapp-io/react-native-toast";
-import { ToastOptions } from "@/lib/constants/ToastOptions";
 
 const sizes: ProductSize[] = ["S", "M", "L", "XL"];
 

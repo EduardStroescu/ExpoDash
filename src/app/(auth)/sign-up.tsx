@@ -1,12 +1,15 @@
-import { useColorScheme, Platform, KeyboardAvoidingView } from "react-native";
-import { useState } from "react";
 import Button from "@/components/Button";
-import { Link, router } from "expo-router";
-import { supabase } from "@/lib/supabase/supabase";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Input, { InputProps } from "@/components/Input";
 import Meta from "@/components/Meta";
+import { ToastOptions } from "@/lib/constants/ToastOptions";
+import { SignUpSchema } from "@/lib/formSchemas/signUpSchema";
+import { supabase } from "@/lib/supabase/supabase";
+import { toast } from "@backpackapp-io/react-native-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, router } from "expo-router";
+import { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { KeyboardAvoidingView, Platform, useColorScheme } from "react-native";
 import {
   Form,
   GetProps,
@@ -16,10 +19,7 @@ import {
   XStack,
   YStack,
 } from "tamagui";
-import Input, { InputProps } from "@/components/Input";
-import { toast } from "@backpackapp-io/react-native-toast";
-import { ToastOptions } from "@/lib/constants/ToastOptions";
-import { SignUpSchema } from "@/lib/formSchemas/signUpSchema";
+import { z } from "zod";
 
 export default function SignUpPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -66,7 +66,7 @@ export default function SignUpPage() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ScrollView {...styles.container}>
+        <ScrollView {...styles.page}>
           <Text {...styles.title}>Register</Text>
           <Form {...styles.form} id="box-shadow" gap="$3">
             <YStack gap="$2">
@@ -147,7 +147,7 @@ export default function SignUpPage() {
 }
 
 interface StyleTypes {
-  container: GetProps<typeof ScrollView>;
+  page: GetProps<typeof ScrollView>;
   form: GetProps<typeof Form>;
   title: GetProps<typeof Text>;
   label: GetProps<typeof Text>;
@@ -157,19 +157,25 @@ interface StyleTypes {
 }
 
 const styles: StyleTypes = {
-  container: {
+  page: {
     width: "100%",
     minHeight: "100%",
     backgroundColor: "$background",
-    contentContainerStyle: { justifyContent: "center", height: "90%" },
+    contentContainerStyle: {
+      height: "90%",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   },
   // @ts-ignore: onSubmit is not required to function, but added form for the ability to sumbit on pressing "enter" on web
   form: {
     paddingHorizontal: 20,
     alignSelf: "center",
     width: "100%",
-    $gtMd: {
-      width: "30%",
+    $gtSm: {
+      width: "40%",
+      minWidth: 400,
+      maxWidth: 500,
       paddingVertical: 20,
       borderRadius: 20,
       borderStyle: "double" as "solid",

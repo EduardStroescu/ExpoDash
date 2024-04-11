@@ -1,5 +1,5 @@
-import { View } from "react-native";
 import { forwardRef } from "react";
+import { View } from "react-native";
 import { GetProps, Button as Pressable } from "tamagui";
 
 export type ButtonProps = {

@@ -1,12 +1,12 @@
-import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Redirect, Tabs } from "expo-router";
+import React from "react";
 
-import Colors from "../../lib/constants/Colors";
-import { useSelector } from "react-redux";
+import AnimatedLoader from "@/components/AnimatedLoader";
 import { RootState } from "@/lib/reduxStore";
 import { Platform } from "react-native";
-import AnimatedLoader from "@/components/AnimatedLoader";
+import { useSelector } from "react-redux";
+import Colors from "../../lib/constants/Colors";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];

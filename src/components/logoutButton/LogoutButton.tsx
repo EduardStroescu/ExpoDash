@@ -1,9 +1,9 @@
-import React from "react";
-import { supabase } from "../../lib/supabase/supabase";
-import { router } from "expo-router";
-import Button from "../Button";
-import { useDispatch } from "react-redux";
 import { setProfile, setSession } from "@/lib/features/authSlice";
+import { router } from "expo-router";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { supabase } from "../../lib/supabase/supabase";
+import Button from "../Button";
 
 type LogoutButtonProps = React.ComponentPropsWithoutRef<typeof Button>;
 
@@ -15,7 +15,7 @@ export default function LogoutButton(props: LogoutButtonProps) {
       text="Sign out"
       onPress={() => {
         supabase.auth.signOut();
-        dispatch(setSession(null))
+        dispatch(setSession(null));
         dispatch(setProfile(null));
         router.replace("/");
       }}

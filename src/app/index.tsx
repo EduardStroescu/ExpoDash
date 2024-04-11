@@ -1,14 +1,11 @@
-import { Link, Redirect, usePathname } from "expo-router";
-import { Platform, useColorScheme } from "react-native";
-import Button, { ButtonProps } from "../components/Button";
-import { useSelector } from "react-redux";
-import { RootState } from "../lib/reduxStore";
-import LogoutButton from "../components/logoutButton/LogoutButton";
-import { StatusBar } from "expo-status-bar";
-import { Stats } from "@/components/stats/Stats";
-import SvgBackground from "@/components/svgBackground/SvgBackground";
 import AnimatedLoader from "@/components/AnimatedLoader";
 import { InlineGradient } from "@/components/InlineGradient";
+import { Stats } from "@/components/stats/Stats";
+import SvgBackground from "@/components/svgBackground/SvgBackground";
+import { Link, Redirect, usePathname } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { Platform, useColorScheme } from "react-native";
+import { useSelector } from "react-redux";
 import {
   GetProps,
   ScrollView,
@@ -19,6 +16,9 @@ import {
   YStack,
   useTheme,
 } from "tamagui";
+import Button, { ButtonProps } from "../components/Button";
+import LogoutButton from "../components/logoutButton/LogoutButton";
+import { RootState } from "../lib/reduxStore";
 
 export default function Page() {
   const colorScheme = useColorScheme();

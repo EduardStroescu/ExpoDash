@@ -1,11 +1,13 @@
-import { supabase } from "@/lib/supabase/supabase";
 import { RootState } from "@/lib/reduxStore";
+import { supabase } from "@/lib/supabase/supabase";
+import { InsertTables, UpdateTables } from "@/lib/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import { InsertTables, UpdateTables } from "@/lib/types";
 
 export const useAdminOrderList = ({ archived }: { archived: boolean }) => {
-  const status = archived ? ["Delivered"] : ["New", "Cooking", "Delivering"];
+  const status = archived
+    ? ["Delivered"]
+    : ["New", "Cooking", "Delivering", "Cancelled"];
 
   return useQuery({
     queryKey: ["orders", { archived }],
@@ -133,7 +135,7 @@ export const useOrderStatistics = () => {
         total_delivered_orders_month,
         total_new_orders_year,
         total_delivered_orders_year
-        `
+        `,
         )
         .order("created_at", { ascending: false })
         .limit(1);

@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { router, useSegments } from "expo-router";
-import { Tables } from "../lib/types";
 import Animated, { SlideInUp } from "react-native-reanimated";
-import { View, Text, GetProps, Button } from "tamagui";
+import { Button, GetProps, Text, View } from "tamagui";
+import { Tables } from "../lib/types";
 dayjs.extend(relativeTime);
 
 interface OrderListItemProps {

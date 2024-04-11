@@ -1,12 +1,12 @@
-import { useColorScheme, Platform } from "react-native";
-import ProductListItem from "@/components/ProductListItem";
-import { useProductList } from "../../api/products";
-import Header from "@/components/webOnlyComponents/Header";
 import AnimatedFlatList from "@/components/AnimatedFlatlist";
-import { Theme, View, useWindowDimensions } from "tamagui";
-import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
 import PageError from "@/components/PageError";
+import ProductListItem from "@/components/ProductListItem";
 import { SkeletonProductListItem } from "@/components/skeletons/SkeletonProductListItem";
+import Header from "@/components/webOnlyComponents/Header";
+import { useResponsiveStyle } from "@/lib/hooks/useResponsiveStyle";
+import { Platform, useColorScheme } from "react-native";
+import { Theme, View, useWindowDimensions } from "tamagui";
+import { useProductList } from "../../api/products";
 
 export default function Menu() {
   const colorScheme = useColorScheme();
@@ -23,11 +23,14 @@ export default function Menu() {
   };
   const columnNumber = useResponsiveStyle(columnBreakpoints, width);
 
-  if (isLoading) {
-    return (
-      <Theme name={colorScheme}>
-        {Platform.OS === "web" && <Header />}
+  if (error) {
+    return <PageError />;
+  }
 
+  return (
+    <Theme name={colorScheme}>
+      {Platform.OS === "web" && <Header />}
+      {isLoading ? (
         <View {...styles.container}>
           <AnimatedFlatList
             {...styles.contentContainerStyle}
@@ -47,39 +50,29 @@ export default function Menu() {
             }}
           />
         </View>
-      </Theme>
-    );
-  }
-
-  if (error) {
-    return <PageError />;
-  }
-
-  return (
-    <Theme name={colorScheme}>
-      {Platform.OS === "web" && <Header />}
-
-      <View {...styles.container}>
-        <AnimatedFlatList
-          {...styles.contentContainerStyle}
-          data={products}
-          key={columnNumber}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item, index, scrollY }) => (
-            <ProductListItem
-              product={item}
-              index={index}
-              scrollY={scrollY}
-              columnNumber={columnNumber}
-            />
-          )}
-          numColumns={columnNumber}
-          contentContainerStyle={{
-            paddingHorizontal: width <= 660 ? 0 : 10,
-            paddingVertical: width <= 660 ? 10 : 10,
-          }}
-        />
-      </View>
+      ) : (
+        <View {...styles.container}>
+          <AnimatedFlatList
+            {...styles.contentContainerStyle}
+            data={products}
+            key={columnNumber}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index, scrollY }) => (
+              <ProductListItem
+                product={item}
+                index={index}
+                scrollY={scrollY}
+                columnNumber={columnNumber}
+              />
+            )}
+            numColumns={columnNumber}
+            contentContainerStyle={{
+              paddingHorizontal: width <= 660 ? 0 : 10,
+              paddingVertical: width <= 660 ? 10 : 10,
+            }}
+          />
+        </View>
+      )}
     </Theme>
   );
 }
