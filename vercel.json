@@ -1,4 +1,9 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  },
   "buildCommand": "expo export -p web",
   "outputDirectory": "dist",
   "devCommand": "expo",

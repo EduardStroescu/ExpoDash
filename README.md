@@ -1,22 +1,30 @@
+<p align="center">
+  <a href="https://expo-dash.vercel.app/" target="blank"><img src="https://raw.githubusercontent.com/EduardStroescu/PubImages/main/WebsiteImages/expoDash.jpg" alt="ExpoDash Preview" /></a>
+</p>
+
 # ExpoDash
 
 ## Introduction
 
-Product ordering application made with expo/react-native.
+Product ordering application made with Expo/React-Native.
 
 ## Overview
 
-The aim of this project is to create a web and mobile product ordering application tailored towards small businesses who want to be able to manage everything from a single endpoint.
-Current features include user and admin accounts, admin dashboard for tracking orders and managing products, realtime order tracking and updating for both types of accounts.
+The aim of this project is to create a multiplatform Full-Stack Product Ordering Application & Website tailored towards small businesses and their customers, to be able to manage everything from a single endpoint.
+Current features include user and admin authentication (with protected routes and separated by authorization), admin dashboard for tracking orders and managing products, realtime order tracking and updating for both types of users, products listings, product details, order creation, cart and payments, profile management pages for users and admins.
 
 Future Goals: push notifications, live support chat
 
 ### Features
 
-- User Accounts/Admin Accounts
+- User & Admin Accounts and protected routes
 - Admin Dashboard
+- Live order stats for admins: new & delivered per day/week/month/year
 - Can create new products and edit existing ones
-- Realtime order tracking and updating
+- Realtime order tracking and updating for users & admins
+- Order placement
+- Cart and checkout
+- Stripe payments
 
 ### Technologies Used
 
