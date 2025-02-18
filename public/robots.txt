@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /sign-in/
+Allow: /sign-up/
+
+Sitemap: https://expo-dash.vercel.app/sitemap.xml

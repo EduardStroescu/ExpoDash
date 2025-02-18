@@ -1,8 +1,8 @@
+import { Session } from "@supabase/supabase-js";
 import { useEffect } from "react";
-import { supabase } from "../supabase/supabase";
 import { useDispatch } from "react-redux";
 import { setLoading, setProfile, setSession } from "../features/authSlice";
-import { Session } from "@supabase/supabase-js";
+import { supabase } from "../supabase/supabase";
 
 export const useSession = () => {
   const dispatch = useDispatch();

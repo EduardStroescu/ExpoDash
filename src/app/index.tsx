@@ -40,6 +40,10 @@ export default function Page() {
     return <Redirect href="/user/" />;
   }
 
+  if (!profile || !isAdmin) {
+    return null;
+  }
+
   return (
     <Theme name={colorScheme}>
       {pathname === "/" && (
